@@ -1,5 +1,6 @@
 package xplr.in.currencycalculator;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,8 +14,9 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class MainCalculator extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +60,20 @@ public class MainCalculator extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_refresh) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public class FetchCurrencyRates extends AsyncTask<Void, Void, List> {
+
+        @Override
+        protected List doInBackground(Void... params) {
+            // Call into a repository class that will make the network call and construct java
+            // objects
+            return null;
+        }
     }
 }
