@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +17,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.repositories.CurrencyRepository;
+
 public class MainActivity extends AppCompatActivity {
+
+    public static String LOG_TAG = MainActivity.class.getCanonicalName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,19 +67,27 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            return true;
+            new FetchCurrencyRates().execute();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public class FetchCurrencyRates extends AsyncTask<Void, Void, List> {
+    public class FetchCurrencyRates extends AsyncTask<Void, Void, List<Currency>> {
 
         @Override
-        protected List doInBackground(Void... params) {
+        protected List<Currency> doInBackground(Void... params) {
             // Call into a repository class that will make the network call and construct java
             // objects
-            return null;
+            return CurrencyRepository.fetch();
+        }
+
+        @Override
+        protected void onPostExecute(List<Currency> currencies) {
+            Log.v(LOG_TAG, "Received currency update.");
+            for(Currency c : currencies) {
+                Log.v(LOG_TAG, "Have currency " + c.getCode());
+            }
         }
     }
 }
