@@ -1,5 +1,6 @@
 package xplr.in.currencycalculator;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,8 +11,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,13 +44,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        ListView listCurrencyCalculations = (ListView)findViewById(R.id.list_currency_calculations);
+
         currenciesAdapter = new ArrayAdapter<>(
                 this,
                 R.layout.list_item_currency_calculation,
                 R.id.list_item_currency_calculation_text_view,
                 new ArrayList<Currency>());
-        ListView listCurrencyCalculations = (ListView)findViewById(R.id.list_currency_calculations);
         listCurrencyCalculations.setAdapter(currenciesAdapter);
+
+        final Activity context = this;
+        listCurrencyCalculations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.v(LOG_TAG, "Clicked currency "+position);
+                Currency currency = currenciesAdapter.getItem(position);
+                Toast.makeText(context, currency.getCode(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         new FetchCurrencyRates().execute();
     }
