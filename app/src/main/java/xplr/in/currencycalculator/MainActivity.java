@@ -1,6 +1,7 @@
 package xplr.in.currencycalculator;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,7 +15,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        final Activity context = this;
+
         setContentView(R.layout.activity_main_calculator);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -39,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(context, FindCurrency.class);
+                startActivity(intent);
             }
         });
 
@@ -54,13 +57,13 @@ public class MainActivity extends AppCompatActivity {
                 new ArrayList<Currency>());
         listCurrencyCalculations.setAdapter(currenciesAdapter);
 
-        final Activity context = this;
         listCurrencyCalculations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.v(LOG_TAG, "Clicked currency "+position);
+                Log.v(LOG_TAG, "Clicked currency " + position);
                 Currency currency = currenciesAdapter.getItem(position);
-                Toast.makeText(context, currency.getCode(), Toast.LENGTH_SHORT).show();
+                Snackbar.make(view, currency.getCode(), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
 
