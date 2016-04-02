@@ -14,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import xplr.in.currencycalculator.models.Currency;
@@ -23,6 +22,8 @@ import xplr.in.currencycalculator.repositories.CurrencyRepository;
 public class MainActivity extends AppCompatActivity {
 
     public static String LOG_TAG = MainActivity.class.getCanonicalName();
+
+    private ArrayAdapter<Currency> currenciesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,16 +41,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        String[] currencies = new String[]{"USD", "INR", "SLR", "BHT"};
-        ArrayList<String> currenciesList = new ArrayList<String>(Arrays.asList(currencies));
-        System.out.println(currenciesList);
-        ArrayAdapter<String> currenciesAdapter = new ArrayAdapter<String>(
+        currenciesAdapter = new ArrayAdapter<>(
                 this,
                 R.layout.list_item_currency_calculation,
                 R.id.list_item_currency_calculation_text_view,
-                currenciesList);
+                new ArrayList<Currency>());
         ListView listCurrencyCalculations = (ListView)findViewById(R.id.list_currency_calculations);
         listCurrencyCalculations.setAdapter(currenciesAdapter);
+
+        new FetchCurrencyRates().execute();
     }
 
     @Override
@@ -88,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
             for(Currency c : currencies) {
                 Log.v(LOG_TAG, "Have currency " + c.getCode());
             }
+            currenciesAdapter.clear();
+            currenciesAdapter.addAll(currencies);
         }
     }
 }
