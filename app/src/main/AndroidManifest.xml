@@ -26,8 +26,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FindCurrency"
-            android:label="@string/title_activity_find_currency"
+            android:name=".SelectCurrencyActivity"
+            android:label="@string/title_activity_select_currency"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, FindCurrency.class);
+                Intent intent = new Intent(context, SelectCurrencyActivity.class);
                 startActivity(intent);
             }
         });
