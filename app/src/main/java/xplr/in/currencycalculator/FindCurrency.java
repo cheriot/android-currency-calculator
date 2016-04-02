@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 public class FindCurrency extends AppCompatActivity {
+    // TODO: Rename FindCurrencyActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

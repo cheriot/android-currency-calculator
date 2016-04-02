@@ -1,14 +1,17 @@
 package xplr.in.currencycalculator.models;
 
+import com.orm.dsl.Table;
+
 import java.math.BigDecimal;
 
-/**
- * Created by cheriot on 4/1/16.
- */
+@Table
 public class Currency {
 
+    private Long id;
     private String code;
     private BigDecimal rate;
+
+    public Currency() {}
 
     public Currency(String code, BigDecimal rate) {
         this.code = code;
