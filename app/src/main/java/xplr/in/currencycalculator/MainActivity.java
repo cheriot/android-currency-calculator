@@ -97,15 +97,12 @@ public class MainActivity extends AppCompatActivity {
         protected List<Currency> doInBackground(Void... params) {
             // Call into a repository class that will make the network call and construct java
             // objects
-            return CurrencyRepository.fetch();
+            return CurrencyRepository.fetchAll();
         }
 
         @Override
         protected void onPostExecute(List<Currency> currencies) {
             Log.v(LOG_TAG, "Received currency update.");
-            for(Currency c : currencies) {
-                Log.v(LOG_TAG, "Have currency " + c.getCode());
-            }
             currenciesAdapter.clear();
             currenciesAdapter.addAll(currencies);
         }
