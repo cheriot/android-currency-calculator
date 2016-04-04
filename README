@@ -1,11 +1,10 @@
 ~/Library/Android/sdk/platform-tools/adb logcat ActivityManager:I CurrencyCalculator:D *:S
 
-Use OkHttp instead of HttpURLConnection. Or http://square.github.io/retrofit/, which is built on OkHttp
-
 Currency list from https://currencylayer.com/currencies
 Array.prototype.map.call(document.querySelectorAll('td:first-child'), function(e) { return e.innerText;}).slice(0,-1).reduce(function(str, c) { return str + '"USD'+c+'"'+', '}, "");
 
 Add BTC manually
+Manually handle N/A currencies. Several are British and can be added back with the same values as the pound.
 
 Competitors list http://www.xe.com/iso4217.php
 Array.prototype.map.call(document.querySelectorAll('#currencyTable a'),
@@ -14,16 +13,19 @@ function(e) { return e.innerText }).join(', ')
 
 What's the gap?
 
-YQL for known currencies, USD base is in the app
+YQL for known currencies, USD base is in the app. Watch for N/A values.
 
 For the next app, the calendar and weather aware alarm, http://openweathermap.com/price
 
 Country flags https://github.com/lipis/flag-icon-css
+Need currency symbols, too.
+
+Use SimpleCursorAdapter for the currencies list view?
 
 Android dev stack possibilities
-RxJava
-http://androidannotations.org/
-http://greenrobot.github.io/EventBus/
+pos  http://androidannotations.org/
+pos  RxJava, RxAndroid
+pos  http://greenrobot.github.io/EventBus/
 
 Add code quality aids. https://www.reddit.com/r/androiddev/comments/4brjhn/post_your_lint_findbugs_and_pmd_configsfilters/
 https://www.reddit.com/r/androiddev/comments/4br68j/what_are_the_things_that_we_should_be_doing/
