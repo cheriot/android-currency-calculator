@@ -16,6 +16,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +28,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static String LOG_TAG = MainActivity.class.getCanonicalName();
 
-    private ArrayAdapter<Currency> currenciesAdapter;
+    @Inject
+    CurrencyRepository currencyRepository;
+    ArrayAdapter<Currency> currenciesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         protected List<Currency> doInBackground(Void... params) {
             // Call into a repository class that will make the network call and construct java
             // objects
-            return CurrencyRepository.fetchAll();
+            return currencyRepository.fetchAll();
         }
 
         @Override

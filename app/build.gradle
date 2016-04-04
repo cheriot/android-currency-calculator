@@ -21,22 +21,29 @@ android {
             debuggable true
         }
     }
+    packagingOptions {
+        // Added to avoid a DuplicateFileException
+        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.github.satyan:sugar:1.4'
+    compile 'org.roboguice:roboguice:3.0.1'
+    provided 'org.roboguice:roboblender:3.0.1'
+
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+
     testCompile 'junit:junit:4.12'
 
     // http://developer.android.com/training/testing/start/index.html
     androidTestCompile 'com.android.support:support-annotations:23.1.0'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
-
     compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.android.support:design:23.1.0'
-    // TODO: remove retrofit, depend on okhttp directly
-    compile 'com.squareup.retrofit2:retrofit:2.0.1'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.0'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.1.2'
-    compile 'com.github.satyan:sugar:1.4'
 }
