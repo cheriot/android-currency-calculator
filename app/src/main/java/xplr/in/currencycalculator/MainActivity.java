@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -21,10 +20,11 @@ import com.google.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+import xplr.in.currencycalculator.activities.GuiceAppCompatActivity;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends GuiceAppCompatActivity {
 
     public static String LOG_TAG = MainActivity.class.getCanonicalName();
 
@@ -32,8 +32,7 @@ public class MainActivity extends AppCompatActivity {
     CurrencyRepository currencyRepository;
     ArrayAdapter<Currency> currenciesAdapter;
 
-    public MainActivity(CurrencyRepository currencyRepository) {
-        this.currencyRepository = currencyRepository;
+    public MainActivity() {
     }
 
     @Override

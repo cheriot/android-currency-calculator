@@ -27,6 +27,7 @@ public class CurrencyRepository {
     @Inject
     CurrencySource currencySource;
 
+    @Inject
     public CurrencyRepository(CurrencySource currencySource) {
         this.currencySource = currencySource;
     }
