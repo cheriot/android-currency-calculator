@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.Charset;
 
@@ -17,6 +18,7 @@ import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.sources.CurrencySource;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by cheriot on 4/3/16.
@@ -44,7 +46,11 @@ public class CurrencyRepositoryTest {
 
     @Test
     public void testFetchAllCorrectCodeAndRate() {
-        // TODO
+        String json = resource("currencyResponse.json");
+        currencyRepository(json).fetchAll();
+        Currency btc = SugarRecord.find(Currency.class, "code = 'BTC'").get(0);
+        assertNotNull("BTC code parsed correctly", btc);
+        assertEquals("Rate parsed correctly", new BigDecimal("0.0024"), btc.getRate());
     }
 
     private String resource(String filename) {

@@ -108,11 +108,13 @@ public class CurrencyRepository {
         private String Rate;
 
         public boolean isValid() {
-            return !("N/A".equals(Rate) || "N/A".equals("Name"));
+            return id.length() == 6 && id.startsWith("USD")
+                    && !"N/A".equals(Rate)
+                    && !"N/A".equals(Name);
         }
 
         public String getCode() {
-            return id;
+            return id.substring(3);
         }
 
         public BigDecimal getRate() {
