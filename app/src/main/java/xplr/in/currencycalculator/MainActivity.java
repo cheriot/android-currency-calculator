@@ -32,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
     CurrencyRepository currencyRepository;
     ArrayAdapter<Currency> currenciesAdapter;
 
+    public MainActivity(CurrencyRepository currencyRepository) {
+        this.currencyRepository = currencyRepository;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

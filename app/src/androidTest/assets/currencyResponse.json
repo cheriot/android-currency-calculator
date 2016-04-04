@@ -1,0 +1,56 @@
+{
+  "query": {
+    "count": 5,
+    "created": "2016-04-03T12:31:19Z",
+    "lang": "en-US",
+    "results": {
+      "rate": [
+        {
+          "id": "USDBTC",
+          "Name": "USD/BTC",
+          "Rate": "0.0024",
+          "Date": "4/2/2016",
+          "Time": "1:45pm",
+          "Ask": "0.0024",
+          "Bid": "0.0024"
+        },
+        {
+          "id": "USDAED",
+          "Name": "USD/AED",
+          "Rate": "3.6730",
+          "Date": "4/2/2016",
+          "Time": "12:53pm",
+          "Ask": "3.6740",
+          "Bid": "3.6730"
+        },
+        {
+          "id": "USDAFN",
+          "Name": "USD/AFN",
+          "Rate": "68.6600",
+          "Date": "4/2/2016",
+          "Time": "12:53pm",
+          "Ask": "68.7600",
+          "Bid": "68.6600"
+        },
+        {
+          "id": "USDALL",
+          "Name": "USD/ALL",
+          "Rate": "121.8245",
+          "Date": "4/2/2016",
+          "Time": "12:53pm",
+          "Ask": "121.9500",
+          "Bid": "121.8245"
+        },
+        {
+          "id": "USDAMD",
+          "Name": "USD/AMD",
+          "Rate": "481.2600",
+          "Date": "4/2/2016",
+          "Time": "12:53pm",
+          "Ask": "481.2700",
+          "Bid": "481.2600"
+        }
+      ]
+    }
+  }
+}
