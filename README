@@ -1,10 +1,11 @@
 Next Steps
 1. drive home screen with cursor list view
+  - use loader to keep query off UI thread
 2. add cursor list view to select currency screen
 3. select currency UI
 4. main page only shows selected currencies
 - move fetchAll to a service
-- do I need this whole loader business?
+- best way to notify the UI of changes in data?
 
 ~/Library/Android/sdk/platform-tools/adb logcat ActivityManager:I CurrencyCalculator:D *:S
 adb devices
