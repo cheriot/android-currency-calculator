@@ -1,10 +1,7 @@
 package xplr.in.currencycalculator;
 
 import android.app.Activity;
-import android.app.LoaderManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,7 +22,6 @@ import java.util.List;
 
 import xplr.in.currencycalculator.activities.GuiceAppCompatActivity;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
-import xplr.in.currencycalculator.loaders.WorkingAsyncTaskLoader;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
@@ -36,10 +32,8 @@ public class MainActivity extends GuiceAppCompatActivity {
     @Inject
     CurrencyRepository currencyRepository;
     CursorAdapter currenciesAdapter;
-    CurrencyLoaderCallbacks currencyLoaderCallbacks;
 
     public MainActivity() {
-        currencyLoaderCallbacks = new CurrencyLoaderCallbacks(this);
     }
 
     @Override
@@ -61,9 +55,7 @@ public class MainActivity extends GuiceAppCompatActivity {
             }
         });
 
-
         ListView listCurrencyCalculations = (ListView)findViewById(R.id.list_currency_calculations);
-
 
         currenciesAdapter = new CurrencyCursorAdapter(this, null);
         listCurrencyCalculations.setAdapter(currenciesAdapter);
@@ -79,7 +71,8 @@ public class MainActivity extends GuiceAppCompatActivity {
             }
         });
 
-        getLoaderManager().initLoader(CurrencyLoaderCallbacks.LOADER_ID, null, currencyLoaderCallbacks);
+        CurrencyLoaderCallbacks clc = new CurrencyLoaderCallbacks(this, currencyRepository, currenciesAdapter);
+        getLoaderManager().initLoader(CurrencyLoaderCallbacks.LOADER_ID, null, clc);
         new UpdateCurrenciesFromServer().execute();
     }
 
@@ -102,51 +95,6 @@ public class MainActivity extends GuiceAppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public class CurrencyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
-
-        public final static int LOADER_ID = 0;
-        private Context context;
-
-        public CurrencyLoaderCallbacks(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return new CurrencyLoader(context, currencyRepository);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            currenciesAdapter.swapCursor(cursor);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-            currenciesAdapter.swapCursor(null);
-        }
-    }
-
-    public static class CurrencyLoader extends WorkingAsyncTaskLoader<Cursor> {
-
-        private CurrencyRepository currencyRepository;
-
-        public CurrencyLoader(Context context, CurrencyRepository currencyRepository) {
-            super(context);
-            this.currencyRepository = currencyRepository;
-        }
-
-        @Override
-        protected void releaseResources(Cursor data) {
-            if(!data.isClosed()) data.close();
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-            return currencyRepository.getSelectedCursor();
-        }
     }
 
     public class UpdateCurrenciesFromServer extends AsyncTask<Void, Void, List<Currency>> {
