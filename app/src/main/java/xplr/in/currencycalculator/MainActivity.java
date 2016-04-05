@@ -1,7 +1,11 @@
 package xplr.in.currencycalculator;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.AsyncTaskLoader;
+import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -73,7 +77,7 @@ public class MainActivity extends GuiceAppCompatActivity {
             }
         });
 
-        new QueryCurrencyRates().execute();
+        getLoaderManager().initLoader(CurrencyLoaderCallbacks.LOADER_ID, null, new CurrencyLoaderCallbacks(this));
         new UpdateCurrenciesFromServer().execute();
     }
 
@@ -98,15 +102,45 @@ public class MainActivity extends GuiceAppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class QueryCurrencyRates extends AsyncTask<Void, Void, Cursor> {
-        @Override
-        protected Cursor doInBackground(Void... params) {
-            return currencyRepository.getSelectedCursor();
+    public class CurrencyLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
+
+        public final static int LOADER_ID = 0;
+        private Context context;
+        private Cursor cursor;
+
+        public CurrencyLoaderCallbacks(Context context) {
+            this.context = context;
         }
 
         @Override
-        protected void onPostExecute(Cursor cursor) {
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return new CurrencyLoader(context, currencyRepository);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+            this.cursor = cursor;
             currenciesAdapter.swapCursor(cursor);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            currenciesAdapter.swapCursor(null);
+            cursor.close();
+        }
+    }
+
+    public static class CurrencyLoader extends AsyncTaskLoader<Cursor> {
+        private CurrencyRepository currencyRepository;
+
+        public CurrencyLoader(Context context, CurrencyRepository currencyRepository) {
+            super(context);
+            this.currencyRepository = currencyRepository;
+        }
+
+        @Override
+        public Cursor loadInBackground() {
+            return currencyRepository.getSelectedCursor();
         }
     }
 
