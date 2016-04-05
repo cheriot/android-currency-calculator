@@ -13,7 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.google.inject.Inject;
@@ -31,7 +31,7 @@ public class MainActivity extends GuiceAppCompatActivity {
 
     @Inject
     CurrencyRepository currencyRepository;
-    BaseAdapter currenciesAdapter;
+    CursorAdapter currenciesAdapter;
 
     public MainActivity() {
     }
@@ -59,7 +59,7 @@ public class MainActivity extends GuiceAppCompatActivity {
         ListView listCurrencyCalculations = (ListView)findViewById(R.id.list_currency_calculations);
 
 
-        currenciesAdapter = new CurrencyCursorAdapter(this, currencyRepository.getSelectedCursor());
+        currenciesAdapter = new CurrencyCursorAdapter(this, null);
         listCurrencyCalculations.setAdapter(currenciesAdapter);
 
         listCurrencyCalculations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -73,7 +73,8 @@ public class MainActivity extends GuiceAppCompatActivity {
             }
         });
 
-        new FetchCurrencyRates().execute();
+        new QueryCurrencyRates().execute();
+        new UpdateCurrenciesFromServer().execute();
     }
 
     @Override
@@ -91,13 +92,25 @@ public class MainActivity extends GuiceAppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            new FetchCurrencyRates().execute();
+            new UpdateCurrenciesFromServer().execute();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public class FetchCurrencyRates extends AsyncTask<Void, Void, List<Currency>> {
+    public class QueryCurrencyRates extends AsyncTask<Void, Void, Cursor> {
+        @Override
+        protected Cursor doInBackground(Void... params) {
+            return currencyRepository.getSelectedCursor();
+        }
+
+        @Override
+        protected void onPostExecute(Cursor cursor) {
+            currenciesAdapter.swapCursor(cursor);
+        }
+    }
+
+    public class UpdateCurrenciesFromServer extends AsyncTask<Void, Void, List<Currency>> {
         @Override
         protected List<Currency> doInBackground(Void... params) {
             // Call into a repository class that will make the network call and construct java
