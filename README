@@ -3,9 +3,13 @@ Next Steps
   - use loader to keep query off UI thread
 2. add cursor list view to select currency screen
 3. select currency UI
-4. main page only shows selected currencies
+4. main screen only shows selected currencies
+5. main screen selects the base currency
+6. calculate!
 - move fetchAll to a service
 - best way to notify the UI of changes in data?
+- country names
+
 
 ~/Library/Android/sdk/platform-tools/adb logcat ActivityManager:I CurrencyCalculator:D *:S
 adb devices
