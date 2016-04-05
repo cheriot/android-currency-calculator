@@ -9,12 +9,13 @@ import java.math.BigDecimal;
 @Table
 public class Currency {
 
-    @NotNull @Unique
     private Long id;
     @NotNull @Unique
     private String code;
     @NotNull
     private BigDecimal rate;
+    @NotNull
+    private boolean selected;
 
     public Currency() {
     }
@@ -36,12 +37,21 @@ public class Currency {
         return rate;
     }
 
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
     @Override
     public String toString() {
         return "Currency{" +
                 "id=" + id +
                 ", code='" + code + '\'' +
                 ", rate=" + rate +
+                ", selected=" + selected +
                 '}';
     }
 }

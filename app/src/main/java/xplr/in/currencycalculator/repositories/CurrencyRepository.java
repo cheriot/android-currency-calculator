@@ -54,6 +54,14 @@ public class CurrencyRepository {
         return SugarRecord.getCursor(Currency.class, null, null, null, null, null);
     }
 
+    public Currency updateSelection(int id, boolean isSelected) {
+        Currency currency = SugarRecord.findById(Currency.class, id);
+        currency.setSelected(isSelected);
+        SugarRecord.update(currency);
+        Log.v(LOG_TAG, "updateSelection " + currency.toString());
+        return currency;
+    }
+
     private static List<RateResponse> parseCurrencyJson(String json) {
         try {
             Gson gson = new GsonBuilder().create();

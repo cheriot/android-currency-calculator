@@ -57,7 +57,7 @@ public class MainActivity extends GuiceAppCompatActivity {
 
         ListView listCurrencyCalculations = (ListView)findViewById(R.id.list_currency_calculations);
 
-        currenciesAdapter = new CurrencyCursorAdapter(this, null);
+        currenciesAdapter = new CurrencyCursorAdapter(this, R.layout.list_item_currency_calculation);
         listCurrencyCalculations.setAdapter(currenciesAdapter);
 
         listCurrencyCalculations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -73,7 +73,7 @@ public class MainActivity extends GuiceAppCompatActivity {
 
         CurrencyLoaderCallbacks clc = new CurrencyLoaderCallbacks(this, currencyRepository, currenciesAdapter);
         getLoaderManager().initLoader(CurrencyLoaderCallbacks.LOADER_ID, null, clc);
-        new UpdateCurrenciesFromServer().execute();
+        new PersistCurrencySelection().execute();
     }
 
     @Override
@@ -91,13 +91,13 @@ public class MainActivity extends GuiceAppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            new UpdateCurrenciesFromServer().execute();
+            new PersistCurrencySelection().execute();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public class UpdateCurrenciesFromServer extends AsyncTask<Void, Void, List<Currency>> {
+    public class PersistCurrencySelection extends AsyncTask<Void, Void, List<Currency>> {
         @Override
         protected List<Currency> doInBackground(Void... params) {
             // Call into a repository class that will make the network call and construct java
