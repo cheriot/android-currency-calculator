@@ -41,7 +41,6 @@ public class GuiceAppCompatActivity extends AppCompatActivity implements RoboCon
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         try {
             RoboGuice.destroyInjector( this );
         }

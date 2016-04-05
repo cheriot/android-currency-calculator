@@ -2,6 +2,7 @@ package xplr.in.currencycalculator;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,15 +13,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.google.inject.Inject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import xplr.in.currencycalculator.activities.GuiceAppCompatActivity;
+import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
@@ -30,7 +31,7 @@ public class MainActivity extends GuiceAppCompatActivity {
 
     @Inject
     CurrencyRepository currencyRepository;
-    ArrayAdapter<Currency> currenciesAdapter;
+    BaseAdapter currenciesAdapter;
 
     public MainActivity() {
     }
@@ -57,19 +58,17 @@ public class MainActivity extends GuiceAppCompatActivity {
 
         ListView listCurrencyCalculations = (ListView)findViewById(R.id.list_currency_calculations);
 
-        currenciesAdapter = new ArrayAdapter<>(
-                this,
-                R.layout.list_item_currency_calculation,
-                R.id.list_item_currency_calculation_text_view,
-                new ArrayList<Currency>());
+
+        currenciesAdapter = new CurrencyCursorAdapter(this, currencyRepository.getSelectedCursor());
         listCurrencyCalculations.setAdapter(currenciesAdapter);
 
         listCurrencyCalculations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.v(LOG_TAG, "Clicked currency " + position);
-                Currency currency = currenciesAdapter.getItem(position);
-                Snackbar.make(view, currency.getCode(), Snackbar.LENGTH_LONG)
+                Cursor currencyCursor = (Cursor) currenciesAdapter.getItem(position);
+                String code = currencyCursor.getString(currencyCursor.getColumnIndexOrThrow("CODE"));
+                Snackbar.make(view, code, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -99,7 +98,6 @@ public class MainActivity extends GuiceAppCompatActivity {
     }
 
     public class FetchCurrencyRates extends AsyncTask<Void, Void, List<Currency>> {
-
         @Override
         protected List<Currency> doInBackground(Void... params) {
             // Call into a repository class that will make the network call and construct java
@@ -110,8 +108,7 @@ public class MainActivity extends GuiceAppCompatActivity {
         @Override
         protected void onPostExecute(List<Currency> currencies) {
             Log.v(LOG_TAG, "Received currency update.");
-            currenciesAdapter.clear();
-            currenciesAdapter.addAll(currencies);
+            currenciesAdapter.notifyDataSetChanged();
         }
     }
 }

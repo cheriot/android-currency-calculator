@@ -1,5 +1,6 @@
 package xplr.in.currencycalculator.repositories;
 
+import android.database.Cursor;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -47,6 +48,10 @@ public class CurrencyRepository {
 
         List<Currency> currencies = currencyFactory(rates);
         return currencies;
+    }
+
+    public Cursor getSelectedCursor() {
+        return SugarRecord.getCursor(Currency.class, null, null, null, null, null);
     }
 
     private static List<RateResponse> parseCurrencyJson(String json) {
