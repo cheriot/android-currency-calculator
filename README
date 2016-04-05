@@ -1,4 +1,15 @@
+Next Steps
+1. drive home screen with cursor list view
+2. add cursor list view to select currency screen
+3. select currency UI
+4. main page only shows selected currencies
+- move fetchAll to a service
+- do I need this whole loader business?
+
 ~/Library/Android/sdk/platform-tools/adb logcat ActivityManager:I CurrencyCalculator:D *:S
+adb devices
+adb -s <device> shell
+run-as xplr.in.currencycalculator
 
 Currency list from https://currencylayer.com/currencies
 Array.prototype.map.call(document.querySelectorAll('td:first-child'), function(e) { return e.innerText;}).slice(0,-1).reduce(function(str, c) { return str + '"USD'+c+'"'+', '}, "");
