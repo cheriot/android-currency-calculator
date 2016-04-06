@@ -9,6 +9,8 @@ import com.google.gson.JsonSyntaxException;
 import com.google.inject.Inject;
 import com.orm.SugarRecord;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,11 +28,14 @@ public class CurrencyRepository {
     private static final String LOG_TAG = CurrencyRepository.class.getCanonicalName();
 
     @Inject
-    CurrencySource currencySource;
+    private CurrencySource currencySource;
+    @Inject
+    private EventBus eventBus;
 
     @Inject
-    public CurrencyRepository(CurrencySource currencySource) {
+    public CurrencyRepository(CurrencySource currencySource, EventBus eventBus) {
         this.currencySource = currencySource;
+        this.eventBus = eventBus;
     }
 
     public List<Currency> fetchAll() {
@@ -47,10 +52,15 @@ public class CurrencyRepository {
         Log.v(LOG_TAG, "Updated "+rates.size()+" currencies.");
 
         List<Currency> currencies = currencyFactory(rates);
+        publishDataChange();
         return currencies;
     }
 
     public Cursor getSelectedCursor() {
+        return SugarRecord.getCursor(Currency.class, "selected = 1", null, null, null, null);
+    }
+
+    public Cursor getAllCursor() {
         return SugarRecord.getCursor(Currency.class, null, null, null, null, null);
     }
 
@@ -59,7 +69,13 @@ public class CurrencyRepository {
         currency.setSelected(isSelected);
         SugarRecord.update(currency);
         Log.v(LOG_TAG, "updateSelection " + currency.toString());
+        publishDataChange();
         return currency;
+    }
+
+    private void publishDataChange() {
+        Log.v(LOG_TAG, "publishDataChange");
+        this.eventBus.post(new CurrencyDataChangeEvent());
     }
 
     private static List<RateResponse> parseCurrencyJson(String json) {
@@ -78,7 +94,6 @@ public class CurrencyRepository {
         List<Currency> currencies = new ArrayList<Currency>(rates.size());
         for(RateResponse r : rates) {
             if(r.isValid()) {
-                // TODO update without fetch
                 Currency c = findOrInstantiate("code = ?", r.getCode());
                 c.update(r.getCode(), r.getRate());
                 SugarRecord.save(c);
@@ -93,13 +108,13 @@ public class CurrencyRepository {
         return found.size() > 0 ? found.get(0) : new Currency();
     }
 
-    class CurrencyResponse {
+    private static class CurrencyResponse {
         private QueryResponse query;
 
         public QueryResponse getQuery() { return query; }
     }
 
-    class QueryResponse {
+    private static class QueryResponse {
         private int count;
         private Date created;
         private ResultsResponse results;
@@ -107,7 +122,7 @@ public class CurrencyRepository {
         public ResultsResponse getResults() { return results; }
     }
 
-    class ResultsResponse {
+    private static class ResultsResponse {
         private List<RateResponse> rate;
 
         public List<RateResponse> getRate() {
@@ -115,7 +130,7 @@ public class CurrencyRepository {
         }
     }
 
-    public class RateResponse {
+    private static class RateResponse {
         private String id;
         private String Name;
         private String Rate;
@@ -145,7 +160,7 @@ public class CurrencyRepository {
         }
     }
 
-    public class InvalidRateException extends RuntimeException {
+    public static class InvalidRateException extends RuntimeException {
         public InvalidRateException(RateResponse r) {
             super("Invalid rate response "+r.toString());
         }

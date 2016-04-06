@@ -18,19 +18,20 @@ import android.widget.ListView;
 
 import com.google.inject.Inject;
 
-import java.util.List;
+import org.greenrobot.eventbus.EventBus;
 
 import xplr.in.currencycalculator.activities.GuiceAppCompatActivity;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
-import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
+import xplr.in.currencycalculator.loaders.SelectedCurrencyLoader;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
-public class MainActivity extends GuiceAppCompatActivity {
+public class MainActivity extends GuiceAppCompatActivity implements CurrencyListActivity {
 
-    public static String LOG_TAG = MainActivity.class.getCanonicalName();
+    private static String LOG_TAG = MainActivity.class.getCanonicalName();
 
-    @Inject
-    CurrencyRepository currencyRepository;
+    @Inject CurrencyRepository currencyRepository;
+    @Inject EventBus eventBus;
     CursorAdapter currenciesAdapter;
 
     public MainActivity() {
@@ -71,9 +72,9 @@ public class MainActivity extends GuiceAppCompatActivity {
             }
         });
 
-        CurrencyLoaderCallbacks clc = new CurrencyLoaderCallbacks(this, currencyRepository, currenciesAdapter);
+        CurrencyLoaderCallbacks clc = new CurrencyLoaderCallbacks(this, SelectedCurrencyLoader.class);
         getLoaderManager().initLoader(CurrencyLoaderCallbacks.LOADER_ID, null, clc);
-        new PersistCurrencySelection().execute();
+        //new UpdateCurrenciesFromServer().execute();
     }
 
     @Override
@@ -91,24 +92,37 @@ public class MainActivity extends GuiceAppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            new PersistCurrencySelection().execute();
+            new UpdateCurrenciesFromServer().execute();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public class PersistCurrencySelection extends AsyncTask<Void, Void, List<Currency>> {
+    public class UpdateCurrenciesFromServer extends AsyncTask<Void, Void, Void> {
         @Override
-        protected List<Currency> doInBackground(Void... params) {
-            // Call into a repository class that will make the network call and construct java
-            // objects
-            return currencyRepository.fetchAll();
+        protected Void doInBackground(Void... params) {
+            currencyRepository.fetchAll();
+            return null;
         }
+    }
 
-        @Override
-        protected void onPostExecute(List<Currency> currencies) {
-            Log.v(LOG_TAG, "Received currency update.");
-            currenciesAdapter.notifyDataSetChanged();
-        }
+    @Override
+    public int getListItemLayout() {
+        return R.layout.list_item_currency_calculation;
+    }
+
+    @Override
+    public CurrencyRepository getCurrencyRepository() {
+        return currencyRepository;
+    }
+
+    @Override
+    public CursorAdapter getCurrencyCursorAdapter() {
+        return currenciesAdapter;
+    }
+
+    @Override
+    public EventBus getEventBus() {
+        return eventBus;
     }
 }

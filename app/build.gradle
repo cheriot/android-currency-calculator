@@ -31,6 +31,11 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    // What's the use case for these? Only to avoid AsyncTask?
+    // compile 'io.reactivex:rxandroid:1.1.0'
+    // compile 'io.reactivex:rxjava:1.1.2'
+
+    compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.google.guava:guava:19.0'
     compile 'com.github.satyan:sugar:1.5'
     compile 'org.roboguice:roboguice:3.0.1'

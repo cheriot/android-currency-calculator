@@ -14,17 +14,21 @@ import android.widget.ListView;
 
 import com.google.inject.Inject;
 
+import org.greenrobot.eventbus.EventBus;
+
 import xplr.in.currencycalculator.activities.GuiceAppCompatActivity;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
+import xplr.in.currencycalculator.loaders.AllCurrencyLoader;
+import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
-public class SelectCurrencyActivity extends GuiceAppCompatActivity {
+public class SelectCurrencyActivity extends GuiceAppCompatActivity implements CurrencyListActivity {
 
     public static String LOG_TAG = SelectCurrencyActivity.class.getCanonicalName();
 
-    @Inject
-    CurrencyRepository currencyRepository;
+    @Inject CurrencyRepository currencyRepository;
+    @Inject EventBus eventBus;
     CursorAdapter currenciesAdapter;
     ListView currenciesListView;
 
@@ -51,7 +55,7 @@ public class SelectCurrencyActivity extends GuiceAppCompatActivity {
             }
         });
 
-        CurrencyLoaderCallbacks clc = new CurrencyLoaderCallbacks(this, currencyRepository, currenciesAdapter);
+        CurrencyLoaderCallbacks clc = new CurrencyLoaderCallbacks(this, AllCurrencyLoader.class);
         getLoaderManager().initLoader(CurrencyLoaderCallbacks.LOADER_ID, null, clc);
     }
 
@@ -66,15 +70,30 @@ public class SelectCurrencyActivity extends GuiceAppCompatActivity {
         Cursor currencyCursor = (Cursor) currenciesAdapter.getItem(position);
         boolean isSelected = checkBox.isChecked();
         int currencyId = currencyCursor.getInt(currencyCursor.getColumnIndexOrThrow("ID"));
-        new UpdateCurrenciesFromServer(currencyId, isSelected).execute();
+        new PersistCurrencySelection(currencyId, isSelected).execute();
     }
 
-    public class UpdateCurrenciesFromServer extends AsyncTask<Void, Void, Currency> {
+    @Override
+    public int getListItemLayout() {
+        return R.layout.list_item_selectable_currency;
+    }
+
+    @Override
+    public CurrencyRepository getCurrencyRepository() {
+        return currencyRepository;
+    }
+
+    @Override
+    public CursorAdapter getCurrencyCursorAdapter() {
+        return currenciesAdapter;
+    }
+
+    public class PersistCurrencySelection extends AsyncTask<Void, Void, Currency> {
 
         private int currencyId;
         private boolean isSelected;
 
-        public UpdateCurrenciesFromServer(int currencyId, boolean isSelected) {
+        public PersistCurrencySelection(int currencyId, boolean isSelected) {
             this.currencyId = currencyId;
             this.isSelected = isSelected;
         }
@@ -88,11 +107,14 @@ public class SelectCurrencyActivity extends GuiceAppCompatActivity {
         @Override
         protected void onPostExecute(Currency currency) {
             Log.v(LOG_TAG, "Completed update.");
-            // currenciesAdapter.notifyDataSetChanged();
-            getLoaderManager().getLoader(CurrencyLoaderCallbacks.LOADER_ID).forceLoad();
             String message = (currency.isSelected() ? "Selected " : "Removed ") + currency.getCode() + ".";
             Snackbar.make(currenciesListView, message, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         }
+    }
+
+    @Override
+    public EventBus getEventBus() {
+        return eventBus;
     }
 }
