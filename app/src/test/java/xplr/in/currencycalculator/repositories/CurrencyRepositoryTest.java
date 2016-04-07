@@ -4,6 +4,7 @@ package xplr.in.currencycalculator.repositories;
 import com.google.common.io.Resources;
 import com.orm.SugarRecord;
 
+import org.greenrobot.eventbus.EventBus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
@@ -55,6 +56,8 @@ public class CurrencyRepositoryTest {
 
     private String resource(String filename) {
         try {
+            // TODO replace with Android's Resources.get*(resId)
+            // http://blog.nimbledroid.com/2016/04/06/slow-ClassLoader.getResourceAsStream.html
             URL url = Resources.getResource(filename);
             return Resources.toString(url, Charset.defaultCharset());
         } catch(Exception e) {
@@ -69,6 +72,6 @@ public class CurrencyRepositoryTest {
                 return json;
             }
         }
-        return new CurrencyRepository(new MockCurrencySource());
+        return new CurrencyRepository(new MockCurrencySource(), new EventBus());
     }
 }

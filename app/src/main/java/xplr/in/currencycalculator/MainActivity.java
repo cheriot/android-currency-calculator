@@ -3,7 +3,6 @@ package xplr.in.currencycalculator;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -25,6 +24,7 @@ import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
 import xplr.in.currencycalculator.loaders.SelectedCurrencyLoader;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
+import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
 
 public class MainActivity extends GuiceAppCompatActivity implements CurrencyListActivity {
 
@@ -32,6 +32,7 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
 
     @Inject CurrencyRepository currencyRepository;
     @Inject EventBus eventBus;
+    @Inject CurrencySyncTriggers currencySyncTriggers;
     CursorAdapter currenciesAdapter;
 
     public MainActivity() {
@@ -74,7 +75,11 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
 
         CurrencyLoaderCallbacks clc = new CurrencyLoaderCallbacks(this, SelectedCurrencyLoader.class);
         getLoaderManager().initLoader(CurrencyLoaderCallbacks.LOADER_ID, null, clc);
-        //new UpdateCurrenciesFromServer().execute();
+
+        // Setup a scheduled sync if that hasn't happened already. This will trigger an initial
+        // sync if one has not occurred.
+        // TODO: EventBus events are not received after sync
+        currencySyncTriggers.createSyncAccount(this);
     }
 
     @Override
@@ -92,18 +97,10 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            new UpdateCurrenciesFromServer().execute();
+            currencySyncTriggers.syncNow();
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public class UpdateCurrenciesFromServer extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            currencyRepository.fetchAll();
-            return null;
-        }
     }
 
     @Override
