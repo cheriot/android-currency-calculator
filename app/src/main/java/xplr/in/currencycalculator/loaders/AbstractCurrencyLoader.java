@@ -12,12 +12,12 @@ import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
 /**
  * Created by cheriot on 4/5/16.
  */
-public abstract class CurrencyLoader extends WorkingAsyncTaskLoader<Cursor> {
+public abstract class AbstractCurrencyLoader extends WorkingAsyncTaskLoader<Cursor> {
 
-    private static String LOG_TAG = CurrencyLoader.class.getCanonicalName();
+    private static String LOG_TAG = AbstractCurrencyLoader.class.getCanonicalName();
     private CurrencyListActivity activity;
 
-    public CurrencyLoader(CurrencyListActivity activity) {
+    public AbstractCurrencyLoader(CurrencyListActivity activity) {
         super((Context)activity);
         this.activity = activity;
     }

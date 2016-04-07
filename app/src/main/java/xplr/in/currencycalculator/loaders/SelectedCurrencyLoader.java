@@ -7,7 +7,7 @@ import xplr.in.currencycalculator.CurrencyListActivity;
 /**
  * Created by cheriot on 4/6/16.
  */
-public class SelectedCurrencyLoader extends CurrencyLoader {
+public class SelectedCurrencyLoader extends AbstractCurrencyLoader {
     private static String LOG_TAG = SelectedCurrencyLoader.class.getCanonicalName();
 
     public SelectedCurrencyLoader(CurrencyListActivity activity) {
