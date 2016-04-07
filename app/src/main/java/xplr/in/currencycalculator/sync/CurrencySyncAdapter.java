@@ -35,4 +35,12 @@ public class CurrencySyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         currencyRepository.fetchAll();
     }
+
+    @Override
+    public void onSyncCanceled() {
+        super.onSyncCanceled();
+        // TODO: cancel the request?
+        // "If your adapter does not respect the cancel issued by the framework you run the risk of your app's entire process being killed."
+        // - http://developer.android.com/reference/android/content/AbstractThreadedSyncAdapter.html
+    }
 }

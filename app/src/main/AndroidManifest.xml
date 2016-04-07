@@ -69,7 +69,9 @@
             android:syncable="true"/>
 
         <!-- Schedule periodic currency rate updates through Android's SyncAdapter to preserve
-        phone batter. -->
+        phone batter.
+
+        android:process=":sync" prevents EventBus communication, which is process specific -->
         <service
             android:name="xplr.in.currencycalculator.sync.CurrencySyncService"
             android:exported="true"
