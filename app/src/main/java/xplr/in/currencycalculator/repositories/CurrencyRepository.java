@@ -57,7 +57,7 @@ public class CurrencyRepository {
     }
 
     public Cursor getSelectedCursor() {
-        return SugarRecord.getCursor(Currency.class, "selected = 1", null, null, null, null);
+        return SugarRecord.getCursor(Currency.class, "position != null and position > 1", null, null, null, null);
     }
 
     public Cursor getAllCursor() {
@@ -104,6 +104,14 @@ public class CurrencyRepository {
 
         currency.setPosition(newPosition);
         SugarRecord.update(currency);
+
+        Log.v(LOG_TAG, "insertAtPosition  " + newPosition + " " + currency.toString());
+        publishDataChange();
+    }
+
+    public Currency getBaseCurrency() {
+        List<Currency> list = SugarRecord.find(Currency.class, "position != null and position > 1");
+        return list.isEmpty() ? null : list.get(0);
     }
 
     public Currency findByCode(String code) {
