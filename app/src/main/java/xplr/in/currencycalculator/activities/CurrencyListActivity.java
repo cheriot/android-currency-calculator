@@ -1,4 +1,4 @@
-package xplr.in.currencycalculator;
+package xplr.in.currencycalculator.activities;
 
 import android.widget.CursorAdapter;
 

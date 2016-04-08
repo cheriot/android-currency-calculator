@@ -2,7 +2,7 @@ package xplr.in.currencycalculator.loaders;
 
 import android.database.Cursor;
 
-import xplr.in.currencycalculator.CurrencyListActivity;
+import xplr.in.currencycalculator.activities.CurrencyListActivity;
 
 /**
  * Created by cheriot on 4/6/16.

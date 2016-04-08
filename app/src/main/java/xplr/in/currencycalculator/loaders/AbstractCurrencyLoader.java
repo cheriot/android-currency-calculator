@@ -6,7 +6,7 @@ import android.util.Log;
 
 import org.greenrobot.eventbus.Subscribe;
 
-import xplr.in.currencycalculator.CurrencyListActivity;
+import xplr.in.currencycalculator.activities.CurrencyListActivity;
 import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
 
 /**

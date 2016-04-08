@@ -5,7 +5,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 
-import xplr.in.currencycalculator.CurrencyListActivity;
+import xplr.in.currencycalculator.activities.CurrencyListActivity;
 
 /**
  * Created by cheriot on 4/5/16.

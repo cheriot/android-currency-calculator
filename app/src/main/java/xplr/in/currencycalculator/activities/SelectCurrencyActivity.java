@@ -1,4 +1,4 @@
-package xplr.in.currencycalculator;
+package xplr.in.currencycalculator.activities;
 
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -16,7 +16,7 @@ import com.google.inject.Inject;
 
 import org.greenrobot.eventbus.EventBus;
 
-import xplr.in.currencycalculator.activities.GuiceAppCompatActivity;
+import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.loaders.AllCurrencyLoader;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
