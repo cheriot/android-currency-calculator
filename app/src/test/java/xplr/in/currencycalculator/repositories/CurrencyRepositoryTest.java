@@ -34,24 +34,98 @@ public class CurrencyRepositoryTest {
     }
 
     @Test
-    public void testFetchAllCount() {
-        String json = resource("currencyResponse.json");
-        currencyRepository(json).fetchAll();
-        assertEquals(5, SugarRecord.count(Currency.class));
-    }
-
-    @Test
     public void testFetchAllSkipsInvalid() {
-        // TODO
+        populate();
+        assertEquals("Skips the 6th, N/A currency.", 5, SugarRecord.count(Currency.class));
     }
 
     @Test
     public void testFetchAllCorrectCodeAndRate() {
+        CurrencyRepository currencyRepository = populate();
+        Currency btc = currencyRepository.findByCode("BTC");
+        assertNotNull("BTC code parsed correctly.", btc);
+        assertEquals("Rate parsed correctly.", new BigDecimal("0.0024"), btc.getRate());
+    }
+
+    @Test
+    public void testInitialInsert() {
+        CurrencyRepository currencyRepository = populate();
+
+        Currency btc = currencyRepository.findByCode("BTC");
+        currencyRepository.insertAtPosition(1, btc);
+        assertInPosition("BTC is now first in the list.", 1, "BTC");
+
+        Currency amd = currencyRepository.findByCode("AMD");
+        currencyRepository.insertAtPosition(1, amd);
+        assertInPosition("AMD is now first in the list.", 1, "AMD");
+        assertInPosition("BTC has been shifted to second.", 2, "BTC");
+
+        assertInPosition("ALL is still not in the list.", null, "ALL");
+    }
+
+    @Test
+    public void testMoveUp() {
+        CurrencyRepository currencyRepository = populate();
+
+        insertAt(1, "BTC");
+        insertAt(1, "AED");
+        insertAt(1, "AMD");
+        insertAt(1, "ALL");
+        insertAt(1, "AFN");
+
+        // Now ordered AFN, ALL, AMD, AED, BTC.
+        assertInPosition("AED starts with position 4.", 4, "AED");
+
+        // Move up
+        insertAt(2, "AED");
+
+        assertInPosition("AFN is unchanged.",    1, "AFN");
+        assertInPosition("AED moved to second.", 2, "AED");
+        assertInPosition("ALL moved to third.",  3, "ALL");
+        assertInPosition("AMD moved to fourth.", 4, "AMD");
+        assertInPosition("BTC is unchanged.",    5, "BTC");
+    }
+
+    @Test
+    public void testMoveDown() {
+        CurrencyRepository currencyRepository = populate();
+
+        insertAt(1, "BTC");
+        insertAt(1, "AED");
+        insertAt(1, "AMD");
+        insertAt(1, "ALL");
+        insertAt(1, "AFN");
+
+        // Now ordered AFN, ALL, AMD, AED, BTC.
+        assertInPosition("ALL starts with position 2.", 2, "ALL");
+
+        // Move down.
+        insertAt(4, "ALL");
+
+        assertInPosition("AFN is unchanged.",    1, "AFN");
+        assertInPosition("AMD moved to second.", 2, "AMD");
+        assertInPosition("AED moved to third.",  3, "AED");
+        assertInPosition("ALL moved to fourth.", 4, "ALL");
+        assertInPosition("BTC is unchanged.",    5, "BTC");
+    }
+
+    private void insertAt(int position, String code) {
+        currencyRepository().insertAtPosition(position, currencyRepository().findByCode(code));
+    }
+
+    private void assertInPosition(String message, Integer position, String code) {
+        assertEquals(message, position, currencyRepository().findByCode(code).getPosition());
+    }
+
+    private CurrencyRepository populate() {
         String json = resource("currencyResponse.json");
-        currencyRepository(json).fetchAll();
-        Currency btc = SugarRecord.find(Currency.class, "code = 'BTC'").get(0);
-        assertNotNull("BTC code parsed correctly", btc);
-        assertEquals("Rate parsed correctly", new BigDecimal("0.0024"), btc.getRate());
+        CurrencyRepository currencyRepository = currencyRepository(json);
+        currencyRepository.fetchAll();
+        return currencyRepository;
+    }
+
+    private CurrencyRepository currencyRepository() {
+        return new CurrencyRepository(null, null);
     }
 
     private String resource(String filename) {

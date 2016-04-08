@@ -10,12 +10,13 @@ import java.math.BigDecimal;
 public class Currency {
 
     private Long id;
-    @NotNull @Unique
+    @Unique @NotNull
     private String code;
     @NotNull
     private BigDecimal rate;
     @NotNull
     private boolean selected;
+    private Integer position;
 
     public Currency() {
     }
@@ -45,11 +46,20 @@ public class Currency {
         this.selected = selected;
     }
 
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
+    }
+
     @Override
     public String toString() {
         return "Currency{" +
                 "id=" + id +
                 ", code='" + code + '\'' +
+                ", position=" + position +
                 ", rate=" + rate +
                 ", selected=" + selected +
                 '}';

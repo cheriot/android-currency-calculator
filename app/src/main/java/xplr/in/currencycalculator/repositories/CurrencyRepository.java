@@ -67,10 +67,48 @@ public class CurrencyRepository {
     public Currency updateSelection(int id, boolean isSelected) {
         Currency currency = SugarRecord.findById(Currency.class, id);
         currency.setSelected(isSelected);
+        if (isSelected) {
+            insertAtPosition(1, currency);
+        } else {
+            currency.setPosition(null);
+        }
         SugarRecord.update(currency);
         Log.v(LOG_TAG, "updateSelection " + currency.toString());
         publishDataChange();
         return currency;
+    }
+
+    private static final String SHIFT_LIST_SQL = "update currency set position = position";
+    public void insertAtPosition(int newPosition, Currency currency) {
+        Integer startPos = currency.getPosition();
+
+        if (startPos != null) {
+            StringBuilder sql = new StringBuilder(SHIFT_LIST_SQL);
+            if(startPos < newPosition) {
+                // Move down
+                // startPosition 2, newPosition 5, first shift 3, 4, 5 up by one
+                sql.append("-1 where position <= ? and position > ?");
+            } else if (startPos > newPosition) {
+                // Move up
+                // startPosition 5, newPosition 2, first shift 2, 3, 4 down by one
+                sql.append("+1 where position >= ? and position < ?");
+            }
+            SugarRecord.executeQuery(
+                    sql.toString(), Integer.toString(newPosition), startPos.toString());
+        } else {
+            // Initial insert
+            // newPosition 3, first shift 3, 4, 5, etc down by one
+            String sql = SHIFT_LIST_SQL + "+1 where position >= ?";
+            SugarRecord.executeQuery(sql, Integer.toString(newPosition));
+        }
+
+        currency.setPosition(newPosition);
+        SugarRecord.update(currency);
+    }
+
+    public Currency findByCode(String code) {
+        List<Currency> list = SugarRecord.find(Currency.class, "code = ?", code);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     private void publishDataChange() {
@@ -90,11 +128,11 @@ public class CurrencyRepository {
         }
     }
 
-    private static List<Currency> currencyFactory(List<RateResponse> rates) {
+    private List<Currency> currencyFactory(List<RateResponse> rates) {
         List<Currency> currencies = new ArrayList<Currency>(rates.size());
         for(RateResponse r : rates) {
             if(r.isValid()) {
-                Currency c = findOrInstantiate("code = ?", r.getCode());
+                Currency c = findOrInstantiate(r.getCode());
                 c.update(r.getCode(), r.getRate());
                 SugarRecord.save(c);
                 currencies.add(c);
@@ -103,9 +141,9 @@ public class CurrencyRepository {
         return currencies;
     }
 
-    private static Currency findOrInstantiate(String whereClause, String... args) {
-        List<Currency> found = SugarRecord.find(Currency.class, whereClause, args);
-        return found.size() > 0 ? found.get(0) : new Currency();
+    private Currency findOrInstantiate(String code) {
+        Currency currency = findByCode(code);
+        return currency != null ? currency : new Currency();
     }
 
     private static class CurrencyResponse {
