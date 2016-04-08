@@ -76,6 +76,8 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
         CurrencyLoaderCallbacks clc = new CurrencyLoaderCallbacks(this, SelectedCurrencyLoader.class);
         getLoaderManager().initLoader(CurrencyLoaderCallbacks.LOADER_ID, null, clc);
 
+        // TODO There's a "30 frames skipped" message. Setup the sync account on another thread?
+
         // Setup a scheduled sync if that hasn't happened already. This will trigger an initial
         // sync if one has not occurred.
         // TODO: EventBus events are not received after sync
