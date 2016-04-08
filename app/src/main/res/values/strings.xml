@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Currency Calculator</string>
     <string name="action_refresh">Refresh</string>
-    <string name="title_activity_select_currency">Find Currencies</string>
+    <string name="title_activity_select_currency">Select Currencies</string>
 </resources>

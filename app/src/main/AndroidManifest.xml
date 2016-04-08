@@ -61,21 +61,20 @@
                 android:resource="@xml/authenticator" />
         </service>
 
-        <!-- Emtpy ContentProvider because Android's SyncAdapter requires one. -->
+        <!-- Empty ContentProvider because Android's SyncAdapter requires one. -->
         <provider
             android:name="xplr.in.currencycalculator.sync.StubContentProvider"
             android:authorities="xplr.in.currencycalculator"
             android:exported="false"
             android:syncable="true"/>
 
-        <!-- Schedule periodic currency rate updates through Android's SyncAdapter to preserve
-        phone batter.
+        <!-- Schedule periodic currency rate updates through Android's SyncAdapter for better
+        sync scheduling.
 
         android:process=":sync" prevents EventBus communication, which is process specific -->
         <service
             android:name="xplr.in.currencycalculator.sync.CurrencySyncService"
-            android:exported="true"
-            android:process=":sync">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
