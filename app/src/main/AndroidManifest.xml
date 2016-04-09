@@ -19,10 +19,6 @@
         android:theme="@style/AppTheme"
         android:name="xplr.in.currencycalculator.Application">
 
-        <meta-data android:name="DATABASE" android:value="currency.db" />
-        <meta-data android:name="VERSION" android:value="3" />
-        <meta-data android:name="QUERY_LOG" android:value="true" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="xplr.in.currencycalculator.models" />
         <meta-data android:name = "roboguice.modules" android:value="xplr.in.currencycalculator.Module" />
 
         <activity

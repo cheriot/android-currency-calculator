@@ -28,6 +28,22 @@ android {
     }
 }
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+apply plugin: 'com.neenbedankt.android-apt'
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -37,9 +53,16 @@ dependencies {
 
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.google.guava:guava:19.0'
-    compile 'com.github.satyan:sugar:1.5'
+
+    // TODO replace and kill
     compile 'org.roboguice:roboguice:3.0.1'
     provided 'org.roboguice:roboblender:3.0.1'
+    // with these
+    compile 'com.yahoo.squidb:squidb:2.0.2'
+    compile 'com.yahoo.squidb:squidb-annotations:2.0.2'
+    apt 'com.yahoo.squidb:squidb-processor:2.0.2'
+    // and Dagger 2
+    // and Butterknife
 
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'

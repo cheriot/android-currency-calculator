@@ -18,9 +18,9 @@ import org.greenrobot.eventbus.EventBus;
 
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
+import xplr.in.currencycalculator.databases.Currency;
 import xplr.in.currencycalculator.loaders.AllCurrencyLoader;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
-import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
 public class SelectCurrencyActivity extends GuiceAppCompatActivity implements CurrencyListActivity {

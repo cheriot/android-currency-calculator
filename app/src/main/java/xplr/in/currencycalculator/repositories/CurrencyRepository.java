@@ -7,7 +7,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.inject.Inject;
-import com.orm.SugarRecord;
+import com.yahoo.squidb.sql.Criterion;
+import com.yahoo.squidb.sql.Query;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -17,7 +18,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.databases.CurrenciesDatabase;
+import xplr.in.currencycalculator.databases.Currency;
 import xplr.in.currencycalculator.sources.CurrencySource;
 
 /**
@@ -31,10 +33,12 @@ public class CurrencyRepository {
     private CurrencySource currencySource;
     @Inject
     private EventBus eventBus;
+    private CurrenciesDatabase database;
 
     @Inject
     public CurrencyRepository(CurrencySource currencySource, EventBus eventBus) {
         this.currencySource = currencySource;
+        this.database = CurrenciesDatabase.getInstance();
         this.eventBus = eventBus;
     }
 
@@ -56,67 +60,86 @@ public class CurrencyRepository {
         return currencies;
     }
 
+    static final Query ALL_CURRENCIES = Query
+            .select()
+            .from(Currency.TABLE)
+            .freeze();
+
+    static final Query SELECTED_CURRENCIES = ALL_CURRENCIES
+            .where(Currency.POSITION.isNotNull())
+            .orderBy(Currency.POSITION.asc())
+            .freeze();
+
+    static final Query CALCULATED_CURRENCIES = SELECTED_CURRENCIES
+            .where(Currency.POSITION.gt(1))
+            .freeze();
+
+    static final Query BASE_CURRENCY = SELECTED_CURRENCIES
+            .where(Currency.POSITION.eq(1))
+            .freeze();
+
     public Cursor getSelectedCursor() {
-        return SugarRecord.getCursor(Currency.class, "position != null and position > 1", null, null, null, null);
+        return database.query(Currency.class, CALCULATED_CURRENCIES);
     }
 
     public Cursor getAllCursor() {
-        return SugarRecord.getCursor(Currency.class, null, null, null, null, null);
+        return database.query(Currency.class, ALL_CURRENCIES);
     }
 
     public Currency updateSelection(int id, boolean isSelected) {
-        Currency currency = SugarRecord.findById(Currency.class, id);
-        currency.setSelected(isSelected);
+        Currency currency = database.fetch(Currency.class, id, Currency.PROPERTIES);
         if (isSelected) {
             insertAtPosition(1, currency);
         } else {
             currency.setPosition(null);
         }
-        SugarRecord.update(currency);
+        database.persist(currency);
         Log.v(LOG_TAG, "updateSelection " + currency.toString());
         publishDataChange();
         return currency;
     }
 
-    private static final String SHIFT_LIST_SQL = "update currency set position = position";
+    private static final String SHIFT_LIST_SQL = "update currencies set position = position";
     public void insertAtPosition(int newPosition, Currency currency) {
         Integer startPos = currency.getPosition();
 
         if (startPos != null) {
             StringBuilder sql = new StringBuilder(SHIFT_LIST_SQL);
+            String[] args = new String[] {Integer.toString(newPosition), startPos.toString()};
+            Criterion where;
             if(startPos < newPosition) {
                 // Move down
                 // startPosition 2, newPosition 5, first shift 3, 4, 5 up by one
                 sql.append("-1 where position <= ? and position > ?");
+                where = Currency.POSITION.lte(newPosition).and(Currency.POSITION.gt(startPos));
             } else if (startPos > newPosition) {
                 // Move up
                 // startPosition 5, newPosition 2, first shift 2, 3, 4 down by one
                 sql.append("+1 where position >= ? and position < ?");
+                where = Currency.POSITION.gte(newPosition).and(Currency.POSITION.lt(startPos));
             }
-            SugarRecord.executeQuery(
-                    sql.toString(), Integer.toString(newPosition), startPos.toString());
+            database.execSql(sql.toString(), args);
         } else {
             // Initial insert
             // newPosition 3, first shift 3, 4, 5, etc down by one
             String sql = SHIFT_LIST_SQL + "+1 where position >= ?";
-            SugarRecord.executeQuery(sql, Integer.toString(newPosition));
+            database.execSql(sql.toString(), new String[] {Integer.toString(newPosition)});
         }
 
         currency.setPosition(newPosition);
-        SugarRecord.update(currency);
+        database.persist(currency);
 
         Log.v(LOG_TAG, "insertAtPosition  " + newPosition + " " + currency.toString());
         publishDataChange();
     }
 
     public Currency getBaseCurrency() {
-        List<Currency> list = SugarRecord.find(Currency.class, "position != null and position > 1");
-        return list.isEmpty() ? null : list.get(0);
+        return database.fetchByQuery(Currency.class, BASE_CURRENCY);
     }
 
     public Currency findByCode(String code) {
-        List<Currency> list = SugarRecord.find(Currency.class, "code = ?", code);
-        return list.isEmpty() ? null : list.get(0);
+        Query query = ALL_CURRENCIES.where(Currency.CODE.eq(code));
+        return database.fetchByQuery(Currency.class, query);
     }
 
     private void publishDataChange() {
@@ -141,8 +164,9 @@ public class CurrencyRepository {
         for(RateResponse r : rates) {
             if(r.isValid()) {
                 Currency c = findOrInstantiate(r.getCode());
-                c.update(r.getCode(), r.getRate());
-                SugarRecord.save(c);
+                c.setCode(r.getCode());
+                c.setRate(r.getRate().toString());
+                database.persist(c);
                 currencies.add(c);
             }
         }
@@ -178,13 +202,11 @@ public class CurrencyRepository {
 
     private static class RateResponse {
         private String id;
-        private String Name;
         private String Rate;
 
         public boolean isValid() {
             return id.length() == 6 && id.startsWith("USD")
-                    && !"N/A".equals(Rate)
-                    && !"N/A".equals(Name);
+                    && !"N/A".equals(Rate);
         }
 
         public String getCode() {
@@ -200,7 +222,6 @@ public class CurrencyRepository {
         public String toString() {
             return "RateResponse{" +
                     "id='" + id + '\'' +
-                    ", Name='" + Name + '\'' +
                     ", Rate='" + Rate + '\'' +
                     '}';
         }
@@ -209,9 +230,6 @@ public class CurrencyRepository {
     public static class InvalidRateException extends RuntimeException {
         public InvalidRateException(RateResponse r) {
             super("Invalid rate response "+r.toString());
-        }
-        public InvalidRateException(RateResponse r, Exception e) {
-            super("Invalid rate response "+r.toString(), e);
         }
     }
 }

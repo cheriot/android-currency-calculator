@@ -1,19 +1,19 @@
 package xplr.in.currencycalculator;
 
-import com.orm.SugarContext;
+import xplr.in.currencycalculator.databases.CurrenciesDatabase;
 
 public class Application extends android.app.Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
-        SugarContext.init(this);
+        CurrenciesDatabase.init(this);
     }
 
     @Override
     public void onTerminate() {
         super.onTerminate();
-        SugarContext.terminate();
+        CurrenciesDatabase.getInstance().close();
     }
 
 }

@@ -2,20 +2,20 @@ package xplr.in.currencycalculator.repositories;
 
 
 import com.google.common.io.Resources;
-import com.orm.SugarRecord;
 
 import org.greenrobot.eventbus.EventBus;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.Charset;
 
 import xplr.in.currencycalculator.BuildConfig;
-import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.databases.CurrenciesDatabase;
+import xplr.in.currencycalculator.databases.Currency;
 import xplr.in.currencycalculator.sources.CurrencySource;
 
 import static org.junit.Assert.assertEquals;
@@ -28,15 +28,22 @@ import static org.junit.Assert.assertNotNull;
 @Config(constants = BuildConfig.class, sdk = 21)
 public class CurrencyRepositoryTest {
 
+    CurrenciesDatabase database;
+
+    @Before
+    public void setUp() {
+        database = CurrenciesDatabase.getInstance();
+    }
+
     @Test
     public void testEmptyDatabase() {
-        assertEquals("Empty database for each test.", 0L, SugarRecord.count(Currency.class));
+        assertEquals("Empty database for each test.", 0L, database.countAll(Currency.class));
     }
 
     @Test
     public void testFetchAllSkipsInvalid() {
         populate();
-        assertEquals("Skips the 6th, N/A currency.", 5, SugarRecord.count(Currency.class));
+        assertEquals("Skips the 6th, N/A currency.", 5, database.countAll(Currency.class));
     }
 
     @Test
@@ -44,7 +51,7 @@ public class CurrencyRepositoryTest {
         CurrencyRepository currencyRepository = populate();
         Currency btc = currencyRepository.findByCode("BTC");
         assertNotNull("BTC code parsed correctly.", btc);
-        assertEquals("Rate parsed correctly.", new BigDecimal("0.0024"), btc.getRate());
+        assertEquals("Rate parsed correctly.", "0.0024", btc.getRate());
     }
 
     @Test
@@ -57,9 +64,9 @@ public class CurrencyRepositoryTest {
 
         Currency amd = currencyRepository.findByCode("AMD");
         currencyRepository.insertAtPosition(1, amd);
+
         assertInPosition("AMD is now first in the list.", 1, "AMD");
         assertInPosition("BTC has been shifted to second.", 2, "BTC");
-
         assertInPosition("ALL is still not in the list.", null, "ALL");
     }
 
@@ -125,7 +132,7 @@ public class CurrencyRepositoryTest {
     }
 
     private CurrencyRepository currencyRepository() {
-        return new CurrencyRepository(null, null);
+        return new CurrencyRepository(null, new EventBus());
     }
 
     private String resource(String filename) {
