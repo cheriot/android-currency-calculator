@@ -118,12 +118,12 @@ public class CurrencyRepository {
                 sql.append("+1 where position >= ? and position < ?");
                 where = Currency.POSITION.gte(newPosition).and(Currency.POSITION.lt(startPos));
             }
-            database.execSql(sql.toString(), args);
+            database.tryExecSql(sql.toString(), args);
         } else {
             // Initial insert
             // newPosition 3, first shift 3, 4, 5, etc down by one
             String sql = SHIFT_LIST_SQL + "+1 where position >= ?";
-            database.execSql(sql.toString(), new String[] {Integer.toString(newPosition)});
+            database.tryExecSql(sql.toString(), new String[] {Integer.toString(newPosition)});
         }
 
         currency.setPosition(newPosition);

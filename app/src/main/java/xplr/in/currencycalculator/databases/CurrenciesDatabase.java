@@ -71,10 +71,6 @@ public class CurrenciesDatabase extends SquidDatabase {
         return cursorToModelList(modelClass, query(modelClass, query));
     }
 
-    public void execSql(String sql, String[] bindArgs) {
-        getDatabase().execSQL(sql, bindArgs);
-    }
-
     public List<List<String>> rawAsList(String sql, String[] args) {
         return cursorToList(rawQuery(sql, args));
     }
