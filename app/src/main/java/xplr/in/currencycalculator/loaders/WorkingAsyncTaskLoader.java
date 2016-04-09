@@ -50,7 +50,9 @@ public abstract class WorkingAsyncTaskLoader<D> extends AsyncTaskLoader<D> {
 
     @Override
     public void onCanceled(D data) {
-        releaseResources(data);
+        if (data != null) {
+            releaseResources(data);
+        }
     }
 
     @Override

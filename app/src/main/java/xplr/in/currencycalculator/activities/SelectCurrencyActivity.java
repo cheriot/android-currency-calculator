@@ -1,6 +1,5 @@
 package xplr.in.currencycalculator.activities;
 
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -29,7 +28,7 @@ public class SelectCurrencyActivity extends GuiceAppCompatActivity implements Cu
 
     @Inject CurrencyRepository currencyRepository;
     @Inject EventBus eventBus;
-    CursorAdapter currenciesAdapter;
+    CurrencyCursorAdapter currenciesAdapter;
     ListView currenciesListView;
 
     @Override
@@ -51,7 +50,7 @@ public class SelectCurrencyActivity extends GuiceAppCompatActivity implements Cu
                 Log.v(LOG_TAG, "Clicked currency " + position + " " + view.getClass());
                 CheckBox checkBox = (CheckBox)view.findViewById(R.id.currency_selected);
                 checkBox.setChecked(!checkBox.isChecked());
-                persistSelection(position, checkBox);
+                toggleCurrencySelection(position, checkBox);
             }
         });
 
@@ -63,14 +62,13 @@ public class SelectCurrencyActivity extends GuiceAppCompatActivity implements Cu
         CheckBox checkBox = (CheckBox)view;
         Log.v(LOG_TAG, "Clicked checkbox " + checkBox.isChecked());
         int position = currenciesListView.getPositionForView(checkBox);
-        persistSelection(position, checkBox);
+        toggleCurrencySelection(position, checkBox);
     }
 
-    private void persistSelection(int position, CheckBox checkBox) {
-        Cursor currencyCursor = (Cursor) currenciesAdapter.getItem(position);
+    private void toggleCurrencySelection(int position, CheckBox checkBox) {
+        Currency currency = currenciesAdapter.getCurrency(position);
         boolean isSelected = checkBox.isChecked();
-        int currencyId = currencyCursor.getInt(currencyCursor.getColumnIndexOrThrow("ID"));
-        new PersistCurrencySelection(currencyId, isSelected).execute();
+        new PersistCurrencySelection(currency, isSelected).execute();
     }
 
     @Override
@@ -90,11 +88,11 @@ public class SelectCurrencyActivity extends GuiceAppCompatActivity implements Cu
 
     public class PersistCurrencySelection extends AsyncTask<Void, Void, Currency> {
 
-        private int currencyId;
+        private long currencyId;
         private boolean isSelected;
 
-        public PersistCurrencySelection(int currencyId, boolean isSelected) {
-            this.currencyId = currencyId;
+        public PersistCurrencySelection(Currency currency, boolean isSelected) {
+            this.currencyId = currency.getId();
             this.isSelected = isSelected;
         }
 

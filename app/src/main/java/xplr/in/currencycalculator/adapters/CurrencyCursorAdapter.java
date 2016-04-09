@@ -9,7 +9,10 @@ import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import com.yahoo.squidb.data.SquidCursor;
+
 import xplr.in.currencycalculator.R;
+import xplr.in.currencycalculator.databases.Currency;
 
 /**
  * Created by cheriot on 4/5/16.
@@ -32,18 +35,23 @@ public class CurrencyCursorAdapter extends CursorAdapter {
                 .inflate(listItemLayout, parent, false);
     }
 
+    public Currency getCurrency(int position) {
+        Currency currency = new Currency();
+        currency.readPropertiesFromCursor((SquidCursor)getItem(position));
+        return currency;
+    }
+
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        String code = cursor.getString(cursor.getColumnIndexOrThrow("CODE"));
-        String rate = cursor.getString(cursor.getColumnIndexOrThrow("RATE"));
-        int isSelected = cursor.getInt(cursor.getColumnIndexOrThrow("SELECTED"));
+        Currency currency = new Currency();
+        currency.readPropertiesFromCursor((SquidCursor)cursor);
 
         TextView codeText = (TextView) view.findViewById(R.id.currency_code);
         TextView rateText = (TextView) view.findViewById(R.id.currency_rate);
         CheckBox checkBox = (CheckBox) view.findViewById(R.id.currency_selected);
 
-        if(codeText != null) codeText.setText(code);
-        if(rateText != null) rateText.setText(rate);
-        if(checkBox != null) checkBox.setChecked(isSelected != 0);
+        if(codeText != null) codeText.setText(currency.getCode());
+        if(rateText != null) rateText.setText(currency.getRate());
+        if(checkBox != null) checkBox.setChecked(currency.isSelected());
     }
 }

@@ -2,7 +2,6 @@ package xplr.in.currencycalculator.databases;
 
 import com.yahoo.squidb.annotations.ColumnSpec;
 import com.yahoo.squidb.annotations.ModelMethod;
-import com.yahoo.squidb.annotations.PrimaryKey;
 import com.yahoo.squidb.annotations.TableModelSpec;
 
 /**
@@ -11,8 +10,6 @@ import com.yahoo.squidb.annotations.TableModelSpec;
 @TableModelSpec(className="Currency",tableName="currencies")
 public class CurrencySpec {
 
-    @PrimaryKey
-    long id;
     @ColumnSpec(constraints="not null unique")
     String code;
     // TODO Custom data type for BigDecimal

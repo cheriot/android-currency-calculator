@@ -38,7 +38,7 @@ public class CurrenciesDatabase extends SquidDatabase {
 
     @Override
     public String getName() {
-        return "currencies";
+        return "currencies.db";
     }
 
     @Override

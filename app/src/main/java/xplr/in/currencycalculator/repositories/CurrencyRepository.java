@@ -86,7 +86,7 @@ public class CurrencyRepository {
         return database.query(Currency.class, ALL_CURRENCIES);
     }
 
-    public Currency updateSelection(int id, boolean isSelected) {
+    public Currency updateSelection(long id, boolean isSelected) {
         Currency currency = database.fetch(Currency.class, id, Currency.PROPERTIES);
         if (isSelected) {
             insertAtPosition(1, currency);
@@ -94,7 +94,7 @@ public class CurrencyRepository {
             currency.setPosition(null);
         }
         database.persist(currency);
-        Log.v(LOG_TAG, "updateSelection " + currency.toString());
+        Log.v(LOG_TAG, "updateSelection " + isSelected + " " + currency.toString());
         publishDataChange();
         return currency;
     }
