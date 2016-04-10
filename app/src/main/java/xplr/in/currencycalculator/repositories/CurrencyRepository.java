@@ -91,7 +91,7 @@ public class CurrencyRepository {
     public Currency updateSelection(long id, boolean isSelected) {
         Currency currency = database.fetch(Currency.class, id, Currency.PROPERTIES);
         if (isSelected) {
-            insertAtPosition(1, currency);
+            insertAtPosition(2, currency);
         } else {
             currency.setPosition(null);
         }
@@ -137,6 +137,11 @@ public class CurrencyRepository {
 
     public Currency getBaseCurrency() {
         return database.fetchByQuery(Currency.class, BASE_CURRENCY);
+    }
+
+    public void setBaseCurrency(Currency currency) {
+        insertAtPosition(1, currency);
+        publishDataChange();
     }
 
     public Currency findByCode(String code) {

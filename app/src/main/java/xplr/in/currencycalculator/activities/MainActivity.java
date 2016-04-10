@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,12 +21,14 @@ import com.google.inject.Inject;
 import com.yahoo.squidb.data.SquidCursor;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.databases.Currency;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
 import xplr.in.currencycalculator.loaders.SelectedCurrencyLoader;
+import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
 
@@ -51,6 +52,10 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
         final Activity context = this;
 
         setContentView(R.layout.activity_main_calculator);
+
+        eventBus.register(this);
+        new BaseCurrencyQuery().execute();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -61,8 +66,6 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
                 startActivity(new Intent(context, SelectCurrencyActivity.class));
             }
         });
-
-        new BaseCurrencyQuery().execute();
 
         // Connect ListView to its Adapter
         ListView listCurrencyCalculations = (ListView)findViewById(R.id.list_currency_calculations);
@@ -75,8 +78,7 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
                 SquidCursor currencyCursor = (SquidCursor) currenciesAdapter.getItem(position);
                 Currency currency = new Currency();
                 currency.readPropertiesFromCursor(currencyCursor);
-                Snackbar.make(view, currency.getCode(), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                currencyRepository.setBaseCurrency(currency);
             }
         });
 
@@ -89,6 +91,12 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
         // Setup a scheduled sync if that hasn't happened already. This will trigger an initial
         // sync if one has not occurred.
         currencySyncTriggers.createSyncAccount(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        eventBus.unregister(this);
+        super.onDestroy();
     }
 
     private void bindBaseCurrency(Currency currency) {
@@ -109,6 +117,11 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
             @Override
             public void afterTextChanged(Editable s) {}
         });
+    }
+
+    @Subscribe
+    public void onCurrencyDataChanged(CurrencyDataChangeEvent e) {
+        new BaseCurrencyQuery().execute();
     }
 
     @Override
