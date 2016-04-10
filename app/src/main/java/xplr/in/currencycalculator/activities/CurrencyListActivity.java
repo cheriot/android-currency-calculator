@@ -4,6 +4,7 @@ import android.widget.CursorAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 
+import xplr.in.currencycalculator.databases.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
 /**
@@ -16,4 +17,6 @@ public interface CurrencyListActivity {
     CursorAdapter getCurrencyCursorAdapter();
 
     EventBus getEventBus();
+
+    SelectedCurrency getBaseCurrency();
 }

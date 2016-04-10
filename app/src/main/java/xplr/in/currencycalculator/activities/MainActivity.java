@@ -26,6 +26,7 @@ import org.greenrobot.eventbus.Subscribe;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.databases.Currency;
+import xplr.in.currencycalculator.databases.SelectedCurrency;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
 import xplr.in.currencycalculator.loaders.SelectedCurrencyLoader;
 import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
@@ -40,13 +41,14 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencySyncTriggers currencySyncTriggers;
     CursorAdapter currenciesAdapter;
-    Currency baseCurrency;
+    SelectedCurrency baseCurrency;
 
     public MainActivity() {
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
         final Activity context = this;
@@ -65,6 +67,22 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
             public void onClick(View view) {
                 startActivity(new Intent(context, SelectCurrencyActivity.class));
             }
+        });
+
+        final TextView baseCurrencyAmountView = (TextView)findViewById(R.id.base_currency_amount);
+        baseCurrencyAmountView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.v(LOG_TAG, "TEXT " + s);
+                baseCurrency.setAmount(s.toString());
+                currenciesAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
 
         // Connect ListView to its Adapter
@@ -99,28 +117,21 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
         super.onDestroy();
     }
 
-    private void bindBaseCurrency(Currency currency) {
-        Log.v(LOG_TAG, "bindBaseCurrency " + currency.getCode());
-        TextView rateView = (TextView)findViewById(R.id.base_currency_rate);
+    private void setBaseCurrency(SelectedCurrency currency) {
+        if (baseCurrency != null && baseCurrency.getCode().equals(currency.getCode())) return;
+
+        Log.v(LOG_TAG, "setBaseCurrency " + currency.getCode());
         TextView codeView = (TextView)findViewById(R.id.base_currency_code);
-        rateView.setText(currency.getRate());
         codeView.setText(currency.getCode());
-        codeView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        baseCurrency = currency;
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.v(LOG_TAG, "TEXT " + s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
+        // Rebind ListView items so converted amounts can be calculated.
+        currenciesAdapter.notifyDataSetChanged();
     }
 
     @Subscribe
     public void onCurrencyDataChanged(CurrencyDataChangeEvent e) {
+        Log.v(LOG_TAG, "onCurrencyDataChanged update base currency");
         new BaseCurrencyQuery().execute();
     }
 
@@ -157,17 +168,22 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
         return eventBus;
     }
 
-    public class BaseCurrencyQuery extends AsyncTask<Void, Void, Currency> {
+    @Override
+    public SelectedCurrency getBaseCurrency() {
+        return baseCurrency;
+    }
+
+    public class BaseCurrencyQuery extends AsyncTask<Void, Void, SelectedCurrency> {
 
         @Override
-        protected Currency doInBackground(Void... params) {
+        protected SelectedCurrency doInBackground(Void... params) {
             return currencyRepository.getBaseCurrency();
         }
 
         @Override
-        protected void onPostExecute(Currency currency) {
+        protected void onPostExecute(SelectedCurrency currency) {
             Log.v(LOG_TAG, "Base currency is " + currency);
-            if (currency != null) bindBaseCurrency(currency);
+            if (currency != null) setBaseCurrency(currency);
         }
     }
 }

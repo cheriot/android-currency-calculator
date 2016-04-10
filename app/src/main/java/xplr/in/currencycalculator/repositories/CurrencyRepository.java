@@ -20,6 +20,7 @@ import java.util.List;
 
 import xplr.in.currencycalculator.databases.CurrenciesDatabase;
 import xplr.in.currencycalculator.databases.Currency;
+import xplr.in.currencycalculator.databases.SelectedCurrency;
 import xplr.in.currencycalculator.sources.CurrencySource;
 
 /**
@@ -58,7 +59,7 @@ public class CurrencyRepository {
         Log.v(LOG_TAG, "Updated "+rates.size()+" currencies.");
 
         List<Currency> currencies = currencyFactory(rates);
-        publishDataChange();
+        publishDataChange("fetchAll");
         return currencies;
     }
 
@@ -94,10 +95,10 @@ public class CurrencyRepository {
             insertAtPosition(2, currency);
         } else {
             currency.setPosition(null);
+            database.persist(currency);
+            publishDataChange("remove selected");
         }
-        database.persist(currency);
         Log.v(LOG_TAG, "updateSelection " + isSelected + " " + currency.toString());
-        publishDataChange();
         return currency;
     }
 
@@ -132,16 +133,15 @@ public class CurrencyRepository {
         database.persist(currency);
 
         Log.v(LOG_TAG, "insertAtPosition  " + newPosition + " " + currency.toString());
-        publishDataChange();
+        publishDataChange("insertAtPosition");
     }
 
-    public Currency getBaseCurrency() {
-        return database.fetchByQuery(Currency.class, BASE_CURRENCY);
+    public SelectedCurrency getBaseCurrency() {
+        return database.fetchByQuery(SelectedCurrency.class, BASE_CURRENCY);
     }
 
     public void setBaseCurrency(Currency currency) {
         insertAtPosition(1, currency);
-        publishDataChange();
     }
 
     public Currency findByCode(String code) {
@@ -149,8 +149,8 @@ public class CurrencyRepository {
         return database.fetchByQuery(Currency.class, query);
     }
 
-    private void publishDataChange() {
-        Log.v(LOG_TAG, "publishDataChange");
+    private void publishDataChange(String sourceName) {
+        Log.v(LOG_TAG, "publishDataChange " + sourceName);
         this.eventBus.post(new CurrencyDataChangeEvent());
     }
 
