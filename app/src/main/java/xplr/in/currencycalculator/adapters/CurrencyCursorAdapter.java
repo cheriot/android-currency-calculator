@@ -61,9 +61,7 @@ public class CurrencyCursorAdapter extends CursorAdapter {
         if(checkBox != null) checkBox.setChecked(currency.isSelected());
 
         SelectedCurrency baseCurrency = this.currencyListActivity.getBaseCurrency();
-        if(baseCurrency != null && baseCurrency.getAmount() != null && rateText != null) {
-            rateText.setText(currency.convertFrom(baseCurrency));
-        }
+        if(rateText != null) rateText.setText(currency.convertFrom(baseCurrency));
         Log.v(LOG_TAG, "baseCurrency in bindView    " + baseCurrency);
     }
 }

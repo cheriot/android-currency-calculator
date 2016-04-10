@@ -1,5 +1,7 @@
 package xplr.in.currencycalculator.databases;
 
+import android.text.TextUtils;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 
@@ -16,7 +18,9 @@ public class SelectedCurrency extends Currency {
     private String amount;
 
     public String convertFrom(SelectedCurrency base) {
-        if (base.getAmount() != null) {
+        if (base != null
+                && base.getAmount() != null
+                && !TextUtils.isEmpty(base.getAmount().trim())) {
             BigDecimal baseRate = new BigDecimal(base.getRate());
             BigDecimal baseAmount = new BigDecimal(base.getAmount());
             BigDecimal baseDollars = baseAmount.divide(baseRate, MathContext.DECIMAL128);
