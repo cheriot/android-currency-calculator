@@ -1,19 +1,8 @@
 package xplr.in.currencycalculator.activities;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-
-import com.google.inject.Key;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import roboguice.RoboGuice;
-import roboguice.util.RoboContext;
-
 /**
  * Created by cheriot on 4/5/16.
- */
+
 public class GuiceAppCompatActivity extends AppCompatActivity implements RoboContext {
 
 
@@ -49,3 +38,4 @@ public class GuiceAppCompatActivity extends AppCompatActivity implements RoboCon
         }
     }
 }
+ */

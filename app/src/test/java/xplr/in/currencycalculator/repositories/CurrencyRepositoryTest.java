@@ -8,11 +8,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.net.URL;
 import java.nio.charset.Charset;
 
+import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
 import xplr.in.currencycalculator.databases.CurrenciesDatabase;
 import xplr.in.currencycalculator.databases.Currency;
@@ -32,7 +34,7 @@ public class CurrencyRepositoryTest {
 
     @Before
     public void setUp() {
-        database = CurrenciesDatabase.getInstance();
+        database = new CurrenciesDatabase((App)RuntimeEnvironment.application);
     }
 
     @Test
@@ -147,7 +149,7 @@ public class CurrencyRepositoryTest {
     }
 
     private CurrencyRepository currencyRepository() {
-        return new CurrencyRepository(null, new EventBus());
+        return new CurrencyRepository(null, database, new EventBus());
     }
 
     private String resource(String filename) {
@@ -168,6 +170,6 @@ public class CurrencyRepositoryTest {
                 return json;
             }
         }
-        return new CurrencyRepository(new MockCurrencySource(), new EventBus());
+        return new CurrencyRepository(new MockCurrencySource(), database, new EventBus());
     }
 }

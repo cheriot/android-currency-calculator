@@ -17,9 +17,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name="xplr.in.currencycalculator.Application">
-
-        <meta-data android:name = "roboguice.modules" android:value="xplr.in.currencycalculator.Module" />
+        android:name=".App">
 
         <activity
             android:name=".activities.MainActivity"

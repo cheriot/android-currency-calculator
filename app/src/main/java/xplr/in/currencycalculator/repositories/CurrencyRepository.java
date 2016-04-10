@@ -6,7 +6,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.google.inject.Inject;
 import com.yahoo.squidb.sql.Criterion;
 import com.yahoo.squidb.sql.Query;
 
@@ -18,6 +17,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import xplr.in.currencycalculator.databases.CurrenciesDatabase;
 import xplr.in.currencycalculator.databases.Currency;
 import xplr.in.currencycalculator.databases.SelectedCurrency;
@@ -26,20 +28,19 @@ import xplr.in.currencycalculator.sources.CurrencySource;
 /**
  * Created by cheriot on 4/1/16.
  */
+@Singleton
 public class CurrencyRepository {
 
     private static final String LOG_TAG = CurrencyRepository.class.getCanonicalName();
 
-    @Inject
-    private CurrencySource currencySource;
-    @Inject
-    private EventBus eventBus;
-    private CurrenciesDatabase database;
+    @Inject CurrencySource currencySource;
+    @Inject CurrenciesDatabase database;
+    @Inject EventBus eventBus;
 
     @Inject
-    public CurrencyRepository(CurrencySource currencySource, EventBus eventBus) {
+    public CurrencyRepository(CurrencySource currencySource, CurrenciesDatabase database, EventBus eventBus) {
         this.currencySource = currencySource;
-        this.database = CurrenciesDatabase.getInstance();
+        this.database = database;
         this.eventBus = eventBus;
     }
 

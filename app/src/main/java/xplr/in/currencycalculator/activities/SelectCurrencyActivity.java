@@ -3,6 +3,7 @@ package xplr.in.currencycalculator.activities;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -11,10 +12,11 @@ import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
-import com.google.inject.Inject;
-
 import org.greenrobot.eventbus.EventBus;
 
+import javax.inject.Inject;
+
+import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.databases.Currency;
@@ -23,7 +25,7 @@ import xplr.in.currencycalculator.loaders.AllCurrencyLoader;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
-public class SelectCurrencyActivity extends GuiceAppCompatActivity implements CurrencyListActivity {
+public class SelectCurrencyActivity extends AppCompatActivity implements CurrencyListActivity {
 
     public static String LOG_TAG = SelectCurrencyActivity.class.getCanonicalName();
 
@@ -35,6 +37,8 @@ public class SelectCurrencyActivity extends GuiceAppCompatActivity implements Cu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((App)getApplication()).getAppComponent().inject(this);
+
         setContentView(R.layout.activity_select_currency);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

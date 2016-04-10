@@ -3,13 +3,12 @@ package xplr.in.currencycalculator.sync;
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
-import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
-import roboguice.RoboGuice;
+import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
 /**
@@ -19,16 +18,17 @@ import xplr.in.currencycalculator.repositories.CurrencyRepository;
  */
 public class CurrencySyncAdapter extends AbstractThreadedSyncAdapter {
 
-    @Inject CurrencyRepository currencyRepository;
+    @Inject
+    CurrencyRepository currencyRepository;
 
-    public CurrencySyncAdapter(Context context, boolean autoInitialize) {
+    public CurrencySyncAdapter(App context, boolean autoInitialize) {
         super(context, autoInitialize);
-        RoboGuice.getInjector(context).injectMembersWithoutViews(this);
+        context.inject(this);
     }
 
-    public CurrencySyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
+    public CurrencySyncAdapter(App context, boolean autoInitialize, boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
-        RoboGuice.getInjector(context).injectMembersWithoutViews(this);
+        context.inject(this);
     }
 
     @Override

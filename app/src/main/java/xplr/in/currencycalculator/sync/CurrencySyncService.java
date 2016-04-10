@@ -4,6 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import xplr.in.currencycalculator.App;
+
 /**
  * Define a Service that returns an IBinder for the
  * sync adapter class, allowing the sync adapter framework to call
@@ -30,7 +32,7 @@ public class CurrencySyncService extends Service {
          */
         synchronized (syncAdapterLock) {
             if (currencySyncAdapter == null) {
-                currencySyncAdapter = new CurrencySyncAdapter(getApplicationContext(), true);
+                currencySyncAdapter = new CurrencySyncAdapter((App)getApplication(), true);
             }
         }
     }

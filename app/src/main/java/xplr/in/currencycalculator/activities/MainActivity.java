@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,12 +18,14 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.inject.Inject;
 import com.yahoo.squidb.data.SquidCursor;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import javax.inject.Inject;
+
+import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.databases.Currency;
@@ -33,7 +36,7 @@ import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
 
-public class MainActivity extends GuiceAppCompatActivity implements CurrencyListActivity {
+public class MainActivity extends AppCompatActivity implements CurrencyListActivity {
 
     private static String LOG_TAG = MainActivity.class.getCanonicalName();
 
@@ -50,6 +53,7 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
+        ((App)getApplication()).inject(this);
 
         final Activity context = this;
 

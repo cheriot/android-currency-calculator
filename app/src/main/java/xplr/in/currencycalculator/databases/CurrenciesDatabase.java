@@ -1,6 +1,5 @@
 package xplr.in.currencycalculator.databases;
 
-import android.content.Context;
 import android.database.Cursor;
 
 import com.yahoo.squidb.data.AbstractModel;
@@ -13,26 +12,22 @@ import com.yahoo.squidb.sql.Table;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import xplr.in.currencycalculator.App;
+
 /**
  * Created by cheriot on 4/9/16.
  */
 public class CurrenciesDatabase extends SquidDatabase {
-
-    // TODO Can this be done with Dagger?
-    private static CurrenciesDatabase db;
-    public static void init(Context context) {
-        db = new CurrenciesDatabase(context);
-    }
-    public static CurrenciesDatabase getInstance() {
-        return db;
-    }
 
     /**
      * Create a new SquidDatabase
      *
      * @param context the Context, must not be null
      */
-    public CurrenciesDatabase(Context context) {
+    @Inject
+    public CurrenciesDatabase(App context) {
         super(context);
     }
 

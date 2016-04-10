@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import javax.inject.Inject;
+
 /**
  * Ways to trigger currency data to sync: scheduled and immediate.
  *
@@ -23,6 +25,10 @@ public class CurrencySyncTriggers {
     private static final String PREF_SETUP_COMPLETE = "setup_complete";
     public static final String ACCOUNT = "public_account";
     public static final String ACCOUNT_TYPE = "xplr.in.currencycalculator";
+
+    @Inject
+    public CurrencySyncTriggers() {
+    }
 
     /**
      * Create an entry for this application in the system account list, if it isn't already there.
