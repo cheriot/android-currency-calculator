@@ -11,8 +11,6 @@ import xplr.in.currencycalculator.repositories.CurrencyRepository;
  */
 public interface CurrencyListActivity {
 
-    int getListItemLayout();
-
     CurrencyRepository getCurrencyRepository();
 
     CursorAdapter getCurrencyCursorAdapter();

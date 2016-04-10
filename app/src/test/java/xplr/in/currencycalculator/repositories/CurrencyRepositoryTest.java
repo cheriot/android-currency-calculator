@@ -72,7 +72,7 @@ public class CurrencyRepositoryTest {
 
     @Test
     public void testMoveUp() {
-        CurrencyRepository currencyRepository = populate();
+        populate();
 
         insertAt(1, "BTC");
         insertAt(1, "AED");
@@ -95,7 +95,7 @@ public class CurrencyRepositoryTest {
 
     @Test
     public void testMoveDown() {
-        CurrencyRepository currencyRepository = populate();
+        populate();
 
         insertAt(1, "BTC");
         insertAt(1, "AED");
@@ -114,6 +114,21 @@ public class CurrencyRepositoryTest {
         assertInPosition("AED moved to third.",  3, "AED");
         assertInPosition("ALL moved to fourth.", 4, "ALL");
         assertInPosition("BTC is unchanged.",    5, "BTC");
+    }
+
+    @Test
+    public void testGetBaseCurrency() {
+        CurrencyRepository currencyRepository = populate();
+
+        insertAt(1, "BTC");
+        insertAt(1, "AED");
+        insertAt(1, "AMD");
+
+        assertInPosition("AMD is first in the list.", 1, "AMD");
+
+        Currency base = currencyRepository.getBaseCurrency();
+        assertNotNull("Found base currency.", base);
+        assertEquals("Base currency is AMD.", "AMD", base.getCode());
     }
 
     private void insertAt(int position, String code) {

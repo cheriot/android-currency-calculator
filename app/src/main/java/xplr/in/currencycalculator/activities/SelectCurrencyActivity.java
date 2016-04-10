@@ -72,11 +72,6 @@ public class SelectCurrencyActivity extends GuiceAppCompatActivity implements Cu
     }
 
     @Override
-    public int getListItemLayout() {
-        return R.layout.list_item_selectable_currency;
-    }
-
-    @Override
     public CurrencyRepository getCurrencyRepository() {
         return currencyRepository;
     }
