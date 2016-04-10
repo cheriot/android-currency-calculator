@@ -1,6 +1,9 @@
 package xplr.in.currencycalculator;
 
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Singleton;
@@ -27,11 +30,15 @@ public class AppModule {
         return new EventBus();
     }
 
-    @Provides App provideApplication() {
+    @Provides @Singleton App provideApplication() {
         return app;
     }
 
-    @Provides CurrencySource currencySource() {
+    @Provides @Singleton CurrencySource provideCurrencySource() {
         return new HttpCurrencySource();
+    }
+
+    @Provides @Singleton SharedPreferences provideSharedPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(app);
     }
 }

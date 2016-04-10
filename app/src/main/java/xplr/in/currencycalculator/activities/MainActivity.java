@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
-        ((App)getApplication()).inject(this);
+        ((App)getApplication()).getAppComponent().inject(this);
 
         final Activity context = this;
 
