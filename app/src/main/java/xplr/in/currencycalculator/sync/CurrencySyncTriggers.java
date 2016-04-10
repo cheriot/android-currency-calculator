@@ -77,10 +77,7 @@ public class CurrencySyncTriggers {
         // Disable sync backoff and ignore sync preferences. In other words...perform sync NOW!
         b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        ContentResolver.requestSync(
-                getAccount(),                            // Sync account
-                StubContentProvider.CONTENT_AUTHORITY,   // Content authority
-                b);                                      // Extras
+        ContentResolver.requestSync(getAccount(), StubContentProvider.CONTENT_AUTHORITY, b);
     }
 
     private Account getAccount() {

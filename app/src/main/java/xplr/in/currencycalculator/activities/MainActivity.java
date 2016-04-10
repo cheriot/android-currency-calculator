@@ -2,7 +2,6 @@ package xplr.in.currencycalculator.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.inject.Inject;
+import com.yahoo.squidb.data.SquidCursor;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -72,9 +72,10 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.v(LOG_TAG, "Clicked currency " + position);
-                Cursor currencyCursor = (Cursor) currenciesAdapter.getItem(position);
-                String code = currencyCursor.getString(currencyCursor.getColumnIndexOrThrow("CODE"));
-                Snackbar.make(view, code, Snackbar.LENGTH_LONG)
+                SquidCursor currencyCursor = (SquidCursor) currenciesAdapter.getItem(position);
+                Currency currency = new Currency();
+                currency.readPropertiesFromCursor(currencyCursor);
+                Snackbar.make(view, currency.getCode(), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -92,9 +93,11 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
 
     private void bindBaseCurrency(Currency currency) {
         Log.v(LOG_TAG, "bindBaseCurrency " + currency.getCode());
-        TextView code = (TextView)findViewById(R.id.base_currency_code);
-        code.setText(currency.getCode());
-        code.addTextChangedListener(new TextWatcher() {
+        TextView rateView = (TextView)findViewById(R.id.base_currency_rate);
+        TextView codeView = (TextView)findViewById(R.id.base_currency_code);
+        rateView.setText(currency.getRate());
+        codeView.setText(currency.getCode());
+        codeView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -120,12 +123,9 @@ public class MainActivity extends GuiceAppCompatActivity implements CurrencyList
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (id == R.id.action_refresh) {
+        if (item.getItemId() == R.id.action_refresh) {
             currencySyncTriggers.syncNow();
         }
-
         return super.onOptionsItemSelected(item);
     }
 

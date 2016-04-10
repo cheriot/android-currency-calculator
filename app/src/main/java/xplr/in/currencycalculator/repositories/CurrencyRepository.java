@@ -43,6 +43,8 @@ public class CurrencyRepository {
     }
 
     public List<Currency> fetchAll() {
+        Log.v(LOG_TAG, "fetchAll");
+
         String json = currencySource.get();
         if(json == null) {
             return Collections.emptyList();
