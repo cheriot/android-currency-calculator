@@ -52,22 +52,18 @@ dependencies {
     // compile 'io.reactivex:rxjava:1.1.2'
 
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.google.guava:guava:19.0'
-
     compile 'com.yahoo.squidb:squidb:2.0.2'
     compile 'com.yahoo.squidb:squidb-annotations:2.0.2'
     apt 'com.yahoo.squidb:squidb-processor:2.0.2'
     compile 'com.google.dagger:dagger:2.2'
     apt 'com.google.dagger:dagger-compiler:2.2'
-    // Is this needed to use Dagger2?
-    compile     'javax.annotation:javax.annotation-api:1.2'
     // and Butterknife
-
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
 
     testCompile 'org.robolectric:robolectric:3.0'
     testCompile 'junit:junit:4.12'
+    testCompile 'com.google.guava:guava:19.0'
 
     // http://developer.android.com/training/testing/start/index.html
     androidTestCompile 'com.android.support:support-annotations:23.1.0'
