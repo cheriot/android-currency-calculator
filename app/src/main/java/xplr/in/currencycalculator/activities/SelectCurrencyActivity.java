@@ -16,6 +16,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
@@ -32,20 +34,22 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     @Inject CurrencyRepository currencyRepository;
     @Inject EventBus eventBus;
     CurrencyCursorAdapter currenciesAdapter;
-    ListView currenciesListView;
+
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.list_currency_calculations) ListView currenciesListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((App)getApplication()).getAppComponent().inject(this);
-
         setContentView(R.layout.activity_select_currency);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        ((App)getApplication()).getAppComponent().inject(this);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        currenciesListView = (ListView)findViewById(R.id.list_currency_calculations);
         currenciesAdapter = new CurrencyCursorAdapter(this, R.layout.list_item_selectable_currency);
         currenciesListView.setAdapter(currenciesAdapter);
 

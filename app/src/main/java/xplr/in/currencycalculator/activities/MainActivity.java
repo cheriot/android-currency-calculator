@@ -25,6 +25,8 @@ import org.greenrobot.eventbus.Subscribe;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
@@ -46,6 +48,12 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     CursorAdapter currenciesAdapter;
     SelectedCurrency baseCurrency;
 
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.fab) FloatingActionButton fab;
+    @Bind(R.id.base_currency_code) TextView baseCurrencyCode;
+    @Bind(R.id.base_currency_amount) TextView baseCurrencyAmount;
+    @Bind(R.id.list_currency_calculations) ListView listCurrencyCalculations;
+
     public MainActivity() {
     }
 
@@ -53,19 +61,18 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_calculator);
+
         ((App)getApplication()).getAppComponent().inject(this);
+        ButterKnife.bind(this);
 
         final Activity context = this;
-
-        setContentView(R.layout.activity_main_calculator);
 
         eventBus.register(this);
         new BaseCurrencyQuery().execute();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,8 +80,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             }
         });
 
-        final TextView baseCurrencyAmountView = (TextView)findViewById(R.id.base_currency_amount);
-        baseCurrencyAmountView.addTextChangedListener(new TextWatcher() {
+        baseCurrencyAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -90,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         });
 
         // Connect ListView to its Adapter
-        ListView listCurrencyCalculations = (ListView)findViewById(R.id.list_currency_calculations);
         currenciesAdapter = new CurrencyCursorAdapter(this, R.layout.list_item_currency_calculation);
         listCurrencyCalculations.setAdapter(currenciesAdapter);
         listCurrencyCalculations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -125,8 +130,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         if (baseCurrency != null && baseCurrency.getCode().equals(currency.getCode())) return;
 
         Log.v(LOG_TAG, "setBaseCurrency " + currency.getCode());
-        TextView codeView = (TextView)findViewById(R.id.base_currency_code);
-        codeView.setText(currency.getCode());
+        baseCurrencyCode.setText(currency.getCode());
         baseCurrency = currency;
 
         // Rebind ListView items so converted amounts can be calculated.

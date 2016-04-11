@@ -15,6 +15,8 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            // proguard configuration needed
+            // http://jakewharton.github.io/butterknife/
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -25,6 +27,10 @@ android {
         // Added to avoid a DuplicateFileException
         exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
         exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
+    }
+    lintOptions {
+        // Suggested by Butterknife
+        disable 'InvalidPackage'
     }
 }
 
@@ -57,7 +63,7 @@ dependencies {
     apt 'com.yahoo.squidb:squidb-processor:2.0.2'
     compile 'com.google.dagger:dagger:2.2'
     apt 'com.google.dagger:dagger-compiler:2.2'
-    // and Butterknife
+    compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
 
