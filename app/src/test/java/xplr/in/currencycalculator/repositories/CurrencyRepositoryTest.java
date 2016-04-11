@@ -1,6 +1,9 @@
 package xplr.in.currencycalculator.repositories;
 
 
+import android.content.SharedPreferences;
+import android.support.annotation.Nullable;
+
 import com.google.common.io.Resources;
 
 import org.greenrobot.eventbus.EventBus;
@@ -13,6 +16,8 @@ import org.robolectric.annotation.Config;
 
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Map;
+import java.util.Set;
 
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
@@ -143,13 +148,20 @@ public class CurrencyRepositoryTest {
 
     private CurrencyRepository populate() {
         String json = resource("currencyResponse.json");
-        CurrencyRepository currencyRepository = currencyRepository(json);
+        CurrencyRepository currencyRepository = currencyRepository(json, null);
+        currencyRepository.fetchAll();
+        return currencyRepository;
+    }
+
+    private CurrencyRepository populate(String amount) {
+        String json = resource("currencyResponse.json");
+        CurrencyRepository currencyRepository = currencyRepository(json, amount);
         currencyRepository.fetchAll();
         return currencyRepository;
     }
 
     private CurrencyRepository currencyRepository() {
-        return new CurrencyRepository(null, database, new EventBus());
+        return new CurrencyRepository(null, null, database, new EventBus());
     }
 
     private String resource(String filename) {
@@ -163,13 +175,63 @@ public class CurrencyRepositoryTest {
         }
     }
 
-    private CurrencyRepository currencyRepository(final String json) {
+    private CurrencyRepository currencyRepository(final String json, final String amount) {
         class MockCurrencySource implements CurrencySource {
             @Override
             public String get() {
                 return json;
             }
         }
-        return new CurrencyRepository(new MockCurrencySource(), database, new EventBus());
+
+
+        class MockSharedPrefs implements SharedPreferences {
+            @Override
+            public Map<String, ?> getAll() {
+                return null;
+            }
+            @Nullable
+            @Override
+            public String getString(String key, String defValue) {
+                return amount != null ? amount : defValue;
+            }
+            @Nullable
+            @Override
+            public Set<String> getStringSet(String key, Set<String> defValues) {
+                return null;
+            }
+            @Override
+            public int getInt(String key, int defValue) {
+                return 0;
+            }
+            @Override
+            public long getLong(String key, long defValue) {
+                return 0;
+            }
+            @Override
+            public float getFloat(String key, float defValue) {
+                return 0;
+            }
+            @Override
+            public boolean getBoolean(String key, boolean defValue) {
+                return false;
+            }
+            @Override
+            public boolean contains(String key) {
+                return false;
+            }
+            @Override
+            public Editor edit() {
+                return null;
+            }
+            @Override
+            public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+
+            }
+            @Override
+            public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+
+            }
+        }
+        return new CurrencyRepository(new MockSharedPrefs(), new MockCurrencySource(), database, new EventBus());
     }
 }

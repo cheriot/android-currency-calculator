@@ -1,5 +1,6 @@
 package xplr.in.currencycalculator.repositories;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.util.Log;
 
@@ -33,12 +34,17 @@ public class CurrencyRepository {
 
     private static final String LOG_TAG = CurrencyRepository.class.getCanonicalName();
 
+    @Inject SharedPreferences appSharedPrefs;
     @Inject CurrencySource currencySource;
     @Inject CurrenciesDatabase database;
     @Inject EventBus eventBus;
 
     @Inject
-    public CurrencyRepository(CurrencySource currencySource, CurrenciesDatabase database, EventBus eventBus) {
+    public CurrencyRepository(SharedPreferences appSharedPrefs,
+                              CurrencySource currencySource,
+                              CurrenciesDatabase database,
+                              EventBus eventBus) {
+        this.appSharedPrefs = appSharedPrefs;
         this.currencySource = currencySource;
         this.database = database;
         this.eventBus = eventBus;
@@ -137,12 +143,22 @@ public class CurrencyRepository {
         publishDataChange("insertAtPosition");
     }
 
+    private static final String BASE_CURRENCY_AMOUNT_KEY = "base_currency_amount";
     public SelectedCurrency getBaseCurrency() {
-        return database.fetchByQuery(SelectedCurrency.class, BASE_CURRENCY);
+        SelectedCurrency baseCurrency = database.fetchByQuery(SelectedCurrency.class, BASE_CURRENCY);
+        baseCurrency.setAmount(appSharedPrefs.getString(BASE_CURRENCY_AMOUNT_KEY, null));
+        return baseCurrency;
     }
 
     public void setBaseCurrency(Currency currency) {
         insertAtPosition(1, currency);
+    }
+
+    public void setBaseAmount(SelectedCurrency baseCurrency, String amount) {
+        baseCurrency.setAmount(amount);
+        SharedPreferences.Editor editor = appSharedPrefs.edit();
+        editor.putString(BASE_CURRENCY_AMOUNT_KEY, amount);
+        editor.commit();
     }
 
     public Currency findByCode(String code) {

@@ -30,7 +30,7 @@ public class SelectedCurrency extends Currency {
             amount = myAmount.toString();
             return amount;
         } else {
-            return "0";
+            return "-";
         }
     }
 

@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.base_currency_code) TextView baseCurrencyCode;
-    @Bind(R.id.base_currency_amount) TextView baseCurrencyAmount;
+    @Bind(R.id.base_currency_amount) EditText baseCurrencyAmount;
     @Bind(R.id.list_currency_calculations) ListView listCurrencyCalculations;
 
     public MainActivity() {
@@ -86,9 +87,12 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.v(LOG_TAG, "TEXT " + s);
-                baseCurrency.setAmount(s.toString());
-                currenciesAdapter.notifyDataSetChanged();
+                String text = s.toString();
+                if(baseCurrency != null && !text.equals(baseCurrency.getAmount())) {
+                    Log.v(LOG_TAG, "TEXT " + text);
+                    currencyRepository.setBaseAmount(baseCurrency, text);
+                    currenciesAdapter.notifyDataSetChanged();
+                }
             }
 
             @Override
@@ -126,11 +130,16 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         super.onDestroy();
     }
 
-    private void setBaseCurrency(SelectedCurrency currency) {
-        if (baseCurrency != null && baseCurrency.getCode().equals(currency.getCode())) return;
+    private void displayBaseCurrency(SelectedCurrency currency) {
+        if (baseCurrency != null
+                && baseCurrency.getCode().equals(currency.getCode())
+                && baseCurrency.getAmount().equals(currency.getAmount())) return;
 
-        Log.v(LOG_TAG, "setBaseCurrency " + currency.getCode());
+        Log.v(LOG_TAG, "displayBaseCurrency " + currency.getCode());
         baseCurrencyCode.setText(currency.getCode());
+        baseCurrencyAmount.setText(currency.getAmount());
+        // Move the cursor to the end as if the amount had just been typed.
+        baseCurrencyAmount.setSelection(baseCurrencyAmount.length());
         baseCurrency = currency;
 
         // Rebind ListView items so converted amounts can be calculated.
@@ -191,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         @Override
         protected void onPostExecute(SelectedCurrency currency) {
             Log.v(LOG_TAG, "Base currency is " + currency);
-            if (currency != null) setBaseCurrency(currency);
+            if (currency != null) displayBaseCurrency(currency);
         }
     }
 }
