@@ -17,7 +17,7 @@ public class SelectedCurrency extends Currency {
 
     private String amount;
 
-    public String convertFrom(SelectedCurrency base) {
+    public BigDecimal convertFrom(SelectedCurrency base) {
         if (base != null
                 && base.getAmount() != null
                 && !TextUtils.isEmpty(base.getAmount().trim())) {
@@ -28,9 +28,9 @@ public class SelectedCurrency extends Currency {
             BigDecimal myRate = new BigDecimal(getRate());
             BigDecimal myAmount = baseDollars.multiply(myRate);
             amount = myAmount.toString();
-            return amount;
+            return myAmount;
         } else {
-            return "-";
+            return null;
         }
     }
 

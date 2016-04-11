@@ -12,6 +12,9 @@ import android.widget.TextView;
 
 import com.yahoo.squidb.data.SquidCursor;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.activities.CurrencyListActivity;
 import xplr.in.currencycalculator.databases.Currency;
@@ -61,7 +64,18 @@ public class CurrencyCursorAdapter extends CursorAdapter {
         if(checkBox != null) checkBox.setChecked(currency.isSelected());
 
         SelectedCurrency baseCurrency = this.currencyListActivity.getBaseCurrency();
-        if(rateText != null) rateText.setText(currency.convertFrom(baseCurrency));
+        if(rateText != null) {
+            BigDecimal amount = currency.convertFrom(baseCurrency);
+            if (amount != null) {
+                // DecimalFormat will use the default locale. This still ignores the currency symbol
+                // and which side of the number it goes on. Also, Locale.Category is not available.
+                DecimalFormat format = new DecimalFormat();
+                format.setMaximumFractionDigits(2);
+                rateText.setText(format.format(amount));
+            } else {
+                rateText.setText("-");
+            }
+        }
         Log.v(LOG_TAG, "baseCurrency in bindView    " + baseCurrency);
     }
 }
