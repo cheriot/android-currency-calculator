@@ -158,7 +158,7 @@ public class CurrencyRepository {
         baseCurrency.setAmount(amount);
         SharedPreferences.Editor editor = appSharedPrefs.edit();
         editor.putString(BASE_CURRENCY_AMOUNT_KEY, amount);
-        editor.commit();
+        editor.apply();
     }
 
     public Currency findByCode(String code) {
