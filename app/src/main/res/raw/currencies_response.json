@@ -1,0 +1,1532 @@
+{
+  "query": {
+    "count": 169,
+    "created": "2016-04-11T17:44:35Z",
+    "lang": "en-US",
+    "results": {
+      "rate": [
+        {
+          "id": "USDBTC",
+          "Name": "USD/BTC",
+          "Rate": "0.0024",
+          "Date": "4/11/2016",
+          "Time": "5:11pm",
+          "Ask": "0.0024",
+          "Bid": "0.0024"
+        },
+        {
+          "id": "USDAED",
+          "Name": "USD/AED",
+          "Rate": "3.6731",
+          "Date": "4/11/2016",
+          "Time": "3:31pm",
+          "Ask": "3.6732",
+          "Bid": "3.6731"
+        },
+        {
+          "id": "USDAFN",
+          "Name": "USD/AFN",
+          "Rate": "68.4700",
+          "Date": "4/11/2016",
+          "Time": "4:35pm",
+          "Ask": "68.5700",
+          "Bid": "68.4700"
+        },
+        {
+          "id": "USDALL",
+          "Name": "USD/ALL",
+          "Rate": "121.8195",
+          "Date": "4/11/2016",
+          "Time": "5:21pm",
+          "Ask": "122.3900",
+          "Bid": "121.8195"
+        },
+        {
+          "id": "USDAMD",
+          "Name": "USD/AMD",
+          "Rate": "482.6100",
+          "Date": "4/11/2016",
+          "Time": "3:33pm",
+          "Ask": "482.6200",
+          "Bid": "482.6100"
+        },
+        {
+          "id": "USDANG",
+          "Name": "USD/ANG",
+          "Rate": "1.7900",
+          "Date": "4/11/2016",
+          "Time": "3:47pm",
+          "Ask": "1.7900",
+          "Bid": "1.7900"
+        },
+        {
+          "id": "USDAOA",
+          "Name": "USD/AOA",
+          "Rate": "162.7570",
+          "Date": "4/11/2016",
+          "Time": "6:05pm",
+          "Ask": "163.4320",
+          "Bid": "162.7570"
+        },
+        {
+          "id": "USDARS",
+          "Name": "USD/ARS",
+          "Rate": "14.5225",
+          "Date": "4/11/2016",
+          "Time": "5:26pm",
+          "Ask": "14.5270",
+          "Bid": "14.5225"
+        },
+        {
+          "id": "USDAUD",
+          "Name": "USD/AUD",
+          "Rate": "1.3146",
+          "Date": "4/11/2016",
+          "Time": "3:59pm",
+          "Ask": "1.3146",
+          "Bid": "1.3146"
+        },
+        {
+          "id": "USDAWG",
+          "Name": "USD/AWG",
+          "Rate": "1.7900",
+          "Date": "4/11/2016",
+          "Time": "3:09pm",
+          "Ask": "1.7900",
+          "Bid": "1.7900"
+        },
+        {
+          "id": "USDAZN",
+          "Name": "USD/AZN",
+          "Rate": "1.5308",
+          "Date": "4/11/2016",
+          "Time": "4:45pm",
+          "Ask": "1.5880",
+          "Bid": "1.5308"
+        },
+        {
+          "id": "USDBAM",
+          "Name": "USD/BAM",
+          "Rate": "1.7091",
+          "Date": "4/11/2016",
+          "Time": "4:51pm",
+          "Ask": "1.7093",
+          "Bid": "1.7091"
+        },
+        {
+          "id": "USDBBD",
+          "Name": "USD/BBD",
+          "Rate": "2.0000",
+          "Date": "4/11/2016",
+          "Time": "4:53pm",
+          "Ask": "2.0000",
+          "Bid": "2.0000"
+        },
+        {
+          "id": "USDBDT",
+          "Name": "USD/BDT",
+          "Rate": "78.3689",
+          "Date": "4/11/2016",
+          "Time": "4:19pm",
+          "Ask": "79.9490",
+          "Bid": "78.3689"
+        },
+        {
+          "id": "USDBGN",
+          "Name": "USD/BGN",
+          "Rate": "1.7107",
+          "Date": "4/11/2016",
+          "Time": "5:19pm",
+          "Ask": "1.7200",
+          "Bid": "1.7107"
+        },
+        {
+          "id": "USDBHD",
+          "Name": "USD/BHD",
+          "Rate": "0.3770",
+          "Date": "4/11/2016",
+          "Time": "5:43pm",
+          "Ask": "0.3790",
+          "Bid": "0.3770"
+        },
+        {
+          "id": "USDBIF",
+          "Name": "USD/BIF",
+          "Rate": "1561.8000",
+          "Date": "4/11/2016",
+          "Time": "5:03pm",
+          "Ask": "1583.9000",
+          "Bid": "1561.8000"
+        },
+        {
+          "id": "USDBMD",
+          "Name": "USD/BMD",
+          "Rate": "0.9999",
+          "Date": "4/11/2016",
+          "Time": "4:53pm",
+          "Ask": "1.0000",
+          "Bid": "0.9999"
+        },
+        {
+          "id": "USDBND",
+          "Name": "USD/BND",
+          "Rate": "1.3434",
+          "Date": "4/11/2016",
+          "Time": "4:51pm",
+          "Ask": "1.3438",
+          "Bid": "1.3434"
+        },
+        {
+          "id": "USDBOB",
+          "Name": "USD/BOB",
+          "Rate": "6.9125",
+          "Date": "4/11/2016",
+          "Time": "5:09pm",
+          "Ask": "6.9600",
+          "Bid": "6.9125"
+        },
+        {
+          "id": "USDBRL",
+          "Name": "USD/BRL",
+          "Rate": "3.5261",
+          "Date": "4/11/2016",
+          "Time": "4:39pm",
+          "Ask": "3.5296",
+          "Bid": "3.5261"
+        },
+        {
+          "id": "USDBSD",
+          "Name": "USD/BSD",
+          "Rate": "1.0000",
+          "Date": "4/11/2016",
+          "Time": "4:57pm",
+          "Ask": "1.0062",
+          "Bid": "1.0000"
+        },
+        {
+          "id": "USDBTC",
+          "Name": "USD/BTC",
+          "Rate": "0.0024",
+          "Date": "4/11/2016",
+          "Time": "4:52pm",
+          "Ask": "0.0024",
+          "Bid": "0.0024"
+        },
+        {
+          "id": "USDBTN",
+          "Name": "USD/BTN",
+          "Rate": "66.4475",
+          "Date": "4/11/2016",
+          "Time": "3:43pm",
+          "Ask": "66.4525",
+          "Bid": "66.4475"
+        },
+        {
+          "id": "USDBWP",
+          "Name": "USD/BWP",
+          "Rate": "10.8464",
+          "Date": "4/11/2016",
+          "Time": "4:21pm",
+          "Ask": "10.9870",
+          "Bid": "10.8464"
+        },
+        {
+          "id": "USDBYR",
+          "Name": "USD/BYR",
+          "Rate": "20000.0000",
+          "Date": "4/11/2016",
+          "Time": "5:27pm",
+          "Ask": "20040.0000",
+          "Bid": "20000.0000"
+        },
+        {
+          "id": "USDBZD",
+          "Name": "USD/BZD",
+          "Rate": "1.9950",
+          "Date": "4/11/2016",
+          "Time": "3:03pm",
+          "Ask": "2.0100",
+          "Bid": "1.9950"
+        },
+        {
+          "id": "USDCAD",
+          "Name": "USD/CAD",
+          "Rate": "1.2928",
+          "Date": "4/11/2016",
+          "Time": "2:39pm",
+          "Ask": "1.2930",
+          "Bid": "1.2928"
+        },
+        {
+          "id": "USDCDF",
+          "Name": "USD/CDF",
+          "Rate": "924.0000",
+          "Date": "4/11/2016",
+          "Time": "5:43pm",
+          "Ask": "939.0000",
+          "Bid": "924.0000"
+        },
+        {
+          "id": "USDCHF",
+          "Name": "USD/CHF",
+          "Rate": "0.9535",
+          "Date": "4/11/2016",
+          "Time": "5:39pm",
+          "Ask": "0.9536",
+          "Bid": "0.9535"
+        },
+        {
+          "id": "USDCLF",
+          "Name": "USD/CLF",
+          "Rate": "0.0246",
+          "Date": "4/11/2016",
+          "Time": "12:51pm",
+          "Ask": "0.0247",
+          "Bid": "0.0246"
+        },
+        {
+          "id": "USDCLP",
+          "Name": "USD/CLP",
+          "Rate": "683.5050",
+          "Date": "4/11/2016",
+          "Time": "5:05pm",
+          "Ask": "683.7600",
+          "Bid": "683.5050"
+        },
+        {
+          "id": "USDCNY",
+          "Name": "USD/CNY",
+          "Rate": "6.4590",
+          "Date": "4/11/2016",
+          "Time": "5:03pm",
+          "Ask": "6.4604",
+          "Bid": "6.4590"
+        },
+        {
+          "id": "USDCOP",
+          "Name": "USD/COP",
+          "Rate": "3058.6001",
+          "Date": "4/11/2016",
+          "Time": "3:33pm",
+          "Ask": "3059.2100",
+          "Bid": "3058.6001"
+        },
+        {
+          "id": "USDCRC",
+          "Name": "USD/CRC",
+          "Rate": "535.2000",
+          "Date": "4/11/2016",
+          "Time": "4:03pm",
+          "Ask": "540.2000",
+          "Bid": "535.2000"
+        },
+        {
+          "id": "USDCUC",
+          "Name": "N/A",
+          "Rate": "N/A",
+          "Date": "N/A",
+          "Time": "N/A",
+          "Ask": "N/A",
+          "Bid": "N/A"
+        },
+        {
+          "id": "USDCUP",
+          "Name": "USD/CUP",
+          "Rate": "1.0000",
+          "Date": "4/11/2016",
+          "Time": "6:03pm",
+          "Ask": "1.0000",
+          "Bid": "1.0000"
+        },
+        {
+          "id": "USDCVE",
+          "Name": "USD/CVE",
+          "Rate": "96.5995",
+          "Date": "4/11/2016",
+          "Time": "5:07pm",
+          "Ask": "97.2500",
+          "Bid": "96.5995"
+        },
+        {
+          "id": "USDCZK",
+          "Name": "USD/CZK",
+          "Rate": "23.6975",
+          "Date": "4/11/2016",
+          "Time": "2:20pm",
+          "Ask": "23.7040",
+          "Bid": "23.6975"
+        },
+        {
+          "id": "USDDJF",
+          "Name": "USD/DJF",
+          "Rate": "177.6850",
+          "Date": "4/11/2016",
+          "Time": "5:43pm",
+          "Ask": "178.6000",
+          "Bid": "177.6850"
+        },
+        {
+          "id": "USDDKK",
+          "Name": "USD/DKK",
+          "Rate": "6.5160",
+          "Date": "4/11/2016",
+          "Time": "4:40pm",
+          "Ask": "6.5164",
+          "Bid": "6.5160"
+        },
+        {
+          "id": "USDDOP",
+          "Name": "USD/DOP",
+          "Rate": "45.9050",
+          "Date": "4/11/2016",
+          "Time": "5:17pm",
+          "Ask": "46.0800",
+          "Bid": "45.9050"
+        },
+        {
+          "id": "USDDZD",
+          "Name": "USD/DZD",
+          "Rate": "108.0400",
+          "Date": "4/11/2016",
+          "Time": "2:57pm",
+          "Ask": "108.4800",
+          "Bid": "108.0400"
+        },
+        {
+          "id": "USDEEK",
+          "Name": "N/A",
+          "Rate": "N/A",
+          "Date": "N/A",
+          "Time": "N/A",
+          "Ask": "N/A",
+          "Bid": "N/A"
+        },
+        {
+          "id": "USDEGP",
+          "Name": "USD/EGP",
+          "Rate": "8.8788",
+          "Date": "4/11/2016",
+          "Time": "2:57pm",
+          "Ask": "8.8813",
+          "Bid": "8.8788"
+        },
+        {
+          "id": "USDERN",
+          "Name": "USD/ERN",
+          "Rate": "16.1800",
+          "Date": "4/11/2016",
+          "Time": "5:05pm",
+          "Ask": "16.1900",
+          "Bid": "16.1800"
+        },
+        {
+          "id": "USDETB",
+          "Name": "USD/ETB",
+          "Rate": "21.5020",
+          "Date": "4/11/2016",
+          "Time": "3:47pm",
+          "Ask": "21.6090",
+          "Bid": "21.5020"
+        },
+        {
+          "id": "USDEUR",
+          "Name": "USD/EUR",
+          "Rate": "0.8763",
+          "Date": "4/11/2016",
+          "Time": "5:02pm",
+          "Ask": "0.8764",
+          "Bid": "0.8763"
+        },
+        {
+          "id": "USDFJD",
+          "Name": "USD/FJD",
+          "Rate": "2.0890",
+          "Date": "4/11/2016",
+          "Time": "5:27pm",
+          "Ask": "2.0912",
+          "Bid": "2.0890"
+        },
+        {
+          "id": "USDFKP",
+          "Name": "USD/FKP",
+          "Rate": "0.6598",
+          "Date": "4/11/2016",
+          "Time": "3:11pm",
+          "Ask": "0.6599",
+          "Bid": "0.6598"
+        },
+        {
+          "id": "USDGBP",
+          "Name": "USD/GBP",
+          "Rate": "0.7018",
+          "Date": "4/11/2016",
+          "Time": "2:40pm",
+          "Ask": "0.7018",
+          "Bid": "0.7018"
+        },
+        {
+          "id": "USDGEL",
+          "Name": "USD/GEL",
+          "Rate": "2.2750",
+          "Date": "4/11/2016",
+          "Time": "3:33pm",
+          "Ask": "2.2900",
+          "Bid": "2.2750"
+        },
+        {
+          "id": "USDGGP",
+          "Name": "N/A",
+          "Rate": "N/A",
+          "Date": "N/A",
+          "Time": "N/A",
+          "Ask": "N/A",
+          "Bid": "N/A"
+        },
+        {
+          "id": "USDGHS",
+          "Name": "USD/GHS",
+          "Rate": "3.8225",
+          "Date": "4/11/2016",
+          "Time": "2:57pm",
+          "Ask": "3.8500",
+          "Bid": "3.8225"
+        },
+        {
+          "id": "USDGIP",
+          "Name": "USD/GIP",
+          "Rate": "0.6910",
+          "Date": "4/11/2016",
+          "Time": "5:01pm",
+          "Ask": "0.6920",
+          "Bid": "0.6910"
+        },
+        {
+          "id": "USDGMD",
+          "Name": "USD/GMD",
+          "Rate": "42.6100",
+          "Date": "4/11/2016",
+          "Time": "3:03pm",
+          "Ask": "43.3600",
+          "Bid": "42.6100"
+        },
+        {
+          "id": "USDGNF",
+          "Name": "USD/GNF",
+          "Rate": "7599.9502",
+          "Date": "4/11/2016",
+          "Time": "3:07pm",
+          "Ask": "7695.0000",
+          "Bid": "7599.9502"
+        },
+        {
+          "id": "USDGTQ",
+          "Name": "USD/GTQ",
+          "Rate": "7.7295",
+          "Date": "4/11/2016",
+          "Time": "4:19pm",
+          "Ask": "7.7310",
+          "Bid": "7.7295"
+        },
+        {
+          "id": "USDGYD",
+          "Name": "USD/GYD",
+          "Rate": "207.2100",
+          "Date": "4/11/2016",
+          "Time": "3:49pm",
+          "Ask": "208.4400",
+          "Bid": "207.2100"
+        },
+        {
+          "id": "USDHKD",
+          "Name": "USD/HKD",
+          "Rate": "7.7546",
+          "Date": "4/11/2016",
+          "Time": "4:55pm",
+          "Ask": "7.7560",
+          "Bid": "7.7546"
+        },
+        {
+          "id": "USDHNL",
+          "Name": "USD/HNL",
+          "Rate": "22.6121",
+          "Date": "4/11/2016",
+          "Time": "4:45pm",
+          "Ask": "22.6121",
+          "Bid": "22.6121"
+        },
+        {
+          "id": "USDHRK",
+          "Name": "USD/HRK",
+          "Rate": "6.5546",
+          "Date": "4/11/2016",
+          "Time": "4:40pm",
+          "Ask": "6.5912",
+          "Bid": "6.5546"
+        },
+        {
+          "id": "USDHTG",
+          "Name": "USD/HTG",
+          "Rate": "61.7667",
+          "Date": "4/11/2016",
+          "Time": "4:37pm",
+          "Ask": "61.7667",
+          "Bid": "61.7667"
+        },
+        {
+          "id": "USDHUF",
+          "Name": "USD/HUF",
+          "Rate": "273.5200",
+          "Date": "4/11/2016",
+          "Time": "2:40pm",
+          "Ask": "273.8700",
+          "Bid": "273.5200"
+        },
+        {
+          "id": "USDIDR",
+          "Name": "USD/IDR",
+          "Rate": "13120.0000",
+          "Date": "4/11/2016",
+          "Time": "4:55pm",
+          "Ask": "13125.0000",
+          "Bid": "13120.0000"
+        },
+        {
+          "id": "USDILS",
+          "Name": "USD/ILS",
+          "Rate": "3.7638",
+          "Date": "4/11/2016",
+          "Time": "4:55pm",
+          "Ask": "3.7644",
+          "Bid": "3.7638"
+        },
+        {
+          "id": "USDIMP",
+          "Name": "N/A",
+          "Rate": "N/A",
+          "Date": "N/A",
+          "Time": "N/A",
+          "Ask": "N/A",
+          "Bid": "N/A"
+        },
+        {
+          "id": "USDINR",
+          "Name": "USD/INR",
+          "Rate": "66.3384",
+          "Date": "4/11/2016",
+          "Time": "3:30pm",
+          "Ask": "66.3460",
+          "Bid": "66.3384"
+        },
+        {
+          "id": "USDIQD",
+          "Name": "USD/IQD",
+          "Rate": "1107.1000",
+          "Date": "4/11/2016",
+          "Time": "5:13pm",
+          "Ask": "1135.4000",
+          "Bid": "1107.1000"
+        },
+        {
+          "id": "USDIRR",
+          "Name": "USD/IRR",
+          "Rate": "30274.0000",
+          "Date": "4/11/2016",
+          "Time": "5:01pm",
+          "Ask": "30275.0000",
+          "Bid": "30274.0000"
+        },
+        {
+          "id": "USDISK",
+          "Name": "USD/ISK",
+          "Rate": "122.9600",
+          "Date": "4/11/2016",
+          "Time": "4:23pm",
+          "Ask": "123.1000",
+          "Bid": "122.9600"
+        },
+        {
+          "id": "USDJEP",
+          "Name": "N/A",
+          "Rate": "N/A",
+          "Date": "N/A",
+          "Time": "N/A",
+          "Ask": "N/A",
+          "Bid": "N/A"
+        },
+        {
+          "id": "USDJMD",
+          "Name": "USD/JMD",
+          "Rate": "121.7050",
+          "Date": "4/11/2016",
+          "Time": "2:55pm",
+          "Ask": "122.0800",
+          "Bid": "121.7050"
+        },
+        {
+          "id": "USDJOD",
+          "Name": "USD/JOD",
+          "Rate": "0.7090",
+          "Date": "4/11/2016",
+          "Time": "2:43pm",
+          "Ask": "0.7100",
+          "Bid": "0.7090"
+        },
+        {
+          "id": "USDJPY",
+          "Name": "USD/JPY",
+          "Rate": "107.9220",
+          "Date": "4/11/2016",
+          "Time": "4:37pm",
+          "Ask": "107.9250",
+          "Bid": "107.9220"
+        },
+        {
+          "id": "USDKES",
+          "Name": "USD/KES",
+          "Rate": "101.1310",
+          "Date": "4/11/2016",
+          "Time": "4:41pm",
+          "Ask": "102.8800",
+          "Bid": "101.1310"
+        },
+        {
+          "id": "USDKGS",
+          "Name": "USD/KGS",
+          "Rate": "69.9767",
+          "Date": "4/11/2016",
+          "Time": "2:57pm",
+          "Ask": "69.9767",
+          "Bid": "69.9767"
+        },
+        {
+          "id": "USDKHR",
+          "Name": "USD/KHR",
+          "Rate": "4042.7500",
+          "Date": "4/11/2016",
+          "Time": "3:05pm",
+          "Ask": "4104.6001",
+          "Bid": "4042.7500"
+        },
+        {
+          "id": "USDKMF",
+          "Name": "USD/KMF",
+          "Rate": "429.9290",
+          "Date": "4/11/2016",
+          "Time": "4:55pm",
+          "Ask": "429.9666",
+          "Bid": "429.9290"
+        },
+        {
+          "id": "USDKPW",
+          "Name": "USD/KPW",
+          "Rate": "900.0000",
+          "Date": "4/11/2016",
+          "Time": "5:17pm",
+          "Ask": "901.0000",
+          "Bid": "900.0000"
+        },
+        {
+          "id": "USDKRW",
+          "Name": "USD/KRW",
+          "Rate": "1144.5699",
+          "Date": "4/11/2016",
+          "Time": "2:53pm",
+          "Ask": "1145.3800",
+          "Bid": "1144.5699"
+        },
+        {
+          "id": "USDKWD",
+          "Name": "USD/KWD",
+          "Rate": "0.3013",
+          "Date": "4/11/2016",
+          "Time": "4:39pm",
+          "Ask": "0.3018",
+          "Bid": "0.3013"
+        },
+        {
+          "id": "USDKYD",
+          "Name": "USD/KYD",
+          "Rate": "0.8200",
+          "Date": "4/11/2016",
+          "Time": "5:17pm",
+          "Ask": "0.8200",
+          "Bid": "0.8200"
+        },
+        {
+          "id": "USDKZT",
+          "Name": "USD/KZT",
+          "Rate": "336.7050",
+          "Date": "4/11/2016",
+          "Time": "4:43pm",
+          "Ask": "339.3400",
+          "Bid": "336.7050"
+        },
+        {
+          "id": "USDLAK",
+          "Name": "USD/LAK",
+          "Rate": "8115.4502",
+          "Date": "4/11/2016",
+          "Time": "4:43pm",
+          "Ask": "8140.0000",
+          "Bid": "8115.4502"
+        },
+        {
+          "id": "USDLBP",
+          "Name": "USD/LBP",
+          "Rate": "1508.0000",
+          "Date": "4/11/2016",
+          "Time": "5:09pm",
+          "Ask": "1510.5000",
+          "Bid": "1508.0000"
+        },
+        {
+          "id": "USDLKR",
+          "Name": "USD/LKR",
+          "Rate": "144.8450",
+          "Date": "4/11/2016",
+          "Time": "5:05pm",
+          "Ask": "147.9200",
+          "Bid": "144.8450"
+        },
+        {
+          "id": "USDLRD",
+          "Name": "USD/LRD",
+          "Rate": "84.6700",
+          "Date": "4/11/2016",
+          "Time": "2:37pm",
+          "Ask": "84.6800",
+          "Bid": "84.6700"
+        },
+        {
+          "id": "USDLSL",
+          "Name": "USD/LSL",
+          "Rate": "14.6372",
+          "Date": "4/11/2016",
+          "Time": "3:09pm",
+          "Ask": "14.6436",
+          "Bid": "14.6372"
+        },
+        {
+          "id": "USDLTL",
+          "Name": "USD/LTL",
+          "Rate": "3.0487",
+          "Date": "6/22/2015",
+          "Time": "9:39am",
+          "Ask": "3.0491",
+          "Bid": "3.0487"
+        },
+        {
+          "id": "USDLVL",
+          "Name": "USD/LVL",
+          "Rate": "0.6205",
+          "Date": "6/22/2015",
+          "Time": "9:37am",
+          "Ask": "0.6206",
+          "Bid": "0.6205"
+        },
+        {
+          "id": "USDLYD",
+          "Name": "USD/LYD",
+          "Rate": "1.3603",
+          "Date": "4/11/2016",
+          "Time": "5:01pm",
+          "Ask": "1.3800",
+          "Bid": "1.3603"
+        },
+        {
+          "id": "USDMAD",
+          "Name": "USD/MAD",
+          "Rate": "9.6060",
+          "Date": "4/11/2016",
+          "Time": "2:57pm",
+          "Ask": "9.6310",
+          "Bid": "9.6060"
+        },
+        {
+          "id": "USDMDL",
+          "Name": "USD/MDL",
+          "Rate": "19.6300",
+          "Date": "4/11/2016",
+          "Time": "5:01pm",
+          "Ask": "19.6800",
+          "Bid": "19.6300"
+        },
+        {
+          "id": "USDMGA",
+          "Name": "USD/MGA",
+          "Rate": "3171.4500",
+          "Date": "4/11/2016",
+          "Time": "3:19pm",
+          "Ask": "3215.3999",
+          "Bid": "3171.4500"
+        },
+        {
+          "id": "USDMKD",
+          "Name": "USD/MKD",
+          "Rate": "53.9650",
+          "Date": "4/11/2016",
+          "Time": "5:15pm",
+          "Ask": "54.2400",
+          "Bid": "53.9650"
+        },
+        {
+          "id": "USDMMK",
+          "Name": "USD/MMK",
+          "Rate": "1174.9000",
+          "Date": "4/11/2016",
+          "Time": "4:45pm",
+          "Ask": "1179.9000",
+          "Bid": "1174.9000"
+        },
+        {
+          "id": "USDMNT",
+          "Name": "USD/MNT",
+          "Rate": "2019.5000",
+          "Date": "4/11/2016",
+          "Time": "5:27pm",
+          "Ask": "2027.0000",
+          "Bid": "2019.5000"
+        },
+        {
+          "id": "USDMOP",
+          "Name": "USD/MOP",
+          "Rate": "7.9866",
+          "Date": "4/11/2016",
+          "Time": "4:55pm",
+          "Ask": "7.9869",
+          "Bid": "7.9866"
+        },
+        {
+          "id": "USDMRO",
+          "Name": "USD/MRO",
+          "Rate": "343.0000",
+          "Date": "4/11/2016",
+          "Time": "5:25pm",
+          "Ask": "347.0000",
+          "Bid": "343.0000"
+        },
+        {
+          "id": "USDMUR",
+          "Name": "USD/MUR",
+          "Rate": "35.0500",
+          "Date": "4/11/2016",
+          "Time": "4:47pm",
+          "Ask": "35.2000",
+          "Bid": "35.0500"
+        },
+        {
+          "id": "USDMVR",
+          "Name": "USD/MVR",
+          "Rate": "15.3700",
+          "Date": "4/11/2016",
+          "Time": "4:45pm",
+          "Ask": "15.3700",
+          "Bid": "15.3700"
+        },
+        {
+          "id": "USDMWK",
+          "Name": "USD/MWK",
+          "Rate": "684.6600",
+          "Date": "4/11/2016",
+          "Time": "5:23pm",
+          "Ask": "688.1800",
+          "Bid": "684.6600"
+        },
+        {
+          "id": "USDMXN",
+          "Name": "USD/MXN",
+          "Rate": "17.6194",
+          "Date": "4/11/2016",
+          "Time": "2:52pm",
+          "Ask": "17.6210",
+          "Bid": "17.6194"
+        },
+        {
+          "id": "USDMYR",
+          "Name": "USD/MYR",
+          "Rate": "3.8830",
+          "Date": "4/11/2016",
+          "Time": "4:39pm",
+          "Ask": "3.8876",
+          "Bid": "3.8830"
+        },
+        {
+          "id": "USDMZN",
+          "Name": "USD/MZN",
+          "Rate": "52.4800",
+          "Date": "4/11/2016",
+          "Time": "5:07pm",
+          "Ask": "52.5800",
+          "Bid": "52.4800"
+        },
+        {
+          "id": "USDNAD",
+          "Name": "USD/NAD",
+          "Rate": "14.6372",
+          "Date": "4/11/2016",
+          "Time": "3:11pm",
+          "Ask": "14.6436",
+          "Bid": "14.6372"
+        },
+        {
+          "id": "USDNGN",
+          "Name": "USD/NGN",
+          "Rate": "199.0500",
+          "Date": "4/11/2016",
+          "Time": "2:25pm",
+          "Ask": "199.1000",
+          "Bid": "199.0500"
+        },
+        {
+          "id": "USDNIO",
+          "Name": "USD/NIO",
+          "Rate": "28.3106",
+          "Date": "4/11/2016",
+          "Time": "5:15pm",
+          "Ask": "28.3106",
+          "Bid": "28.3106"
+        },
+        {
+          "id": "USDNOK",
+          "Name": "USD/NOK",
+          "Rate": "8.2006",
+          "Date": "4/11/2016",
+          "Time": "5:04pm",
+          "Ask": "8.2031",
+          "Bid": "8.2006"
+        },
+        {
+          "id": "USDNPR",
+          "Name": "USD/NPR",
+          "Rate": "106.3160",
+          "Date": "4/11/2016",
+          "Time": "4:41pm",
+          "Ask": "106.3240",
+          "Bid": "106.3160"
+        },
+        {
+          "id": "USDNZD",
+          "Name": "USD/NZD",
+          "Rate": "1.4566",
+          "Date": "4/11/2016",
+          "Time": "4:00pm",
+          "Ask": "1.4568",
+          "Bid": "1.4566"
+        },
+        {
+          "id": "USDOMR",
+          "Name": "USD/OMR",
+          "Rate": "0.3850",
+          "Date": "4/11/2016",
+          "Time": "3:01pm",
+          "Ask": "0.3850",
+          "Bid": "0.3850"
+        },
+        {
+          "id": "USDPAB",
+          "Name": "USD/PAB",
+          "Rate": "0.9998",
+          "Date": "4/11/2016",
+          "Time": "4:49pm",
+          "Ask": "1.0218",
+          "Bid": "0.9998"
+        },
+        {
+          "id": "USDPEN",
+          "Name": "USD/PEN",
+          "Rate": "3.3676",
+          "Date": "4/11/2016",
+          "Time": "3:31pm",
+          "Ask": "3.3691",
+          "Bid": "3.3676"
+        },
+        {
+          "id": "USDPGK",
+          "Name": "USD/PGK",
+          "Rate": "3.1219",
+          "Date": "4/11/2016",
+          "Time": "5:05pm",
+          "Ask": "3.1949",
+          "Bid": "3.1219"
+        },
+        {
+          "id": "USDPHP",
+          "Name": "USD/PHP",
+          "Rate": "46.1145",
+          "Date": "4/11/2016",
+          "Time": "3:31pm",
+          "Ask": "46.1600",
+          "Bid": "46.1145"
+        },
+        {
+          "id": "USDPKR",
+          "Name": "USD/PKR",
+          "Rate": "104.7250",
+          "Date": "4/11/2016",
+          "Time": "3:37pm",
+          "Ask": "104.7500",
+          "Bid": "104.7250"
+        },
+        {
+          "id": "USDPLN",
+          "Name": "USD/PLN",
+          "Rate": "3.7506",
+          "Date": "4/11/2016",
+          "Time": "5:05pm",
+          "Ask": "3.7516",
+          "Bid": "3.7506"
+        },
+        {
+          "id": "USDPYG",
+          "Name": "USD/PYG",
+          "Rate": "5626.2998",
+          "Date": "4/11/2016",
+          "Time": "2:57pm",
+          "Ask": "5636.6099",
+          "Bid": "5626.2998"
+        },
+        {
+          "id": "USDQAR",
+          "Name": "USD/QAR",
+          "Rate": "3.6414",
+          "Date": "4/11/2016",
+          "Time": "3:35pm",
+          "Ask": "3.6450",
+          "Bid": "3.6414"
+        },
+        {
+          "id": "USDRON",
+          "Name": "USD/RON",
+          "Rate": "3.9106",
+          "Date": "4/11/2016",
+          "Time": "4:42pm",
+          "Ask": "3.9166",
+          "Bid": "3.9106"
+        },
+        {
+          "id": "USDRSD",
+          "Name": "USD/RSD",
+          "Rate": "107.6850",
+          "Date": "4/11/2016",
+          "Time": "5:17pm",
+          "Ask": "107.7900",
+          "Bid": "107.6850"
+        },
+        {
+          "id": "USDRUB",
+          "Name": "USD/RUB",
+          "Rate": "66.5919",
+          "Date": "4/11/2016",
+          "Time": "3:30pm",
+          "Ask": "66.6049",
+          "Bid": "66.5919"
+        },
+        {
+          "id": "USDRWF",
+          "Name": "USD/RWF",
+          "Rate": "773.4700",
+          "Date": "4/11/2016",
+          "Time": "5:27pm",
+          "Ask": "776.9700",
+          "Bid": "773.4700"
+        },
+        {
+          "id": "USDSAR",
+          "Name": "USD/SAR",
+          "Rate": "3.7501",
+          "Date": "4/11/2016",
+          "Time": "2:53pm",
+          "Ask": "3.7502",
+          "Bid": "3.7501"
+        },
+        {
+          "id": "USDSBD",
+          "Name": "USD/SBD",
+          "Rate": "7.9244",
+          "Date": "4/11/2016",
+          "Time": "4:33pm",
+          "Ask": "7.9872",
+          "Bid": "7.9244"
+        },
+        {
+          "id": "USDSCR",
+          "Name": "USD/SCR",
+          "Rate": "13.5154",
+          "Date": "4/11/2016",
+          "Time": "3:45pm",
+          "Ask": "14.3900",
+          "Bid": "13.5154"
+        },
+        {
+          "id": "USDSDG",
+          "Name": "USD/SDG",
+          "Rate": "6.0991",
+          "Date": "4/11/2016",
+          "Time": "3:13pm",
+          "Ask": "6.0992",
+          "Bid": "6.0991"
+        },
+        {
+          "id": "USDSEK",
+          "Name": "USD/SEK",
+          "Rate": "8.1116",
+          "Date": "4/11/2016",
+          "Time": "5:03pm",
+          "Ask": "8.1134",
+          "Bid": "8.1116"
+        },
+        {
+          "id": "USDSGD",
+          "Name": "USD/SGD",
+          "Rate": "1.3449",
+          "Date": "4/11/2016",
+          "Time": "2:40pm",
+          "Ask": "1.3450",
+          "Bid": "1.3449"
+        },
+        {
+          "id": "USDSHP",
+          "Name": "USD/SHP",
+          "Rate": "0.7016",
+          "Date": "4/11/2016",
+          "Time": "3:47pm",
+          "Ask": "0.7017",
+          "Bid": "0.7016"
+        },
+        {
+          "id": "USDSLL",
+          "Name": "USD/SLL",
+          "Rate": "3975.0000",
+          "Date": "4/11/2016",
+          "Time": "4:49pm",
+          "Ask": "4025.0000",
+          "Bid": "3975.0000"
+        },
+        {
+          "id": "USDSOS",
+          "Name": "USD/SOS",
+          "Rate": "613.9500",
+          "Date": "4/11/2016",
+          "Time": "3:09pm",
+          "Ask": "641.0000",
+          "Bid": "613.9500"
+        },
+        {
+          "id": "USDSRD",
+          "Name": "USD/SRD",
+          "Rate": "5.3725",
+          "Date": "4/11/2016",
+          "Time": "4:59pm",
+          "Ask": "5.4200",
+          "Bid": "5.3725"
+        },
+        {
+          "id": "USDSTD",
+          "Name": "USD/STD",
+          "Rate": "21509.5000",
+          "Date": "4/11/2016",
+          "Time": "3:15pm",
+          "Ask": "21510.0000",
+          "Bid": "21509.5000"
+        },
+        {
+          "id": "USDSVC",
+          "Name": "USD/SVC",
+          "Rate": "8.7272",
+          "Date": "4/11/2016",
+          "Time": "5:35pm",
+          "Ask": "8.7322",
+          "Bid": "8.7272"
+        },
+        {
+          "id": "USDSYP",
+          "Name": "USD/SYP",
+          "Rate": "219.8570",
+          "Date": "4/11/2016",
+          "Time": "4:33pm",
+          "Ask": "219.8580",
+          "Bid": "219.8570"
+        },
+        {
+          "id": "USDSZL",
+          "Name": "USD/SZL",
+          "Rate": "14.7203",
+          "Date": "4/11/2016",
+          "Time": "5:17pm",
+          "Ask": "14.7346",
+          "Bid": "14.7203"
+        },
+        {
+          "id": "USDTHB",
+          "Name": "USD/THB",
+          "Rate": "35.0265",
+          "Date": "4/11/2016",
+          "Time": "4:42pm",
+          "Ask": "35.0900",
+          "Bid": "35.0265"
+        },
+        {
+          "id": "USDTJS",
+          "Name": "USD/TJS",
+          "Rate": "7.8696",
+          "Date": "4/11/2016",
+          "Time": "2:45pm",
+          "Ask": "7.8697",
+          "Bid": "7.8696"
+        },
+        {
+          "id": "USDTMT",
+          "Name": "USD/TMT",
+          "Rate": "3.5000",
+          "Date": "4/11/2016",
+          "Time": "4:35pm",
+          "Ask": "3.5100",
+          "Bid": "3.5000"
+        },
+        {
+          "id": "USDTND",
+          "Name": "USD/TND",
+          "Rate": "1.9984",
+          "Date": "4/11/2016",
+          "Time": "3:45pm",
+          "Ask": "2.0034",
+          "Bid": "1.9984"
+        },
+        {
+          "id": "USDTOP",
+          "Name": "USD/TOP",
+          "Rate": "2.2067",
+          "Date": "4/11/2016",
+          "Time": "3:51pm",
+          "Ask": "2.2821",
+          "Bid": "2.2067"
+        },
+        {
+          "id": "USDTRY",
+          "Name": "USD/TRY",
+          "Rate": "2.8307",
+          "Date": "4/11/2016",
+          "Time": "4:55pm",
+          "Ask": "2.8314",
+          "Bid": "2.8307"
+        },
+        {
+          "id": "USDTTD",
+          "Name": "USD/TTD",
+          "Rate": "6.5766",
+          "Date": "4/11/2016",
+          "Time": "3:03pm",
+          "Ask": "6.6150",
+          "Bid": "6.5766"
+        },
+        {
+          "id": "USDTWD",
+          "Name": "USD/TWD",
+          "Rate": "32.3360",
+          "Date": "4/11/2016",
+          "Time": "5:03pm",
+          "Ask": "32.3510",
+          "Bid": "32.3360"
+        },
+        {
+          "id": "USDTZS",
+          "Name": "USD/TZS",
+          "Rate": "2188.0500",
+          "Date": "4/11/2016",
+          "Time": "2:39pm",
+          "Ask": "2232.0000",
+          "Bid": "2188.0500"
+        },
+        {
+          "id": "USDUAH",
+          "Name": "USD/UAH",
+          "Rate": "25.5250",
+          "Date": "4/11/2016",
+          "Time": "4:37pm",
+          "Ask": "25.5500",
+          "Bid": "25.5250"
+        },
+        {
+          "id": "USDUGX",
+          "Name": "USD/UGX",
+          "Rate": "3343.0000",
+          "Date": "4/11/2016",
+          "Time": "4:35pm",
+          "Ask": "3348.0000",
+          "Bid": "3343.0000"
+        },
+        {
+          "id": "USDUSD",
+          "Name": "USD/USD",
+          "Rate": "1.0000",
+          "Date": "N/A",
+          "Time": "N/A",
+          "Ask": "1.0000",
+          "Bid": "1.0000"
+        },
+        {
+          "id": "USDUYU",
+          "Name": "USD/UYU",
+          "Rate": "31.1250",
+          "Date": "4/11/2016",
+          "Time": "5:15pm",
+          "Ask": "31.2000",
+          "Bid": "31.1250"
+        },
+        {
+          "id": "USDUZS",
+          "Name": "USD/UZS",
+          "Rate": "2882.6799",
+          "Date": "4/11/2016",
+          "Time": "4:05pm",
+          "Ask": "2882.6799",
+          "Bid": "2882.6799"
+        },
+        {
+          "id": "USDVEF",
+          "Name": "USD/VEF",
+          "Rate": "9.9500",
+          "Date": "4/11/2016",
+          "Time": "2:57pm",
+          "Ask": "10.0000",
+          "Bid": "9.9500"
+        },
+        {
+          "id": "USDVND",
+          "Name": "USD/VND",
+          "Rate": "22295.0000",
+          "Date": "4/11/2016",
+          "Time": "4:19pm",
+          "Ask": "22305.0000",
+          "Bid": "22295.0000"
+        },
+        {
+          "id": "USDVUV",
+          "Name": "USD/VUV",
+          "Rate": "109.6100",
+          "Date": "4/11/2016",
+          "Time": "2:35pm",
+          "Ask": "112.8300",
+          "Bid": "109.6100"
+        },
+        {
+          "id": "USDWST",
+          "Name": "USD/WST",
+          "Rate": "2.5629",
+          "Date": "4/11/2016",
+          "Time": "5:03pm",
+          "Ask": "2.6350",
+          "Bid": "2.5629"
+        },
+        {
+          "id": "USDXAF",
+          "Name": "USD/XAF",
+          "Rate": "574.8210",
+          "Date": "4/11/2016",
+          "Time": "2:41pm",
+          "Ask": "574.8966",
+          "Bid": "574.8210"
+        },
+        {
+          "id": "USDXAG",
+          "Name": "USD/XAG",
+          "Rate": "0.0650",
+          "Date": "4/8/2016",
+          "Time": "10:15pm",
+          "Ask": "N/A",
+          "Bid": "0.0650"
+        },
+        {
+          "id": "USDXAU",
+          "Name": "USD/XAU",
+          "Rate": "0.0008",
+          "Date": "4/11/2016",
+          "Time": "4:36pm",
+          "Ask": "0.0008",
+          "Bid": "0.0008"
+        },
+        {
+          "id": "USDXCD",
+          "Name": "USD/XCD",
+          "Rate": "2.7000",
+          "Date": "4/11/2016",
+          "Time": "3:13pm",
+          "Ask": "2.7000",
+          "Bid": "2.7000"
+        },
+        {
+          "id": "USDXDR",
+          "Name": "USD/XDR",
+          "Rate": "0.7070",
+          "Date": "4/11/2016",
+          "Time": "4:55pm",
+          "Ask": "0.7070",
+          "Bid": "0.7070"
+        },
+        {
+          "id": "USDXOF",
+          "Name": "USD/XOF",
+          "Rate": "573.2387",
+          "Date": "4/11/2016",
+          "Time": "5:01pm",
+          "Ask": "573.2888",
+          "Bid": "573.2387"
+        },
+        {
+          "id": "USDXPF",
+          "Name": "USD/XPF",
+          "Rate": "104.5852",
+          "Date": "4/11/2016",
+          "Time": "5:31pm",
+          "Ask": "104.5944",
+          "Bid": "104.5852"
+        },
+        {
+          "id": "USDYER",
+          "Name": "USD/YER",
+          "Rate": "249.1500",
+          "Date": "4/11/2016",
+          "Time": "5:13pm",
+          "Ask": "249.3000",
+          "Bid": "249.1500"
+        },
+        {
+          "id": "USDZAR",
+          "Name": "USD/ZAR",
+          "Rate": "14.6889",
+          "Date": "4/11/2016",
+          "Time": "4:38pm",
+          "Ask": "14.6914",
+          "Bid": "14.6889"
+        },
+        {
+          "id": "USDZMK",
+          "Name": "USD/ZMK",
+          "Rate": "5189.5000",
+          "Date": "N/A",
+          "Time": "N/A",
+          "Ask": "N/A",
+          "Bid": "5189.5000"
+        },
+        {
+          "id": "USDZMW",
+          "Name": "USD/ZMW",
+          "Rate": "9.6750",
+          "Date": "4/11/2016",
+          "Time": "5:03pm",
+          "Ask": "9.6850",
+          "Bid": "9.6750"
+        },
+        {
+          "id": "USDZWL",
+          "Name": "USD/ZWL",
+          "Rate": "322.3550",
+          "Date": "4/11/2016",
+          "Time": "2:59pm",
+          "Ask": "325.5800",
+          "Bid": "322.3550"
+        }
+      ]
+    }
+  }
+}

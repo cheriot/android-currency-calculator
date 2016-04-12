@@ -24,6 +24,7 @@ import xplr.in.currencycalculator.BuildConfig;
 import xplr.in.currencycalculator.databases.CurrenciesDatabase;
 import xplr.in.currencycalculator.databases.Currency;
 import xplr.in.currencycalculator.sources.CurrencySource;
+import xplr.in.currencycalculator.sources.ResRawCurrencySource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,11 +36,12 @@ import static org.junit.Assert.assertNotNull;
 @Config(constants = BuildConfig.class, sdk = 21)
 public class CurrencyRepositoryTest {
 
-    CurrenciesDatabase database;
+    private CurrenciesDatabase database;
 
     @Before
     public void setUp() {
-        database = new CurrenciesDatabase((App)RuntimeEnvironment.application);
+        App app = (App)RuntimeEnvironment.application;
+        database = new CurrenciesDatabase(app, new ResRawCurrencySource(app));
     }
 
     @Test

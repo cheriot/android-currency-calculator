@@ -34,10 +34,10 @@ public class CurrencyRepository {
 
     private static final String LOG_TAG = CurrencyRepository.class.getCanonicalName();
 
-    @Inject SharedPreferences appSharedPrefs;
-    @Inject CurrencySource currencySource;
-    @Inject CurrenciesDatabase database;
-    @Inject EventBus eventBus;
+    private final SharedPreferences appSharedPrefs;
+    private final CurrencySource currencySource;
+    private final CurrenciesDatabase database;
+    private final EventBus eventBus;
 
     @Inject
     public CurrencyRepository(SharedPreferences appSharedPrefs,

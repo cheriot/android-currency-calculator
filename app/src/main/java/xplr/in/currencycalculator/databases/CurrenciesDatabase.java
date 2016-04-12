@@ -1,5 +1,6 @@
 package xplr.in.currencycalculator.databases;
 
+import android.content.res.Resources;
 import android.database.Cursor;
 
 import com.yahoo.squidb.data.AbstractModel;
@@ -13,13 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import xplr.in.currencycalculator.App;
+import xplr.in.currencycalculator.sources.CurrencySource;
 
 /**
  * Created by cheriot on 4/9/16.
  */
 public class CurrenciesDatabase extends SquidDatabase {
+
+    private static final String LOG_TAG = CurrenciesDatabase.class.getName();
+
+    private final Resources appResources;
+    private final CurrencySource currencySource;
 
     /**
      * Create a new SquidDatabase
@@ -27,8 +35,10 @@ public class CurrenciesDatabase extends SquidDatabase {
      * @param context the Context, must not be null
      */
     @Inject
-    public CurrenciesDatabase(App context) {
+    public CurrenciesDatabase(App context, @Named("local")CurrencySource currencySource) {
         super(context);
+        appResources = context.getResources();
+        this.currencySource = currencySource;
     }
 
     @Override
@@ -59,7 +69,7 @@ public class CurrenciesDatabase extends SquidDatabase {
     @Override
     protected void onTablesCreated(SQLiteDatabaseWrapper db) {
         super.onTablesCreated(db);
-        // TODO load local currency data
+        String json = currencySource.get();
     }
 
     public <T extends AbstractModel> List<T> queryAsList(Class<T> modelClass, Query query) {
