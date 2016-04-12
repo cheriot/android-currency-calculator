@@ -24,7 +24,7 @@ android {
         }
     }
     packagingOptions {
-        // Added to avoid a DuplicateFileException
+        // Added to avoid a DuplicateFileException. Guava is testCompile now. Still needed?
         exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
         exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
     }
@@ -70,6 +70,7 @@ dependencies {
     testCompile 'org.robolectric:robolectric:3.0'
     testCompile 'junit:junit:4.12'
     testCompile 'com.google.guava:guava:19.0'
+    testCompile "org.mockito:mockito-core:1.+"
 
     // http://developer.android.com/training/testing/start/index.html
     androidTestCompile 'com.android.support:support-annotations:23.1.0'

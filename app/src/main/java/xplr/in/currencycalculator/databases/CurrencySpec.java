@@ -1,7 +1,6 @@
 package xplr.in.currencycalculator.databases;
 
 import com.yahoo.squidb.annotations.ColumnSpec;
-import com.yahoo.squidb.annotations.Ignore;
 import com.yahoo.squidb.annotations.ModelMethod;
 import com.yahoo.squidb.annotations.TableModelSpec;
 
@@ -19,7 +18,6 @@ public class CurrencySpec {
     @ColumnSpec(constraints="not null")
     String rate;
     Integer position; // null for unselected currencies
-    @Ignore String amount;
 
     @ModelMethod
     public static String toString(Currency currency) {
@@ -34,5 +32,21 @@ public class CurrencySpec {
     @ModelMethod
     public static boolean isSelected(Currency currency) {
         return currency.getPosition() != null;
+    }
+
+    @ModelMethod
+    public boolean equals(Currency currency, Object o) {
+        if (currency == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Currency that = (Currency) o;
+
+        return currency.getId() == that.getId();
+
+    }
+
+    @ModelMethod
+    public int hashCode(Currency currency) {
+        return new Long(currency.getId()).hashCode();
     }
 }

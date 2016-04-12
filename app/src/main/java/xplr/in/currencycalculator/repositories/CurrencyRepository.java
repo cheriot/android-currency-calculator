@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import xplr.in.currencycalculator.databases.CurrenciesDatabase;
@@ -35,29 +36,46 @@ public class CurrencyRepository {
     private static final String LOG_TAG = CurrencyRepository.class.getCanonicalName();
 
     private final SharedPreferences appSharedPrefs;
-    private final CurrencySource currencySource;
+    private final CurrencySource localCurrencySource;
+    private final CurrencySource remoteCurrencySource;
     private final CurrenciesDatabase database;
     private final EventBus eventBus;
 
     @Inject
     public CurrencyRepository(SharedPreferences appSharedPrefs,
-                              CurrencySource currencySource,
+                              @Named("local")CurrencySource localCurrencySource,
+                              @Named("remote")CurrencySource remoteCurrencySource,
                               CurrenciesDatabase database,
                               EventBus eventBus) {
         this.appSharedPrefs = appSharedPrefs;
-        this.currencySource = currencySource;
+        this.localCurrencySource = localCurrencySource;
+        this.remoteCurrencySource = remoteCurrencySource;
         this.database = database;
         this.eventBus = eventBus;
     }
 
-    public List<Currency> fetchAll() {
-        Log.v(LOG_TAG, "fetchAll");
+    public List<Currency> updateFromRemote() {
+        Log.v(LOG_TAG, "updateFromRemote");
+        return update(remoteCurrencySource.get());
+    }
 
-        String json = currencySource.get();
+    public void initializeDatabase() {
+        Log.v(LOG_TAG, "initializeDatabase");
+        update(localCurrencySource.get());
+        // This initial state really needs to be customized for the user's locale.
+        setBaseCurrency(findByCode("USD"));
+        insertAtPosition(2, findByCode("EUR"));
+        insertAtPosition(3, findByCode("MXN"));
+        insertAtPosition(4, findByCode("CNY"));
+        insertAtPosition(5, findByCode("TRY"));
+        insertAtPosition(5, findByCode("RUB"));
+    }
+
+    private List<Currency> update(String json) {
         if(json == null) {
             return Collections.emptyList();
         }
-        Log.v(LOG_TAG, "Downloaded json "+json.substring(0, 200));
+        Log.v(LOG_TAG, "Updating from json " + json.length() + " " + json);
 
         List<RateResponse> rates = parseCurrencyJson(json);
         if(rates == null) {
@@ -66,7 +84,7 @@ public class CurrencyRepository {
         Log.v(LOG_TAG, "Updated "+rates.size()+" currencies.");
 
         List<Currency> currencies = currencyFactory(rates);
-        publishDataChange("fetchAll");
+        publishDataChange("update");
         return currencies;
     }
 
@@ -167,6 +185,7 @@ public class CurrencyRepository {
     }
 
     private void publishDataChange(String sourceName) {
+        // TODO Can this be triggered automatically by squidb's SimpleDataChangedNotifier?
         Log.v(LOG_TAG, "publishDataChange " + sourceName);
         this.eventBus.post(new CurrencyDataChangeEvent());
     }

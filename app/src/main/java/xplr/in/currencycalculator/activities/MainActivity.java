@@ -132,8 +132,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
     private void displayBaseCurrency(SelectedCurrency currency) {
         if (baseCurrency != null
-                && baseCurrency.getCode().equals(currency.getCode())
-                && baseCurrency.getAmount().equals(currency.getAmount())) return;
+                && baseCurrency.sameDisplay(currency)) return;
 
         Log.v(LOG_TAG, "displayBaseCurrency " + currency.getCode());
         baseCurrencyCode.setText(currency.getCode());

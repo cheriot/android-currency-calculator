@@ -5,6 +5,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.math.BigDecimal;
+
 import xplr.in.currencycalculator.BuildConfig;
 
 import static org.junit.Assert.*;
@@ -23,7 +25,7 @@ public class SelectedCurrencyTest {
         base.setAmount("100");
         SelectedCurrency calculated = new SelectedCurrency();
         calculated.setRate("4");
-        assertEquals("Convert currency correctly.", "200", calculated.convertFrom(base));
+        assertEquals("Convert currency correctly.", new BigDecimal("200"), calculated.convertFrom(base));
     }
 
     @Test
@@ -36,6 +38,6 @@ public class SelectedCurrencyTest {
         base.setAmount("100");
         SelectedCurrency calculated = new SelectedCurrency();
         calculated.setRate("4");
-        assertEquals("Convert currency correctly.", "133.33333333333333333333333333333332", calculated.convertFrom(base));
+        assertEquals("Convert currency correctly.", new BigDecimal("133.33333333333333333333333333333332"), calculated.convertFrom(base));
     }
 }

@@ -21,7 +21,7 @@ public class ResRawSource {
         InputStream inputStream = appResources.openRawResource(resourceId);
         Scanner scanner = new Scanner(inputStream, "UTF-8");
         try {
-            return scanner.useDelimiter("\\Z").next();
+            return scanner.useDelimiter("\\A").next();
         } finally {
             scanner.close();
         }

@@ -26,7 +26,7 @@ public class App extends android.app.Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
-        if(currenciesDatabase != null) currenciesDatabase.close();
+        currenciesDatabase.close();
     }
 
 }

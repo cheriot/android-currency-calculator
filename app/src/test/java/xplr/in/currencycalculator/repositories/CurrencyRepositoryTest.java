@@ -19,15 +19,17 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Set;
 
+import dagger.Lazy;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
 import xplr.in.currencycalculator.databases.CurrenciesDatabase;
 import xplr.in.currencycalculator.databases.Currency;
 import xplr.in.currencycalculator.sources.CurrencySource;
-import xplr.in.currencycalculator.sources.ResRawCurrencySource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import static org.mockito.Mockito.*;
 
 /**
  * Created by cheriot on 4/3/16.
@@ -41,7 +43,10 @@ public class CurrencyRepositoryTest {
     @Before
     public void setUp() {
         App app = (App)RuntimeEnvironment.application;
-        database = new CurrenciesDatabase(app, new ResRawCurrencySource(app));
+        // Don't actually populate the database when it's created. Let tests load smaller datasets.
+        Lazy lazy = mock(Lazy.class);
+        when(lazy.get()).thenReturn(mock(CurrencyRepository.class));
+        database = new CurrenciesDatabase(app, lazy);
     }
 
     @Test
@@ -151,19 +156,19 @@ public class CurrencyRepositoryTest {
     private CurrencyRepository populate() {
         String json = resource("currencyResponse.json");
         CurrencyRepository currencyRepository = currencyRepository(json, null);
-        currencyRepository.fetchAll();
+        currencyRepository.updateFromRemote();
         return currencyRepository;
     }
 
     private CurrencyRepository populate(String amount) {
         String json = resource("currencyResponse.json");
         CurrencyRepository currencyRepository = currencyRepository(json, amount);
-        currencyRepository.fetchAll();
+        currencyRepository.updateFromRemote();
         return currencyRepository;
     }
 
     private CurrencyRepository currencyRepository() {
-        return new CurrencyRepository(null, null, database, new EventBus());
+        return new CurrencyRepository(null, null, null, database, new EventBus());
     }
 
     private String resource(String filename) {
@@ -234,6 +239,6 @@ public class CurrencyRepositoryTest {
 
             }
         }
-        return new CurrencyRepository(new MockSharedPrefs(), new MockCurrencySource(), database, new EventBus());
+        return new CurrencyRepository(new MockSharedPrefs(), null, new MockCurrencySource(), database, new EventBus());
     }
 }

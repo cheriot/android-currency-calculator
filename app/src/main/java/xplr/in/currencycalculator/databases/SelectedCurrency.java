@@ -41,4 +41,10 @@ public class SelectedCurrency extends Currency {
     public void setAmount(String amount) {
         this.amount = amount;
     }
+
+    public boolean sameDisplay(SelectedCurrency selectedCurrency) {
+        return equals(selectedCurrency)
+                && amount != null
+                && amount.equals(selectedCurrency.getAmount());
+    }
 }
