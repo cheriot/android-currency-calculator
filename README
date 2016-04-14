@@ -1,32 +1,7 @@
-Next Steps
-6. persist amount
-7. country names
-
-
 ~/Library/Android/sdk/platform-tools/adb logcat ActivityManager:I CurrencyCalculator:D *:S
 adb devices
 adb -s <device> shell
 run-as xplr.in.currencycalculator
-
-Currency list from https://currencylayer.com/currencies
-Array.prototype.map.call(document.querySelectorAll('td:first-child'), function(e) { return e.innerText;}).slice(0,-1).reduce(function(str, c) { return str + '"USD'+c+'"'+', '}, "");
-
-Add BTC manually
-Manually handle N/A currencies. Several are British and can be added back with the same values as the pound.
-
-Competitors list http://www.xe.com/iso4217.php
-Array.prototype.map.call(document.querySelectorAll('#currencyTable a'),
-function(e) { return e.innerText }).join(', ')
-163
-
-What's the gap?
-
-YQL for known currencies, USD base is in the app. Watch for N/A values.
-
-For the next app, the calendar and weather aware alarm, http://openweathermap.com/price
-
-Country flags https://github.com/lipis/flag-icon-css
-Need currency symbols, too.
 
 Use SimpleCursorAdapter for the currencies list view?
 
@@ -63,6 +38,9 @@ https://github.com/roboguice/roboguice/wiki
 Guides
 https://github.com/googlesamples/android-testing
 https://github.com/codepath/android_guides/wiki#getting-started
+
+Marketing
+http://medyo.github.io/generate-awesome-playstore-screenshots-using-sketch
 
 From the guy at BHive, Arvind
 http://getbook.co/chris?auth=3269e7e3dc5bd92bbf026ac34fc3bf9d382b6d6e
