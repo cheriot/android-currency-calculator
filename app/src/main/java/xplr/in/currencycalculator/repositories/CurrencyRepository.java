@@ -192,6 +192,7 @@ public class CurrencyRepository {
 
     private static List<RateResponse> parseCurrencyJson(String json) {
         try {
+            // Consider https://github.com/bluelinelabs/LoganSquare for performance.
             Gson gson = new GsonBuilder().create();
             CurrencyResponse response = gson.fromJson(json, CurrencyResponse.class);
             return response.getQuery().getResults().getRate();

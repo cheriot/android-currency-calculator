@@ -135,12 +135,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                 && baseCurrency.sameDisplay(currency)) return;
 
         Log.v(LOG_TAG, "displayBaseCurrency " + currency.getCode());
+        baseCurrency = currency;
         baseCurrencyCode.setText(currency.getCode());
         baseCurrencyAmount.setText(currency.getAmount());
         // Move the cursor to the end as if the amount had just been typed.
         baseCurrencyAmount.setSelection(baseCurrencyAmount.length());
-        baseCurrency = currency;
-
         // Rebind ListView items so converted amounts can be calculated.
         currenciesAdapter.notifyDataSetChanged();
     }
