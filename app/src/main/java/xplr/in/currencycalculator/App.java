@@ -2,7 +2,7 @@ package xplr.in.currencycalculator;
 
 import javax.inject.Inject;
 
-import xplr.in.currencycalculator.databases.CurrenciesDatabase;
+import xplr.in.currencycalculator.repositories.CurrenciesDatabase;
 
 public class App extends android.app.Application {
 

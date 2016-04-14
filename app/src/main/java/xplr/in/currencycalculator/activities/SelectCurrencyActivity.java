@@ -22,7 +22,7 @@ import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.databases.Currency;
-import xplr.in.currencycalculator.databases.SelectedCurrency;
+import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.loaders.AllCurrencyLoader;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;

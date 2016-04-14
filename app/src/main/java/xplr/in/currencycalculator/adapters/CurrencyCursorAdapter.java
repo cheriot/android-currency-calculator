@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.activities.CurrencyListActivity;
 import xplr.in.currencycalculator.databases.Currency;
-import xplr.in.currencycalculator.databases.SelectedCurrency;
+import xplr.in.currencycalculator.models.SelectedCurrency;
 
 /**
  * Created by cheriot on 4/5/16.

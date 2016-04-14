@@ -22,7 +22,6 @@ import java.util.Set;
 import dagger.Lazy;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
-import xplr.in.currencycalculator.databases.CurrenciesDatabase;
 import xplr.in.currencycalculator.databases.Currency;
 import xplr.in.currencycalculator.sources.RateSource;
 

@@ -1,4 +1,4 @@
-package xplr.in.currencycalculator.databases;
+package xplr.in.currencycalculator.repositories;
 
 import android.database.Cursor;
 
@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import xplr.in.currencycalculator.App;
-import xplr.in.currencycalculator.repositories.CurrencyRepository;
+import xplr.in.currencycalculator.databases.Currency;
 
 /**
  * Created by cheriot on 4/9/16.

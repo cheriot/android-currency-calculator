@@ -4,7 +4,7 @@ import android.widget.CursorAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 
-import xplr.in.currencycalculator.databases.SelectedCurrency;
+import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
 /**

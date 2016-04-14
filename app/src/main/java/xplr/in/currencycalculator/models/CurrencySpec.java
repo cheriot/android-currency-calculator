@@ -1,8 +1,10 @@
-package xplr.in.currencycalculator.databases;
+package xplr.in.currencycalculator.models;
 
 import com.yahoo.squidb.annotations.ColumnSpec;
 import com.yahoo.squidb.annotations.ModelMethod;
 import com.yahoo.squidb.annotations.TableModelSpec;
+
+import xplr.in.currencycalculator.databases.Currency;
 
 /**
  * TODO Custom data type for BigDecimal

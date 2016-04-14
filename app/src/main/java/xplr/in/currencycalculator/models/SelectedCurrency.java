@@ -1,9 +1,11 @@
-package xplr.in.currencycalculator.databases;
+package xplr.in.currencycalculator.models;
 
 import android.text.TextUtils;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+
+import xplr.in.currencycalculator.databases.Currency;
 
 /**
  * Base and calculated currencies have a transient field to hold the amount displayed on screen.

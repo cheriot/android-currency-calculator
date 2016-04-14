@@ -9,6 +9,7 @@ import org.robolectric.annotation.Config;
 
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
+import xplr.in.currencycalculator.repositories.CurrenciesDatabase;
 
 /**
  * Created by cheriot on 4/12/16.

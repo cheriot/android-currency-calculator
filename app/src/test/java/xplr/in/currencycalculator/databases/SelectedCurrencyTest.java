@@ -8,6 +8,7 @@ import org.robolectric.annotation.Config;
 import java.math.BigDecimal;
 
 import xplr.in.currencycalculator.BuildConfig;
+import xplr.in.currencycalculator.models.SelectedCurrency;
 
 import static org.junit.Assert.*;
 
