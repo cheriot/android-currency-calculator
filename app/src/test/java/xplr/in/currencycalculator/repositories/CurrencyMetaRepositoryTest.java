@@ -1,4 +1,4 @@
-package xplr.in.currencycalculator.sources;
+package xplr.in.currencycalculator.repositories;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -7,10 +7,12 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import java.util.List;
+import java.util.Collection;
 
 import xplr.in.currencycalculator.BuildConfig;
 import xplr.in.currencycalculator.models.CurrencyMeta;
+import xplr.in.currencycalculator.sources.CurrencyMetaParser;
+import xplr.in.currencycalculator.sources.CurrencyMetaSource;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -21,30 +23,36 @@ import static junit.framework.TestCase.assertTrue;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class CurrencyMetaSourceTest {
+public class CurrencyMetaRepositoryTest {
 
-    private CurrencyMetaSource currencyMetaSource;
+    private CurrencyMetaRepository currencyMetaRepository;
 
     @Before
     public void setUp() throws Exception {
-        currencyMetaSource = new CurrencyMetaSource(RuntimeEnvironment.application);
+        CurrencyMetaSource source = new CurrencyMetaSource(RuntimeEnvironment.application);
+        currencyMetaRepository = new CurrencyMetaRepository(source, new CurrencyMetaParser());
     }
 
     @Test
-    public void testGet() throws Exception {
-        List<CurrencyMeta> metaList = currencyMetaSource.get();
+    public void testFindAll() {
+        Collection<CurrencyMeta> metaList = currencyMetaRepository.findAll();
         assertNotNull(metaList);
         assertEquals("Correct metaList count.", 157, metaList.size());
 
-        CurrencyMeta usd = null;
+
         for(CurrencyMeta meta : metaList) {
             assertEquals("Three letter code", 3, meta.getCode().length());
             assertNotNull("Name is not null.", meta.getName());
             assertTrue("Minor currency unit is >= 0", meta.getMinorUnits() >= 0);
             assertTrue("Minor currency unit is <= 3", meta.getMinorUnits() <= 3);
-            if(meta.getCode().equals("USD")) usd = meta;
         }
+    }
+
+    @Test
+    public void testUsd() {
+        CurrencyMeta usd = currencyMetaRepository.findByCode("USD");
         assertNotNull("Found USD.", usd);
+        assertEquals("USD code.", "USD", usd.getCode());
         assertEquals("USD name.", "US Dollar", usd.getName());
         assertEquals("USD minor units.", 2, usd.getMinorUnits());
     }
