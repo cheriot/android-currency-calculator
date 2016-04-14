@@ -9,10 +9,10 @@ import xplr.in.currencycalculator.R;
 /**
  * Created by cheriot on 4/12/16.
  */
-public class ResRawCurrencySource extends ResRawSource implements CurrencySource {
+public class ResRawRateSource extends ResRawSource implements RateSource {
 
     @Inject
-    public ResRawCurrencySource(Application context) {
+    public ResRawRateSource(Application context) {
         super(context);
     }
 

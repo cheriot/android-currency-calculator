@@ -25,7 +25,7 @@ import javax.inject.Singleton;
 import xplr.in.currencycalculator.databases.CurrenciesDatabase;
 import xplr.in.currencycalculator.databases.Currency;
 import xplr.in.currencycalculator.databases.SelectedCurrency;
-import xplr.in.currencycalculator.sources.CurrencySource;
+import xplr.in.currencycalculator.sources.RateSource;
 
 /**
  * Created by cheriot on 4/1/16.
@@ -36,32 +36,32 @@ public class CurrencyRepository {
     private static final String LOG_TAG = CurrencyRepository.class.getCanonicalName();
 
     private final SharedPreferences appSharedPrefs;
-    private final CurrencySource localCurrencySource;
-    private final CurrencySource remoteCurrencySource;
+    private final RateSource localRateSource;
+    private final RateSource remoteRateSource;
     private final CurrenciesDatabase database;
     private final EventBus eventBus;
 
     @Inject
     public CurrencyRepository(SharedPreferences appSharedPrefs,
-                              @Named("local")CurrencySource localCurrencySource,
-                              @Named("remote")CurrencySource remoteCurrencySource,
+                              @Named("local")RateSource localRateSource,
+                              @Named("remote")RateSource remoteRateSource,
                               CurrenciesDatabase database,
                               EventBus eventBus) {
         this.appSharedPrefs = appSharedPrefs;
-        this.localCurrencySource = localCurrencySource;
-        this.remoteCurrencySource = remoteCurrencySource;
+        this.localRateSource = localRateSource;
+        this.remoteRateSource = remoteRateSource;
         this.database = database;
         this.eventBus = eventBus;
     }
 
     public List<Currency> updateFromRemote() {
         Log.v(LOG_TAG, "updateFromRemote");
-        return update(remoteCurrencySource.get());
+        return update(remoteRateSource.get());
     }
 
     public void initializeDatabase() {
         Log.v(LOG_TAG, "initializeDatabase");
-        update(localCurrencySource.get());
+        update(localRateSource.get());
         // This initial state really needs to be customized for the user's locale.
         setBaseCurrency(findByCode("USD"));
         insertAtPosition(2, findByCode("EUR"));

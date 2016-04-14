@@ -20,19 +20,19 @@ import static junit.framework.TestCase.assertTrue;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class ResRawCurrencySourceTest {
+public class ResRawRateSourceTest {
 
-    private ResRawCurrencySource resRawCurrencySource;
+    private ResRawRateSource resRawRateSource;
 
     @Before
     public void setUp() throws Exception {
-        resRawCurrencySource = new ResRawCurrencySource(RuntimeEnvironment.application);
+        resRawRateSource = new ResRawRateSource(RuntimeEnvironment.application);
 
     }
 
     @Test
     public void testGet() {
-        String content = resRawCurrencySource.get();
+        String content = resRawRateSource.get();
         assertTrue(isJSONValid(content));
         assertTrue("Contents contains random code: USDBAM", content.contains("USDBAM"));
         assertTrue("Contents contains the last code: USDZWL", content.contains("USDZWL"));

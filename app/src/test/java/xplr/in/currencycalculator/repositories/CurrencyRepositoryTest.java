@@ -24,7 +24,7 @@ import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
 import xplr.in.currencycalculator.databases.CurrenciesDatabase;
 import xplr.in.currencycalculator.databases.Currency;
-import xplr.in.currencycalculator.sources.CurrencySource;
+import xplr.in.currencycalculator.sources.RateSource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -183,7 +183,7 @@ public class CurrencyRepositoryTest {
     }
 
     private CurrencyRepository currencyRepository(final String json, final String amount) {
-        class MockCurrencySource implements CurrencySource {
+        class MockRateSource implements RateSource {
             @Override
             public String get() {
                 return json;
@@ -239,6 +239,6 @@ public class CurrencyRepositoryTest {
 
             }
         }
-        return new CurrencyRepository(new MockSharedPrefs(), null, new MockCurrencySource(), database, new EventBus());
+        return new CurrencyRepository(new MockSharedPrefs(), null, new MockRateSource(), database, new EventBus());
     }
 }
