@@ -18,6 +18,6 @@ public class ResRawRateSource extends ResRawSource implements RateSource {
 
     @Override
     public String get() {
-        return super.get(R.raw.currencies_response);
+        return super.getString(R.raw.currencies_response);
     }
 }

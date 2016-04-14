@@ -16,14 +16,18 @@ public class ResRawSource {
         appResources = context.getResources();
     }
 
-    public String get(int resourceId) {
+    protected String getString(int resourceId) {
         // Use try-with-resource when min API level rises to 19.
-        InputStream inputStream = appResources.openRawResource(resourceId);
+        InputStream inputStream = getInputStream(resourceId);
         Scanner scanner = new Scanner(inputStream, "UTF-8");
         try {
             return scanner.useDelimiter("\\A").next();
         } finally {
             scanner.close();
         }
+    }
+
+    protected InputStream getInputStream(int resourceId) {
+        return appResources.openRawResource(resourceId);
     }
 }

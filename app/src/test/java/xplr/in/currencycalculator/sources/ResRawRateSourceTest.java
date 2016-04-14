@@ -12,8 +12,7 @@ import org.robolectric.annotation.Config;
 
 import xplr.in.currencycalculator.BuildConfig;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 
 /**
  * Created by cheriot on 4/12/16.
