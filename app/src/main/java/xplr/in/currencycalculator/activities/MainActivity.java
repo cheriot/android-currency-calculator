@@ -106,13 +106,13 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                 Log.v(LOG_TAG, "Clicked currency " + position);
                 SquidCursor currencyCursor = (SquidCursor) currenciesAdapter.getItem(position);
                 SelectedCurrency currency = new SelectedCurrency();
+                currency.readPropertiesFromCursor(currencyCursor);
                 // This currency's amount will become the new selected amount.
                 currency.convertFrom(baseCurrency);
                 String formattedAmount = ((TextView)view.findViewById(R.id.currency_rate))
                         .getText()
                         .toString();
                 currency.parse(formattedAmount);
-                currency.readPropertiesFromCursor(currencyCursor);
                 currencyRepository.setBaseCurrency(currency);
             }
         });
