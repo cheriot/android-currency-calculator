@@ -18,7 +18,9 @@ import java.text.DecimalFormat;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.activities.CurrencyListActivity;
 import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.SelectedCurrency;
+import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 
 /**
  * Created by cheriot on 4/5/16.
@@ -28,12 +30,14 @@ public class CurrencyCursorAdapter extends CursorAdapter {
     public static String LOG_TAG = CurrencyCursorAdapter.class.getCanonicalName();
 
     private int listItemLayout;
-    private CurrencyListActivity currencyListActivity;
+    private final CurrencyListActivity currencyListActivity;
+    private final CurrencyMetaRepository currencyMetaRepository;
 
-    public CurrencyCursorAdapter(Context context, int listItemLayout) {
+    public CurrencyCursorAdapter(Context context, int listItemLayout, CurrencyMetaRepository currencyMetaRepository) {
         super(context, null, 0);
         this.listItemLayout = listItemLayout;
         this.currencyListActivity = (CurrencyListActivity)context;
+        this.currencyMetaRepository = currencyMetaRepository;
     }
 
     @Override
@@ -60,7 +64,11 @@ public class CurrencyCursorAdapter extends CursorAdapter {
         TextView rateText = (TextView) view.findViewById(R.id.currency_rate);
         CheckBox checkBox = (CheckBox) view.findViewById(R.id.currency_selected);
 
-        if(codeText != null) codeText.setText(currency.getCode());
+        CurrencyMeta meta = currencyMetaRepository.findByCode(currency.getCode());
+        String name = meta != null? meta.getName() : currency.getCode();
+        int minorUnits = meta != null? meta.getMinorUnits() : 2;
+
+        if(codeText != null) codeText.setText(name);
         if(checkBox != null) checkBox.setChecked(currency.isSelected());
 
         SelectedCurrency baseCurrency = this.currencyListActivity.getBaseCurrency();
@@ -70,7 +78,7 @@ public class CurrencyCursorAdapter extends CursorAdapter {
                 // DecimalFormat will use the default locale. This still ignores the currency symbol
                 // and which side of the number it goes on. Also, Locale.Category is not available.
                 DecimalFormat format = new DecimalFormat();
-                format.setMaximumFractionDigits(2);
+                format.setMaximumFractionDigits(minorUnits);
                 rateText.setText(format.format(amount));
             } else {
                 rateText.setText("-");

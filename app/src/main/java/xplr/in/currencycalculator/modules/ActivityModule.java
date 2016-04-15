@@ -8,6 +8,7 @@ import dagger.Module;
 import dagger.Provides;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
+import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 
 /**
  * Created by cheriot on 4/14/16.
@@ -22,12 +23,12 @@ public class ActivityModule {
     }
 
     @Provides @ActivityScope @Named("calculate")
-    public CurrencyCursorAdapter provideCalculateCurrencyCursorAdapter() {
-        return new CurrencyCursorAdapter(activity, R.layout.list_item_currency_calculation);
+    public CurrencyCursorAdapter provideCalculateCurrencyCursorAdapter(CurrencyMetaRepository currencyMetaRepository) {
+        return new CurrencyCursorAdapter(activity, R.layout.list_item_currency_calculation, currencyMetaRepository);
     }
 
     @Provides @ActivityScope @Named("select")
-    public CurrencyCursorAdapter provideSelectCurrencyCursorAdapter() {
-        return new CurrencyCursorAdapter(activity, R.layout.list_item_selectable_currency);
+    public CurrencyCursorAdapter provideSelectCurrencyCursorAdapter(CurrencyMetaRepository currencyMetaRepository) {
+        return new CurrencyCursorAdapter(activity, R.layout.list_item_selectable_currency, currencyMetaRepository);
     }
 }
