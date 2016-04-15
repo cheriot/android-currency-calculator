@@ -21,6 +21,14 @@ if adapters become a mess, https://github.com/ribot/easy-adapter
 ic_launcher came from:
 https://romannurik.github.io/AndroidAssetStudio/icons-launcher.html#foreground.type=text&foreground.space.trim=1&foreground.space.pad=0.15&foreground.text.text=%24%E2%82%AC%C2%A3&foreground.text.font=Helvetica&foreColor=4caf50%2C0&crop=0&backgroundShape=square&backColor=ffffff%2C100&effects=none
 
+
+ANIMATION
+There's gotta be something useful among
+https://github.com/android-cjj/JJSearchViewAnim
+Can this be applied to removing things from a list?
+https://medium.com/@Sserra90/android-smooth-shared-transitions-in-all-android-versions-9cd27fd3c80f#.t6cl7ax4u
+
+
 Square's libs
 https://corner.squareup.com/2014/10/advocating-against-android-fragments.html
 https://corner.squareup.com/2014/01/mortar-and-flow.html
