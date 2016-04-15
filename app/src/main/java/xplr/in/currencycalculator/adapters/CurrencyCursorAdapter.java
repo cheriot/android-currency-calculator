@@ -2,6 +2,7 @@ package xplr.in.currencycalculator.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 
 import com.yahoo.squidb.data.SquidCursor;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.activities.CurrencyListActivity;
 import xplr.in.currencycalculator.models.Currency;
@@ -20,6 +23,9 @@ import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 
 /**
+ * Adapter for both currency list screens.
+ *
+ * To manage multiple view types override getItemViewType and getViewTypeCount
  * Created by cheriot on 4/5/16.
  */
 public class CurrencyCursorAdapter extends CursorAdapter {
@@ -41,9 +47,12 @@ public class CurrencyCursorAdapter extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         // Is newView called significantly less than bindView? If so, create a view holder and
         // use setTag/getTag.
-        return LayoutInflater
+
+        View view = LayoutInflater
                 .from(context)
                 .inflate(listItemLayout, parent, false);
+        view.setTag(new ViewHolder(view));
+        return view;
     }
 
     public Currency getCurrency(int position) {
@@ -57,23 +66,31 @@ public class CurrencyCursorAdapter extends CursorAdapter {
         SelectedCurrency currency = new SelectedCurrency();
         currency.readPropertiesFromCursor((SquidCursor)cursor);
 
-        TextView codeText = (TextView) view.findViewById(R.id.currency_code);
-        TextView rateText = (TextView) view.findViewById(R.id.currency_rate);
-        CheckBox checkBox = (CheckBox) view.findViewById(R.id.currency_selected);
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         CurrencyMeta meta = currencyMetaRepository.findByCode(currency.getCode());
         String name = meta != null? meta.getName() : currency.getCode();
 
-        if(codeText != null) codeText.setText(name);
-        if(checkBox != null) checkBox.setChecked(currency.isSelected());
+        if(viewHolder.codeText != null) viewHolder.codeText.setText(name);
+        if(viewHolder.checkBox != null) viewHolder.checkBox.setChecked(currency.isSelected());
 
         SelectedCurrency baseCurrency = this.currencyListActivity.getBaseCurrency();
-        if(rateText != null) {
+        if(viewHolder.rateText != null) {
             currency.convertFrom(baseCurrency);
-            rateText.setText(currency.format(meta));
+            viewHolder.rateText.setText(currency.format(meta));
         }
 
         //CurrencyMetaRepository metaRepository = this.currencyListActivity;
         Log.v(LOG_TAG, "baseCurrency in bindView    " + baseCurrency);
+    }
+
+    static class ViewHolder {
+        @Bind(R.id.currency_code) TextView codeText;
+        @Nullable @Bind(R.id.currency_rate) TextView rateText;
+        @Nullable @Bind(R.id.currency_selected) CheckBox checkBox;
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 }
