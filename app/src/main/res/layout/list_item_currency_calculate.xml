@@ -8,6 +8,13 @@
     android:gravity="center_vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <ImageView
+        android:id="@+id/list_item_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher"
+        android:paddingLeft="16dp"/>
+
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/currency_code"
         android:layout_width="0dp"
