@@ -25,6 +25,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Inject EventBus eventBus;
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencySyncTriggers currencySyncTriggers;
-    CursorAdapter currenciesAdapter;
+    @Inject @Named("calculate") CurrencyCursorAdapter currenciesAdapter;
     SelectedCurrency baseCurrency;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -54,9 +55,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Bind(R.id.base_currency_code) TextView baseCurrencyCode;
     @Bind(R.id.base_currency_amount) EditText baseCurrencyAmount;
     @Bind(R.id.list_currency_calculations) ListView currencyCalculationsListView;
-
-    public MainActivity() {
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

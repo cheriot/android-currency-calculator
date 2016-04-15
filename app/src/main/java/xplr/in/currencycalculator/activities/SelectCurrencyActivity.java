@@ -15,16 +15,17 @@ import android.widget.ListView;
 import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
-import xplr.in.currencycalculator.models.Currency;
-import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.loaders.AllCurrencyLoader;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
+import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
 public class SelectCurrencyActivity extends AppCompatActivity implements CurrencyListActivity {
@@ -33,7 +34,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
 
     @Inject CurrencyRepository currencyRepository;
     @Inject EventBus eventBus;
-    CurrencyCursorAdapter currenciesAdapter;
+    @Inject @Named("select") CurrencyCursorAdapter currenciesAdapter;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.list_currency_calculations) ListView currenciesListView;
@@ -50,7 +51,6 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        currenciesAdapter = new CurrencyCursorAdapter(this, R.layout.list_item_selectable_currency);
         currenciesListView.setAdapter(currenciesAdapter);
 
         currenciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
