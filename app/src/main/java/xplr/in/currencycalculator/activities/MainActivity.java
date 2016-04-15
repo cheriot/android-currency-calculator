@@ -115,7 +115,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         CurrencyLoaderCallbacks clc = new CurrencyLoaderCallbacks(this, SelectedCurrencyLoader.class);
         getLoaderManager().initLoader(CurrencyLoaderCallbacks.LOADER_ID, null, clc);
 
-        // TODO There's a "30 frames skipped" message. Setup the sync account on another thread?
+        // TODO There's a "30 frames skipped" message...
+        // Setup the sync account on another thread?
+        // Create/Upgrade/Init database on another thread?
+        // Init filesystem repositories on another thread?
+        // too many bindViews of CurrencyCursorAdapter?
 
         // Setup a scheduled sync if that hasn't happened already. This will trigger an initial
         // sync if one has not occurred.
