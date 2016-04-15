@@ -97,8 +97,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             public void afterTextChanged(Editable s) {}
         });
 
-        // Connect ListView to its Adapter
-        currenciesAdapter = new CurrencyCursorAdapter(this, R.layout.list_item_currency_calculation);
         currencyCalculationsListView.setAdapter(currenciesAdapter);
         currencyCalculationsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

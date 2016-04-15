@@ -52,7 +52,6 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         currenciesListView.setAdapter(currenciesAdapter);
-
         currenciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
