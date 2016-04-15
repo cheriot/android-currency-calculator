@@ -35,8 +35,10 @@ import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
 import xplr.in.currencycalculator.loaders.SelectedCurrencyLoader;
 import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
+import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
 
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Inject EventBus eventBus;
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencySyncTriggers currencySyncTriggers;
+    @Inject CurrencyMetaRepository currencyMetaRepository;
     @Inject @Named("calculate") CurrencyCursorAdapter currenciesAdapter;
     SelectedCurrency baseCurrency;
 
@@ -130,13 +133,13 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         super.onDestroy();
     }
 
-    private void displayBaseCurrency(SelectedCurrency currency) {
+    private void displayBaseCurrency(SelectedCurrency currency, CurrencyMeta meta) {
         if (baseCurrency != null
                 && baseCurrency.sameDisplay(currency)) return;
 
         Log.v(LOG_TAG, "displayBaseCurrency " + currency.getCode());
         baseCurrency = currency;
-        baseCurrencyCode.setText(currency.getCode());
+        baseCurrencyCode.setText(meta != null ? meta.getName() : currency.getCode());
         baseCurrencyAmount.setText(currency.getAmount());
         // Move the cursor to the end as if the amount had just been typed.
         baseCurrencyAmount.setSelection(baseCurrencyAmount.length());
@@ -198,7 +201,9 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         @Override
         protected void onPostExecute(SelectedCurrency currency) {
             Log.v(LOG_TAG, "Base currency is " + currency);
-            if (currency != null) displayBaseCurrency(currency);
+            if (currency != null) {
+                displayBaseCurrency(currency, currencyMetaRepository.findByCode(currency.getCode()));
+            }
         }
     }
 }
