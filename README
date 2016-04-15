@@ -18,6 +18,9 @@ pos  greenDAO instead of sugar? need to figure out migration story
      https://web.archive.org/web/20131102132942/http://www.androidanalyse.com/greendao-schema-migration/
 if adapters become a mess, https://github.com/ribot/easy-adapter
 
+ic_launcher came from:
+https://romannurik.github.io/AndroidAssetStudio/icons-launcher.html#foreground.type=text&foreground.space.trim=1&foreground.space.pad=0.15&foreground.text.text=%24%E2%82%AC%C2%A3&foreground.text.font=Helvetica&foreColor=4caf50%2C0&crop=0&backgroundShape=square&backColor=ffffff%2C100&effects=none
+
 Square's libs
 https://corner.squareup.com/2014/10/advocating-against-android-fragments.html
 https://corner.squareup.com/2014/01/mortar-and-flow.html
