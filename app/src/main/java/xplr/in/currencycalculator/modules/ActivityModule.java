@@ -24,11 +24,11 @@ public class ActivityModule {
 
     @Provides @ActivityScope @Named("calculate")
     public CurrencyCursorAdapter provideCalculateCurrencyCursorAdapter(CurrencyMetaRepository currencyMetaRepository) {
-        return new CurrencyCursorAdapter(activity, R.layout.list_item_currency_calculation, currencyMetaRepository);
+        return new CurrencyCursorAdapter(activity, R.layout.list_item_currency_calculate, currencyMetaRepository);
     }
 
     @Provides @ActivityScope @Named("select")
     public CurrencyCursorAdapter provideSelectCurrencyCursorAdapter(CurrencyMetaRepository currencyMetaRepository) {
-        return new CurrencyCursorAdapter(activity, R.layout.list_item_selectable_currency, currencyMetaRepository);
+        return new CurrencyCursorAdapter(activity, R.layout.list_item_currency_select, currencyMetaRepository);
     }
 }
