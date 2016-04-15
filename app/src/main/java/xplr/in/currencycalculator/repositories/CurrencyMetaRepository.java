@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.sources.CurrencyMetaParser;
@@ -13,6 +14,7 @@ import xplr.in.currencycalculator.sources.CurrencyMetaSource;
 /**
  * Created by cheriot on 4/14/16.
  */
+@Singleton
 public class CurrencyMetaRepository {
 
     private final HashMap<String, CurrencyMeta> metaByCode;

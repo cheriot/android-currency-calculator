@@ -22,7 +22,7 @@ import java.util.Set;
 import dagger.Lazy;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
-import xplr.in.currencycalculator.databases.Currency;
+import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.sources.RateSource;
 
 import static org.junit.Assert.assertEquals;
@@ -43,7 +43,7 @@ public class CurrencyRepositoryTest {
     public void setUp() {
         App app = (App)RuntimeEnvironment.application;
         // Don't actually populate the database when it's created. Let tests load smaller datasets.
-        Lazy lazy = mock(Lazy.class);
+        Lazy<CurrencyRepository> lazy = mock(Lazy.class);
         when(lazy.get()).thenReturn(mock(CurrencyRepository.class));
         database = new CurrenciesDatabase(app, lazy);
     }

@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
-import xplr.in.currencycalculator.databases.Currency;
+import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.loaders.AllCurrencyLoader;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
@@ -43,7 +43,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_currency);
 
-        ((App)getApplication()).getAppComponent().inject(this);
+        ((App)getApplication()).newActivityScope(this).inject(this);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);

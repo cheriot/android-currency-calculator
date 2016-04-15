@@ -17,7 +17,7 @@ import java.text.DecimalFormat;
 
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.activities.CurrencyListActivity;
-import xplr.in.currencycalculator.databases.Currency;
+import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 
 /**
@@ -76,6 +76,8 @@ public class CurrencyCursorAdapter extends CursorAdapter {
                 rateText.setText("-");
             }
         }
+
+        //CurrencyMetaRepository metaRepository = this.currencyListActivity;
         Log.v(LOG_TAG, "baseCurrency in bindView    " + baseCurrency);
     }
 }

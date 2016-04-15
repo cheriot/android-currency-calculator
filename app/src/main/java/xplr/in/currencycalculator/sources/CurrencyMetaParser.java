@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import xplr.in.currencycalculator.models.CurrencyMeta;
 
 
@@ -14,7 +16,11 @@ import xplr.in.currencycalculator.models.CurrencyMeta;
  */
 public class CurrencyMetaParser {
 
-    public List parse(InputStream inputStream) {
+    @Inject
+    public CurrencyMetaParser() {
+    }
+
+    public List<CurrencyMeta> parse(InputStream inputStream) {
         try {
             try {
                 return LoganSquare.parseList(inputStream, CurrencyMeta.class);

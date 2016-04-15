@@ -31,10 +31,10 @@ import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
-import xplr.in.currencycalculator.databases.Currency;
-import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
 import xplr.in.currencycalculator.loaders.SelectedCurrencyLoader;
+import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.base_currency_code) TextView baseCurrencyCode;
     @Bind(R.id.base_currency_amount) EditText baseCurrencyAmount;
-    @Bind(R.id.list_currency_calculations) ListView listCurrencyCalculations;
+    @Bind(R.id.list_currency_calculations) ListView currencyCalculationsListView;
 
     public MainActivity() {
     }
@@ -64,20 +64,20 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_calculator);
 
-        ((App)getApplication()).getAppComponent().inject(this);
+        ((App)getApplication()).newActivityScope(this).inject(this);
         ButterKnife.bind(this);
 
-        final Activity context = this;
 
         eventBus.register(this);
         new BaseCurrencyQuery().execute();
 
         setSupportActionBar(toolbar);
 
+        final Activity thisActivity = this;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(context, SelectCurrencyActivity.class));
+                startActivity(new Intent(thisActivity, SelectCurrencyActivity.class));
             }
         });
 
@@ -101,8 +101,8 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
         // Connect ListView to its Adapter
         currenciesAdapter = new CurrencyCursorAdapter(this, R.layout.list_item_currency_calculation);
-        listCurrencyCalculations.setAdapter(currenciesAdapter);
-        listCurrencyCalculations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        currencyCalculationsListView.setAdapter(currenciesAdapter);
+        currencyCalculationsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.v(LOG_TAG, "Clicked currency " + position);

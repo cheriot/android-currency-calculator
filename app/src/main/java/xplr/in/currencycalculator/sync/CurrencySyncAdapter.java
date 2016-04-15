@@ -21,14 +21,9 @@ public class CurrencySyncAdapter extends AbstractThreadedSyncAdapter {
     @Inject
     CurrencyRepository currencyRepository;
 
-    public CurrencySyncAdapter(App context, boolean autoInitialize) {
+    public CurrencySyncAdapter(App context, boolean autoInitialize, CurrencyRepository currencyRepository) {
         super(context, autoInitialize);
-        context.getAppComponent().inject(this);
-    }
-
-    public CurrencySyncAdapter(App context, boolean autoInitialize, boolean allowParallelSyncs) {
-        super(context, autoInitialize, allowParallelSyncs);
-        context.getAppComponent().inject(this);
+        this.currencyRepository = currencyRepository;
     }
 
     @Override

@@ -4,6 +4,8 @@ import android.app.Application;
 
 import java.io.InputStream;
 
+import javax.inject.Inject;
+
 import xplr.in.currencycalculator.R;
 
 /**
@@ -11,6 +13,7 @@ import xplr.in.currencycalculator.R;
  */
 public class CurrencyMetaSource extends ResRawSource {
 
+    @Inject
     public CurrencyMetaSource(Application context) {
         super(context);
     }

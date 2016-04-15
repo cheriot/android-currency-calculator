@@ -32,7 +32,7 @@ public class CurrencySyncService extends Service {
          */
         synchronized (syncAdapterLock) {
             if (currencySyncAdapter == null) {
-                currencySyncAdapter = new CurrencySyncAdapter((App)getApplication(), true);
+                ((App)getApplication()).getAppComponent().inject(this);
             }
         }
     }

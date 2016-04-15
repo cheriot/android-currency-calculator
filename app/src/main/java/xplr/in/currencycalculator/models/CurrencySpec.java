@@ -4,8 +4,6 @@ import com.yahoo.squidb.annotations.ColumnSpec;
 import com.yahoo.squidb.annotations.ModelMethod;
 import com.yahoo.squidb.annotations.TableModelSpec;
 
-import xplr.in.currencycalculator.databases.Currency;
-
 /**
  * TODO Custom data type for BigDecimal
  * https://github.com/yahoo/squidb/wiki/Writing-plugins-for-custom-data-types
@@ -37,9 +35,9 @@ public class CurrencySpec {
     }
 
     @ModelMethod
-    public boolean equals(Currency currency, Object o) {
+    public static boolean equals(Currency currency, Object o) {
         if (currency == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || currency.getClass() != o.getClass()) return false;
 
         Currency that = (Currency) o;
 
@@ -48,7 +46,7 @@ public class CurrencySpec {
     }
 
     @ModelMethod
-    public int hashCode(Currency currency) {
+    public static int hashCode(Currency currency) {
         return new Long(currency.getId()).hashCode();
     }
 }

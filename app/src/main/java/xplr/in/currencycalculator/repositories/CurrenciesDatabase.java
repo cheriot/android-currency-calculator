@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import xplr.in.currencycalculator.App;
-import xplr.in.currencycalculator.databases.Currency;
+import xplr.in.currencycalculator.models.Currency;
 
 /**
  * Created by cheriot on 4/9/16.
