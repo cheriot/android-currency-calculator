@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         baseCurrencyAmount.setText(currency.getAmount());
         // Move the cursor to the end as if the amount had just been typed.
         baseCurrencyAmount.setSelection(baseCurrencyAmount.length());
-        // Rebind ListView items so converted amounts can be calculated.
+        // Rebind ListView items so converted amounts are updated.
         currenciesAdapter.notifyDataSetChanged();
     }
 
