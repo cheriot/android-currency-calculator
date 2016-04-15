@@ -9,6 +9,7 @@ import org.robolectric.annotation.Config;
 
 import java.util.Collection;
 
+import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.sources.CurrencyMetaParser;
@@ -29,7 +30,7 @@ public class CurrencyMetaRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        CurrencyMetaSource source = new CurrencyMetaSource(RuntimeEnvironment.application);
+        CurrencyMetaSource source = new CurrencyMetaSource((App)RuntimeEnvironment.application);
         currencyMetaRepository = new CurrencyMetaRepository(source, new CurrencyMetaParser());
     }
 

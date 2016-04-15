@@ -23,6 +23,7 @@ import dagger.Lazy;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
 import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.sources.RateSource;
 
 import static org.junit.Assert.assertEquals;
@@ -142,6 +143,31 @@ public class CurrencyRepositoryTest {
         Currency base = currencyRepository.getBaseCurrency();
         assertNotNull("Found base currency.", base);
         assertEquals("Base currency is AMD.", "AMD", base.getCode());
+    }
+
+    @Test
+    public void testSetBaseCurrency() {
+        populate();
+
+        SharedPreferences mockSharedPrefs = mock(SharedPreferences.class);
+        SharedPreferences.Editor mockEditor = mock(SharedPreferences.Editor.class);
+        when(mockSharedPrefs.edit()).thenReturn(mockEditor);
+
+        CurrencyRepository currencyRepository = new CurrencyRepository(
+                mockSharedPrefs, null, null, database, new EventBus());
+
+        insertAt(1, "BTC");
+        insertAt(1, "AED");
+        insertAt(1, "AMD");
+        assertInPosition("AMD is the base currency.", 1, "AMD");
+
+        SelectedCurrency baseCurrency = currencyRepository.findByCode(SelectedCurrency.class, "BTC");
+        baseCurrency.setAmount("100");
+        currencyRepository.setBaseCurrency(baseCurrency);
+        assertInPosition("BTC is now selected.", 1, "BTC");
+
+        verify(mockEditor).putString("base_currency_amount", "100");
+        verify(mockEditor).apply();
     }
 
     private void insertAt(int position, String code) {

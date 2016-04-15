@@ -12,9 +12,6 @@ import android.widget.TextView;
 
 import com.yahoo.squidb.data.SquidCursor;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.activities.CurrencyListActivity;
 import xplr.in.currencycalculator.models.Currency;
@@ -66,23 +63,14 @@ public class CurrencyCursorAdapter extends CursorAdapter {
 
         CurrencyMeta meta = currencyMetaRepository.findByCode(currency.getCode());
         String name = meta != null? meta.getName() : currency.getCode();
-        int minorUnits = meta != null? meta.getMinorUnits() : 2;
 
         if(codeText != null) codeText.setText(name);
         if(checkBox != null) checkBox.setChecked(currency.isSelected());
 
         SelectedCurrency baseCurrency = this.currencyListActivity.getBaseCurrency();
         if(rateText != null) {
-            BigDecimal amount = currency.convertFrom(baseCurrency);
-            if (amount != null) {
-                // DecimalFormat will use the default locale. This still ignores the currency symbol
-                // and which side of the number it goes on. Also, Locale.Category is not available.
-                DecimalFormat format = new DecimalFormat();
-                format.setMaximumFractionDigits(minorUnits);
-                rateText.setText(format.format(amount));
-            } else {
-                rateText.setText("-");
-            }
+            currency.convertFrom(baseCurrency);
+            rateText.setText(currency.format(meta));
         }
 
         //CurrencyMetaRepository metaRepository = this.currencyListActivity;

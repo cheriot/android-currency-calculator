@@ -62,7 +62,10 @@ public class CurrencyRepository {
         Log.v(LOG_TAG, "initializeDatabase");
         update(localRateSource.get());
         // This initial state really needs to be customized for the user's locale.
-        setBaseCurrency(findByCode("USD"));
+        SelectedCurrency baseCurrency = findByCode(SelectedCurrency.class, "USD");
+        // when initializing to a user specific base currency, convert $1 to that currency and round
+        baseCurrency.setAmount("1");
+        setBaseCurrency(baseCurrency);
         insertAtPosition(2, findByCode("EUR"));
         insertAtPosition(3, findByCode("MXN"));
         insertAtPosition(4, findByCode("CNY"));
@@ -167,7 +170,8 @@ public class CurrencyRepository {
         return baseCurrency;
     }
 
-    public void setBaseCurrency(Currency currency) {
+    public void setBaseCurrency(SelectedCurrency currency) {
+        setBaseAmount(currency, currency.getAmount());
         insertAtPosition(1, currency);
     }
 
@@ -179,8 +183,12 @@ public class CurrencyRepository {
     }
 
     public Currency findByCode(String code) {
+        return findByCode(Currency.class, code);
+    }
+
+    <T extends Currency> T findByCode(Class<T> modelClass, String code) {
         Query query = ALL_CURRENCIES.where(Currency.CODE.eq(code));
-        return database.fetchByQuery(Currency.class, query);
+        return database.fetchByQuery(modelClass, query);
     }
 
     private void publishDataChange(String sourceName) {

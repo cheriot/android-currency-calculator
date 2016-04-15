@@ -34,7 +34,6 @@ import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
 import xplr.in.currencycalculator.loaders.SelectedCurrencyLoader;
-import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
@@ -106,7 +105,13 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.v(LOG_TAG, "Clicked currency " + position);
                 SquidCursor currencyCursor = (SquidCursor) currenciesAdapter.getItem(position);
-                Currency currency = new Currency();
+                SelectedCurrency currency = new SelectedCurrency();
+                // This currency's amount will become the new selected amount.
+                currency.convertFrom(baseCurrency);
+                String formattedAmount = ((TextView)view.findViewById(R.id.currency_rate))
+                        .getText()
+                        .toString();
+                currency.parse(formattedAmount);
                 currency.readPropertiesFromCursor(currencyCursor);
                 currencyRepository.setBaseCurrency(currency);
             }

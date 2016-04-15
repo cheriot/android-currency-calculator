@@ -4,6 +4,8 @@ import android.text.TextUtils;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 
 /**
  * Base and calculated currencies have a transient field to hold the amount displayed on screen.
@@ -40,6 +42,34 @@ public class SelectedCurrency extends Currency {
 
     public void setAmount(String amount) {
         this.amount = amount;
+    }
+
+    public String parse(String formattedAmount) {
+        if(!formattedAmount.equals("-")) {
+            try {
+                amount = getFormatter(null).parse(formattedAmount).toString();
+            }catch (ParseException pe) {
+                String msg = "Error parsing " + getCode() + " " + formattedAmount + ".";
+                throw new RuntimeException(msg, pe);
+            }
+        }
+        return amount;
+    }
+
+    public String format(CurrencyMeta meta) {
+        if(amount != null) {
+            return getFormatter(meta).format(new BigDecimal(amount));
+        } else {
+            return "-";
+        }
+    }
+
+    private DecimalFormat getFormatter(CurrencyMeta meta) {
+        // DecimalFormat will use the default locale. This still ignores the currency symbol
+        // and which side of the number it goes on. Also, Locale.Category is not available.
+        DecimalFormat format = new DecimalFormat();
+        format.setMaximumFractionDigits(meta != null ? meta.getMinorUnits() : 2);
+        return format;
     }
 
     public boolean sameDisplay(SelectedCurrency selectedCurrency) {
