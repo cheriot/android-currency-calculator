@@ -2,6 +2,7 @@ package xplr.in.currencycalculator.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.base_currency_code) TextView baseCurrencyCode;
     @Bind(R.id.base_currency_amount) EditText baseCurrencyAmount;
+    @Bind(R.id.base_currency_flag) ImageView baseCurrencyFlag;
     @Bind(R.id.list_currency_calculations) ListView currencyCalculationsListView;
 
     @Override
@@ -144,7 +147,13 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
         Log.v(LOG_TAG, "displayBaseCurrency " + currency.getCode());
         baseCurrency = currency;
-        baseCurrencyCode.setText(meta != null ? meta.getName() : currency.getCode());
+        if(meta != null) {
+            baseCurrencyCode.setText(meta.getName());
+            Drawable drawable = getResources().getDrawable(meta.getFlagResourceId());
+            baseCurrencyFlag.setImageDrawable(drawable);
+        } else {
+            baseCurrencyCode.setText(currency.getCode());
+        }
         baseCurrencyAmount.setText(currency.getAmount());
         // Move the cursor to the end as if the amount had just been typed.
         baseCurrencyAmount.setSelection(baseCurrencyAmount.length());

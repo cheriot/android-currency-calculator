@@ -13,16 +13,17 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:minHeight="80dp"
         android:gravity="center"
         android:background="@android:color/white">
 
         <ImageView
-            android:id="@+id/list_item_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher"
+            android:id="@+id/base_currency_flag"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/flag_ec"
             android:paddingLeft="16dp"/>
+
         <TextView
             android:id="@+id/base_currency_code"
             android:layout_width="wrap_content"

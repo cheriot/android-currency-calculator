@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.sources.CurrencyMetaParser;
 import xplr.in.currencycalculator.sources.CurrencyMetaSource;
+import xplr.in.currencycalculator.sources.ResRawSource;
 
 /**
  * Created by cheriot on 4/14/16.
@@ -20,10 +21,13 @@ public class CurrencyMetaRepository {
     private final HashMap<String, CurrencyMeta> metaByCode;
 
     @Inject
-    public CurrencyMetaRepository(CurrencyMetaSource source, CurrencyMetaParser parser) {
+    public CurrencyMetaRepository(CurrencyMetaSource source, CurrencyMetaParser parser, ResRawSource resRawSource) {
         List<CurrencyMeta> metaList = parser.parse(source.get());
         metaByCode = new HashMap<>(metaList.size());
         for(CurrencyMeta meta : metaList) {
+            String name = meta.getResourceName();
+            int resourceId = resRawSource.getResourceIdFromName(name);
+            meta.setFlagResourceId(resourceId);
             metaByCode.put(meta.getCode(), meta);
         }
     }

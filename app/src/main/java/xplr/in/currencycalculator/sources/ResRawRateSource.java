@@ -1,9 +1,8 @@
 package xplr.in.currencycalculator.sources;
 
-import android.app.Application;
-
 import javax.inject.Inject;
 
+import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 
 /**
@@ -12,7 +11,7 @@ import xplr.in.currencycalculator.R;
 public class ResRawRateSource extends ResRawSource implements RateSource {
 
     @Inject
-    public ResRawRateSource(Application context) {
+    public ResRawRateSource(App context) {
         super(context);
     }
 

@@ -11,6 +11,9 @@ import android.content.Context;
  * and the source of CursorLoader
  * https://github.com/android/platform_frameworks_support/blob/master/v4/java/android/support/v4/content/CursorLoader.java
  *
+ * *Reread to better understand*
+ * https://medium.com/google-developers/making-loading-data-on-android-lifecycle-aware-897e12760832
+ *
  * Created by cheriot on 4/5/16.
  */
 public abstract class WorkingAsyncTaskLoader<D> extends AsyncTaskLoader<D> {

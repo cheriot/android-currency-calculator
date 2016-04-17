@@ -14,6 +14,7 @@ import xplr.in.currencycalculator.BuildConfig;
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.sources.CurrencyMetaParser;
 import xplr.in.currencycalculator.sources.CurrencyMetaSource;
+import xplr.in.currencycalculator.sources.ResRawSource;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -30,8 +31,9 @@ public class CurrencyMetaRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        CurrencyMetaSource source = new CurrencyMetaSource((App)RuntimeEnvironment.application);
-        currencyMetaRepository = new CurrencyMetaRepository(source, new CurrencyMetaParser());
+        App app = (App)RuntimeEnvironment.application;
+        CurrencyMetaSource source = new CurrencyMetaSource(app);
+        currencyMetaRepository = new CurrencyMetaRepository(source, new CurrencyMetaParser(), new ResRawSource(app));
     }
 
     @Test

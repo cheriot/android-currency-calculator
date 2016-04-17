@@ -10,9 +10,11 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
 
-import static junit.framework.TestCase.*;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Created by cheriot on 4/12/16.
@@ -25,7 +27,7 @@ public class ResRawRateSourceTest {
 
     @Before
     public void setUp() throws Exception {
-        resRawRateSource = new ResRawRateSource(RuntimeEnvironment.application);
+        resRawRateSource = new ResRawRateSource((App)RuntimeEnvironment.application);
 
     }
 
