@@ -7,6 +7,7 @@ import android.content.SyncResult;
 import android.os.Bundle;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
@@ -16,13 +17,18 @@ import xplr.in.currencycalculator.repositories.CurrencyRepository;
  *
  * Created by cheriot on 4/7/16.
  */
+@Singleton
 public class CurrencySyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Inject
     CurrencyRepository currencyRepository;
 
-    public CurrencySyncAdapter(App context, boolean autoInitialize, CurrencyRepository currencyRepository) {
-        super(context, autoInitialize);
+    public CurrencySyncAdapter(
+            App context,
+            boolean autoInitialize,
+            boolean parallelSyncs,
+            CurrencyRepository currencyRepository) {
+        super(context, autoInitialize, parallelSyncs);
         this.currencyRepository = currencyRepository;
     }
 

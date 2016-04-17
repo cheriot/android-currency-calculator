@@ -63,6 +63,6 @@ public class AppModule {
 
     @Provides
     CurrencySyncAdapter providesCurrencySyncAdapter(CurrencyRepository currencyRepository) {
-        return new CurrencySyncAdapter(app, true, currencyRepository);
+        return new CurrencySyncAdapter(app, true, false, currencyRepository);
     }
 }

@@ -17,8 +17,7 @@ import xplr.in.currencycalculator.App;
  */
 public class CurrencySyncService extends Service {
 
-    private static CurrencySyncAdapter currencySyncAdapter = null;
-    private static final Object syncAdapterLock = new Object();
+    private CurrencySyncAdapter currencySyncAdapter = null;
 
     /*
      * Instantiate the sync adapter object.
@@ -30,11 +29,7 @@ public class CurrencySyncService extends Service {
          * Set the sync adapter as syncable
          * Disallow parallel syncs
          */
-        synchronized (syncAdapterLock) {
-            if (currencySyncAdapter == null) {
-                ((App)getApplication()).getAppComponent().inject(this);
-            }
-        }
+        ((App)getApplication()).getAppComponent().inject(this);
     }
 
     /**

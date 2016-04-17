@@ -13,6 +13,7 @@ import xplr.in.currencycalculator.repositories.CurrenciesDatabase;
 
 public class App extends android.app.Application {
 
+    // Could make this static so entry points have a more readable line.
     private AppComponent appComponent;
     @Inject CurrenciesDatabase currenciesDatabase;
 
