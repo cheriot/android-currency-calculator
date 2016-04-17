@@ -12,8 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
@@ -43,8 +41,8 @@ import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
-import xplr.in.currencycalculator.sync.SyncCompleteEvent;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
+import xplr.in.currencycalculator.sync.SyncCompleteEvent;
 
 public class MainActivity extends AppCompatActivity implements CurrencyListActivity {
 
@@ -191,24 +189,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         if(swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main_calculator, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        if (item.getItemId() == R.id.action_refresh) {
-            currencySyncTriggers.syncNow();
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
