@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                         .toString();
                 currency.parse(formattedAmount);
                 currencyRepository.setBaseCurrency(currency);
+                currencyCalculationsListView.smoothScrollToPosition(0);
             }
         });
 
