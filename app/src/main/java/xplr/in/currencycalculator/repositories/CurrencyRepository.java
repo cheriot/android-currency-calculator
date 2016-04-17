@@ -113,7 +113,7 @@ public class CurrencyRepository {
     }
 
     public Cursor getAllCursor() {
-        return database.query(Currency.class, ALL_CURRENCIES);
+        return database.query(Currency.class, ALL_CURRENCIES.orderBy(Currency.CODE.asc()));
     }
 
     public Currency updateSelection(long id, boolean isSelected) {
