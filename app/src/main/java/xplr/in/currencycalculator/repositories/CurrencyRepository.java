@@ -25,6 +25,7 @@ import javax.inject.Singleton;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.sources.RateSource;
+import xplr.in.currencycalculator.sync.SyncCompleteEvent;
 
 /**
  * Created by cheriot on 4/1/16.
@@ -53,9 +54,10 @@ public class CurrencyRepository {
         this.eventBus = eventBus;
     }
 
-    public List<Currency> updateFromRemote() {
+    public void updateFromRemote() {
         Log.v(LOG_TAG, "updateFromRemote");
-        return update(remoteRateSource.get());
+        update(remoteRateSource.get());
+        this.eventBus.post(new SyncCompleteEvent());
     }
 
     public void initializeDatabase() {

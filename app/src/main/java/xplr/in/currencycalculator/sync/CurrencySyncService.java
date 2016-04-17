@@ -4,6 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import javax.inject.Inject;
+
 import xplr.in.currencycalculator.App;
 
 /**
@@ -17,7 +19,7 @@ import xplr.in.currencycalculator.App;
  */
 public class CurrencySyncService extends Service {
 
-    private CurrencySyncAdapter currencySyncAdapter = null;
+    @Inject CurrencySyncAdapter currencySyncAdapter = null;
 
     /*
      * Instantiate the sync adapter object.

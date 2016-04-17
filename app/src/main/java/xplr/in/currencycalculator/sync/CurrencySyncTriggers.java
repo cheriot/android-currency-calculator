@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -26,8 +27,11 @@ public class CurrencySyncTriggers {
     public static final String ACCOUNT = "public_account";
     public static final String ACCOUNT_TYPE = "xplr.in.currencycalculator";
 
+    SharedPreferences appSharedPrefs;
+
     @Inject
-    public CurrencySyncTriggers() {
+    public CurrencySyncTriggers(SharedPreferences appSharedPrefs) {
+        this.appSharedPrefs = appSharedPrefs;
     }
 
     /**
@@ -52,7 +56,10 @@ public class CurrencySyncTriggers {
             // Recommend a schedule for automatic synchronization. The system may modify this based
             // on other scheduled syncs and network utilization.
             ContentResolver.addPeriodicSync(
-                    account, StubContentProvider.CONTENT_AUTHORITY, new Bundle(), SYNC_FREQUENCY);
+                    account,
+                    StubContentProvider.CONTENT_AUTHORITY,
+                    new Bundle(),
+                    SYNC_FREQUENCY);
             newAccount = true;
         }
 
@@ -61,8 +68,7 @@ public class CurrencySyncTriggers {
         // the account list, so wee need to check both.)
         if (newAccount || !setupComplete) {
             syncNow();
-            PreferenceManager.getDefaultSharedPreferences(context).edit()
-                    .putBoolean(PREF_SETUP_COMPLETE, true).commit();
+            appSharedPrefs.edit().putBoolean(PREF_SETUP_COMPLETE, true).apply();
         }
     }
 

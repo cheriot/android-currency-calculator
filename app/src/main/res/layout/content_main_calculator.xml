@@ -10,45 +10,51 @@
     tools:showIn="@layout/activity_main_calculator">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="80dp"
+        android:background="@android:color/white"
         android:gravity="center"
-        android:background="@android:color/white">
+        android:minHeight="80dp"
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/base_currency_flag"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/flag_ec"
-            android:paddingLeft="16dp"/>
+            android:paddingLeft="16dp"
+            android:src="@drawable/flag_ec" />
 
         <TextView
             android:id="@+id/base_currency_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
-            android:text="US Dollar"/>
+            android:text="US Dollar" />
 
         <EditText
             android:id="@+id/base_currency_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
+            android:ems="6"
             android:gravity="center"
-            android:inputType="numberDecimal"
-            android:ems="6"/>
+            android:inputType="numberDecimal" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/list_currency_calculations"
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipeContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/list_currency_calculations"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -25,6 +26,7 @@ import com.yahoo.squidb.data.SquidCursor;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,6 +43,7 @@ import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
+import xplr.in.currencycalculator.sync.SyncCompleteEvent;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
 
 public class MainActivity extends AppCompatActivity implements CurrencyListActivity {
@@ -60,16 +63,15 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Bind(R.id.base_currency_amount) EditText baseCurrencyAmount;
     @Bind(R.id.base_currency_flag) ImageView baseCurrencyFlag;
     @Bind(R.id.list_currency_calculations) ListView currencyCalculationsListView;
+    @Bind(R.id.swipeContainer) SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_calculator);
 
         ((App)getApplication()).newActivityScope(this).inject(this);
         ButterKnife.bind(this);
-
 
         eventBus.register(this);
         new BaseCurrencyQuery().execute();
@@ -83,6 +85,22 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                 startActivity(new Intent(thisActivity, SelectCurrencyActivity.class));
             }
         });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Make sure to call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                // See the eventBus subscriber on this class.
+                currencySyncTriggers.syncNow();
+            }
+        });
+        swipeRefreshLayout.setColorSchemeResources(
+                android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
 
         baseCurrencyAmount.addTextChangedListener(new TextWatcher() {
             @Override
@@ -162,10 +180,17 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         currenciesAdapter.notifyDataSetChanged();
     }
 
-    @Subscribe
+    @Subscribe(threadMode=ThreadMode.BACKGROUND)
     public void onCurrencyDataChanged(CurrencyDataChangeEvent e) {
         Log.v(LOG_TAG, "onCurrencyDataChanged update base currency");
         new BaseCurrencyQuery().execute();
+    }
+
+    @Subscribe(threadMode=ThreadMode.MAIN)
+    public void onSyncComplete(SyncCompleteEvent e) {
+        if(swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     @Override
