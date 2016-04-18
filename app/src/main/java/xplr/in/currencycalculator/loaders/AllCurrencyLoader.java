@@ -8,14 +8,16 @@ import xplr.in.currencycalculator.activities.CurrencyListActivity;
  * Created by cheriot on 4/6/16.
  */
 public class AllCurrencyLoader extends AbstractCurrencyLoader {
-    private static String LOG_TAG = AllCurrencyLoader.class.getCanonicalName();
 
-    public AllCurrencyLoader(CurrencyListActivity activity) {
+    private String searchQuery;
+
+    public AllCurrencyLoader(CurrencyListActivity activity, String searchQuery) {
         super(activity);
+        this.searchQuery = searchQuery;
     }
 
     @Override
     public Cursor loadInBackground() {
-        return getActivity().getCurrencyRepository().getAllCursor();
+        return getActivity().getCurrencyRepository().searchAllCursor(searchQuery);
     }
 }

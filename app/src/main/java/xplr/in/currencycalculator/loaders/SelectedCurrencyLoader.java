@@ -16,6 +16,6 @@ public class SelectedCurrencyLoader extends AbstractCurrencyLoader {
 
     @Override
     public Cursor loadInBackground() {
-        return getActivity().getCurrencyRepository().getSelectedCursor();
+        return getActivity().getCurrencyRepository().findSelectedCursor();
     }
 }

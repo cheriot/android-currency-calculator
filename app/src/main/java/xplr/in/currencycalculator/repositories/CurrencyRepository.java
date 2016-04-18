@@ -110,12 +110,19 @@ public class CurrencyRepository {
             .where(Currency.POSITION.eq(1))
             .freeze();
 
-    public Cursor getSelectedCursor() {
+    public Cursor findSelectedCursor() {
         return database.query(Currency.class, CALCULATED_CURRENCIES);
     }
 
-    public Cursor getAllCursor() {
-        return database.query(Currency.class, ALL_CURRENCIES.orderBy(Currency.CODE.asc()));
+    private static final Query SEARCH_CURRENCIES = ALL_CURRENCIES.orderBy(Currency.CODE.asc()).freeze();
+    public Cursor searchAllCursor(String query) {
+        // TODO filter by query
+        Log.v(LOG_TAG, "Search for codes like " + query + "%");
+        Query search = SEARCH_CURRENCIES.fork();
+        if(query != null) {
+            search.where(Currency.CODE.like(query+"%"));
+        }
+        return database.query(Currency.class, search);
     }
 
     public Currency updateSelection(long id, boolean isSelected) {
