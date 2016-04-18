@@ -1,11 +1,17 @@
 package xplr.in.currencycalculator.activities;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -35,6 +41,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     @Inject CurrencyRepository currencyRepository;
     @Inject EventBus eventBus;
     @Inject @Named("select") CurrencyCursorAdapter currenciesAdapter;
+    private String searchQuery;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.list_currency_calculations) ListView currenciesListView;
@@ -47,9 +54,12 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         ((App)getApplication()).newActivityScope(this).inject(this);
         ButterKnife.bind(this);
 
+
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        handleSearch(getIntent());
 
         currenciesListView.setAdapter(currenciesAdapter);
         currenciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -66,6 +76,21 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         getLoaderManager().initLoader(CurrencyLoaderCallbacks.LOADER_ID, null, clc);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleSearch(intent);
+    }
+
+    private void handleSearch(Intent intent) {
+        if(Intent.ACTION_SEARCH.equals(intent)) {
+            String q = intent.getStringExtra(SearchManager.QUERY);
+            // The OnQueryTextListener will prevent the intent from being sent.
+            // Handle searches there.
+            Log.e(LOG_TAG, "ERROR: " + intent.getAction() + " received, but not handled: " + q);
+        }
+    }
+
     public void onCheckboxClicked(View view) {
         CheckBox checkBox = (CheckBox)view;
         Log.v(LOG_TAG, "Clicked checkbox " + checkBox.isChecked());
@@ -80,6 +105,33 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.select_currency_menu, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem menuItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.v(LOG_TAG, "SUBMIT" + query);
+                searchQuery = query;
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.v(LOG_TAG, "SEARCH CHANGE" + newText);
+                searchQuery = newText;
+                return true;
+            }
+        });
+        return true;
+    }
+
+    @Override
     public CurrencyRepository getCurrencyRepository() {
         return currencyRepository;
     }
@@ -87,6 +139,16 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     @Override
     public CursorAdapter getCurrencyCursorAdapter() {
         return currenciesAdapter;
+    }
+
+    @Override
+    public EventBus getEventBus() {
+        return eventBus;
+    }
+
+    @Override
+    public SelectedCurrency getBaseCurrency() {
+        return null;
     }
 
     public class PersistCurrencySelection extends AsyncTask<Void, Void, Currency> {
@@ -112,15 +174,5 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
             Snackbar.make(currenciesListView, message, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         }
-    }
-
-    @Override
-    public EventBus getEventBus() {
-        return eventBus;
-    }
-
-    @Override
-    public SelectedCurrency getBaseCurrency() {
-        return null;
     }
 }

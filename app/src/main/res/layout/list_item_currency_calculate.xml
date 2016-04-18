@@ -13,7 +13,8 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/flag_eu"
-        android:paddingLeft="16dp"/>
+        android:paddingLeft="16dp"
+        android:contentDescription="null"/>
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/currency_code"

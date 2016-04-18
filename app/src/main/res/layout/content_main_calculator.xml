@@ -22,14 +22,15 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:paddingLeft="16dp"
-            android:src="@drawable/flag_ec" />
+            android:src="@drawable/flag_ec"
+            android:contentDescription="null"/>
 
         <TextView
             android:id="@+id/base_currency_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
-            android:text="US Dollar" />
+            android:text="US Dollar"/>
 
         <EditText
             android:id="@+id/base_currency_amount"
@@ -38,7 +39,7 @@
             android:layout_marginLeft="16dp"
             android:ems="6"
             android:gravity="center"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"/>
     </LinearLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"

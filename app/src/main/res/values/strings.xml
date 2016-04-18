@@ -2,4 +2,6 @@
     <string name="app_name">Currency Calculator</string>
     <string name="action_refresh">Refresh</string>
     <string name="title_activity_select_currency">Select Currencies</string>
+    <string name="search_title">Search Currencies</string>
+    <string name="search_hint">Search</string>
 </resources>
