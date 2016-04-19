@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -19,6 +20,7 @@ import javax.inject.Singleton;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.CurrencyRate;
+import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.sources.CurrencyRateParser;
 import xplr.in.currencycalculator.sources.RateSource;
 import xplr.in.currencycalculator.sync.SyncCompleteEvent;
@@ -58,6 +60,9 @@ public class CurrencyBulkRepository {
         this.eventBus = eventBus;
     }
 
+    /**
+     * Populate and empty database and default selections based on the information available.
+     */
     public void initializeDefaultSelections() {
         Log.v(LOG_TAG, "initializeDefaultSelections");
         updateOrInitMeta();
@@ -68,7 +73,6 @@ public class CurrencyBulkRepository {
         insertAtTop("EUR");
         insertAtTop("USD");
 
-        /*
         CurrencyMeta locale = metaRepository.findByCountryCode(Locale.getDefault().getCountry());
         CurrencyMeta sim = metaRepository.findByCountryCode(telephonyManager.getSimCountryIso());
         CurrencyMeta network = metaRepository.findByCountryCode(telephonyManager.getNetworkCountryIso());
@@ -83,9 +87,9 @@ public class CurrencyBulkRepository {
         // and round to make it pretty.
         SelectedCurrency baseCurrency = currencyRepository.getBaseCurrency();
         SelectedCurrency usd = currencyRepository.findByCode(SelectedCurrency.class, "USD");
-        usd.setAmount("1");
+        usd.setAmount("10");
         String amount = baseCurrency.roundNumberCloseTo(usd);
-        currencyRepository.setBaseAmount(baseCurrency, amount);*/
+        currencyRepository.setBaseAmount(baseCurrency, amount);
     }
 
     public void updateFromRemote() {
