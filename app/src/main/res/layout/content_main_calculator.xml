@@ -22,7 +22,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:paddingLeft="16dp"
-            android:src="@drawable/flag_ec"
+            android:src="@drawable/flag_eu"
             android:contentDescription="null"/>
 
         <TextView
