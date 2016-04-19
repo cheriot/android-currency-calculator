@@ -141,6 +141,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         searchQuery = query;
         getLoaderManager().restartLoader(CURRENCY_LOADER_ID, null, this);
         // Return true to preempt the default behavior or sending an intent.
+        currenciesListView.smoothScrollToPosition(0);
         return true;
     }
 
