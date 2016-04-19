@@ -12,7 +12,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -139,7 +138,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
 
     private boolean search(String query) {
         Log.v(LOG_TAG, "SEARCH CHANGE" + query);
-        searchQuery = TextUtils.isEmpty(query) ? null : query;
+        searchQuery = query;
         getLoaderManager().restartLoader(CURRENCY_LOADER_ID, null, this);
         // Return true to preempt the default behavior or sending an intent.
         return true;

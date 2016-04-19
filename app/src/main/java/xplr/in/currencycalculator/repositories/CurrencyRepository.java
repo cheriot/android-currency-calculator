@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.yahoo.squidb.data.TableModel;
 import com.yahoo.squidb.sql.Criterion;
+import com.yahoo.squidb.sql.Function;
 import com.yahoo.squidb.sql.Query;
 
 import org.greenrobot.eventbus.EventBus;
@@ -26,6 +27,8 @@ import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.sources.CurrencyRateParser;
 import xplr.in.currencycalculator.sources.RateSource;
 import xplr.in.currencycalculator.sync.SyncCompleteEvent;
+
+import static android.text.TextUtils.isEmpty;
 
 /**
  * Created by cheriot on 4/1/16.
@@ -167,15 +170,17 @@ public class CurrencyRepository {
 
     private static final Query SEARCH_CURRENCIES = VALID_CURRENCIES.orderBy(Currency.NAME.asc()).freeze();
     public Cursor searchAllCursor(String query) {
+        Log.v(LOG_TAG, "searchAllCursor for "+ query);
+        if(query != null) query = query.trim();
+
         Query search = SEARCH_CURRENCIES.fork();
-        if(query != null) {
+        if(!isEmpty(query)) {
             String fieldPrefix = query + "%";
-            String wordPrefix = " " + query + "%";
-            Log.v(LOG_TAG, "Search for codes and names like " + fieldPrefix + " and " + wordPrefix);
+            String wordPrefix = "% " + query + "%";
             search.where(
                     Currency.CODE.like(fieldPrefix)
-                            .or(Currency.NAME.like(fieldPrefix))
-                            .or(Currency.NAME.like(wordPrefix)));
+                            .or(Function.lower(Currency.NAME).like(fieldPrefix.toLowerCase()))
+                            .or(Function.lower(Currency.NAME).like(wordPrefix.toLowerCase())));
         }
         return database.query(Currency.class, search);
     }
