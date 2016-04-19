@@ -3,19 +3,11 @@ adb devices
 adb -s <device> shell
 run-as xplr.in.currencycalculator
 
-Use SimpleCursorAdapter for the currencies list view?
-
 Android dev stack possibilities
-pos  http://androidannotations.org/
 pos  RxJava, RxAndroid
      http://blog.danlew.net/2014/09/15/grokking-rxjava-part-1/
      http://rxwiki.wikidot.com/101samples
-pos  http://greenrobot.github.io/EventBus/
 pos  debugging with https://github.com/JakeWharton/hugo
-pos  http://jakewharton.github.io/butterknife/ or dagger instead of RoboGuice
-pos  greenDAO instead of sugar? need to figure out migration story
-     https://web.archive.org/web/20140215121239/http://www.androidanalyse.com/greendao-schema-generation/
-     https://web.archive.org/web/20131102132942/http://www.androidanalyse.com/greendao-schema-migration/
 if adapters become a mess, https://github.com/ribot/easy-adapter
 
 ic_launcher came from:
