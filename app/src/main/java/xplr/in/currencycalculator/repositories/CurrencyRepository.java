@@ -165,7 +165,7 @@ public class CurrencyRepository {
         return database.query(Currency.class, CALCULATED_CURRENCIES);
     }
 
-    private static final Query SEARCH_CURRENCIES = VALID_CURRENCIES.orderBy(Currency.CODE.asc()).freeze();
+    private static final Query SEARCH_CURRENCIES = VALID_CURRENCIES.orderBy(Currency.NAME.asc()).freeze();
     public Cursor searchAllCursor(String query) {
         Query search = SEARCH_CURRENCIES.fork();
         if(query != null) {

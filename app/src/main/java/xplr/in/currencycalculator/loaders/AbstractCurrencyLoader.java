@@ -14,7 +14,7 @@ import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
  */
 public abstract class AbstractCurrencyLoader extends WorkingAsyncTaskLoader<Cursor> {
 
-    private static String LOG_TAG = AbstractCurrencyLoader.class.getCanonicalName();
+    private static String LOG_TAG = AbstractCurrencyLoader.class.getSimpleName();
     private CurrencyListActivity activity;
 
     public AbstractCurrencyLoader(CurrencyListActivity activity) {
