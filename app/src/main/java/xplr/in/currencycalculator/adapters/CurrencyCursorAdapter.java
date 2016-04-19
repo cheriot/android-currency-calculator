@@ -71,9 +71,9 @@ public class CurrencyCursorAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         CurrencyMeta meta = currencyMetaRepository.findByCode(currency.getCode());
-        String name = currency.getCode() + " " + currency.getName();
 
-        if(viewHolder.codeText != null) viewHolder.codeText.setText(name);
+        if(viewHolder.codeText != null) viewHolder.codeText.setText(currency.getCode());
+        if(viewHolder.nameText != null) viewHolder.nameText.setText(currency.getName());
         if(viewHolder.checkBox != null) viewHolder.checkBox.setChecked(currency.isSelected());
 
         SelectedCurrency baseCurrency = this.currencyListActivity.getBaseCurrency();
@@ -90,7 +90,8 @@ public class CurrencyCursorAdapter extends CursorAdapter {
     }
 
     static class ViewHolder {
-        @Bind(R.id.currency_code) TextView codeText;
+        @Bind(R.id.currency_name) TextView nameText;
+        @Nullable @Bind(R.id.currency_code) TextView codeText;
         @Nullable @Bind(R.id.currency_rate) TextView rateText;
         @Nullable @Bind(R.id.currency_selected) CheckBox checkBox;
         @Nullable @Bind(R.id.currency_flag) ImageView flagImage;

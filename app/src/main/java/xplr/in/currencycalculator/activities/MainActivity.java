@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab) FloatingActionButton fab;
-    @Bind(R.id.base_currency_code) TextView baseCurrencyCode;
+    @Bind(R.id.base_currency_name) TextView baseCurrencyName;
     @Bind(R.id.base_currency_amount) EditText baseCurrencyAmount;
     @Bind(R.id.base_currency_flag) ImageView baseCurrencyFlag;
     @Bind(R.id.list_currency_calculations) ListView currencyCalculationsListView;
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
         Log.v(LOG_TAG, "displayBaseCurrency " + currency.getCode());
         baseCurrency = currency;
-        baseCurrencyCode.setText(currency.getCode() + " " + currency.getName());
+        baseCurrencyName.setText(currency.getName());
         if(meta != null) {
             Drawable drawable = getResources().getDrawable(meta.getFlagResourceId());
             baseCurrencyFlag.setImageDrawable(drawable);

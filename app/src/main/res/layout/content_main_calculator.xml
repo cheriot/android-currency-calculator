@@ -26,7 +26,7 @@
             android:contentDescription="null"/>
 
         <TextView
-            android:id="@+id/base_currency_code"
+            android:id="@+id/base_currency_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
