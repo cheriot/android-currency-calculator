@@ -17,21 +17,38 @@ public class CurrencySpec {
     String code;
     @ColumnSpec(constraints="not null")
     String rate;
-    Integer position; // null for unselected currencies
+    // Position is null for unselected currencies.
+    Integer position;
+    // Name is null when there's a mismatch between meta data packaged with the app and
+    // the rate response.
+    String name;
+    // TODO Bullshit default value because sqlite requires one. Reset DB version before first release.
+    @ColumnSpec(constraints="not null",defaultValue="2")
+    int minorUnits;
+    // TODO Bullshit default value because sqlite requires one. Reset DB version before first release.
+    @ColumnSpec(constraints="not null",defaultValue="00")
+    String issuingCountryCode;
 
     @ModelMethod
-    public static String toString(Currency currency) {
-        return "CurrencySpec{" +
-                "id=" + currency.getId() +
-                ", code='" + currency.getCode() + '\'' +
-                ", rate=" + currency.getRate() +
-                ", position=" + currency.getPosition() +
-                '}';
+    public static boolean isSelected(Currency c) {
+        return c.getPosition() != null;
     }
 
     @ModelMethod
-    public static boolean isSelected(Currency currency) {
-        return currency.getPosition() != null;
+    public static String getFlagResourceName(Currency c) {
+        return "flag_" + c.getIssuingCountryCode().toLowerCase();
+    }
+
+    @ModelMethod
+    public static void setRate(Currency c, CurrencyRate rate) {
+        c.setRate(rate.getRate().toString());
+    }
+
+    @ModelMethod
+    public static void setMeta(Currency c, CurrencyMeta meta) {
+        c.setName(meta.getName());
+        c.setIssuingCountryCode(meta.getIssuingCountryCode());
+        c.setMinorUnits(meta.getMinorUnits());
     }
 
     @ModelMethod
@@ -48,5 +65,17 @@ public class CurrencySpec {
     @ModelMethod
     public static int hashCode(Currency currency) {
         return new Long(currency.getId()).hashCode();
+    }
+
+    @ModelMethod
+    public static String toString(Currency c) {
+        return "CurrencySpec{" +
+                "code='" + c.getCode() + '\'' +
+                ", rate='" + c.getRate() + '\'' +
+                ", position=" + c.getPosition() +
+                ", name='" + c.getName() + '\'' +
+                ", minorUnits=" + c.getMinorUnits() +
+                ", issuingCountryCode='" + c.getIssuingCountryCode() + '\'' +
+                '}';
     }
 }

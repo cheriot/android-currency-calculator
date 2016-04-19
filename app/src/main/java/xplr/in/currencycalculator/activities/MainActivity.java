@@ -164,12 +164,10 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
         Log.v(LOG_TAG, "displayBaseCurrency " + currency.getCode());
         baseCurrency = currency;
+        baseCurrencyCode.setText(currency.getCode() + " " + currency.getName());
         if(meta != null) {
-            baseCurrencyCode.setText(meta.getName());
             Drawable drawable = getResources().getDrawable(meta.getFlagResourceId());
             baseCurrencyFlag.setImageDrawable(drawable);
-        } else {
-            baseCurrencyCode.setText(currency.getCode());
         }
         baseCurrencyAmount.setText(currency.getAmount());
         // Move the cursor to the end as if the amount had just been typed.

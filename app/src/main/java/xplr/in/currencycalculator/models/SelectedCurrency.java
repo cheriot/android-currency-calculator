@@ -16,6 +16,7 @@ public class SelectedCurrency extends Currency {
 
     // TODO How does this whole Parcelable thing work?
     public static final Creator<SelectedCurrency> CREATOR = new ModelCreator<SelectedCurrency>(SelectedCurrency.class);
+    private static final String EMPTY_AMOUNT = "-";
 
     private String amount;
 
@@ -25,12 +26,17 @@ public class SelectedCurrency extends Currency {
                 && !TextUtils.isEmpty(base.getAmount().trim())) {
             BigDecimal baseRate = new BigDecimal(base.getRate());
             BigDecimal baseAmount = new BigDecimal(base.getAmount());
-            BigDecimal baseDollars = baseAmount.divide(baseRate, MathContext.DECIMAL128);
+            if(!baseRate.equals(BigDecimal.ZERO)) {
+                BigDecimal baseDollars = baseAmount.divide(baseRate, MathContext.DECIMAL128);
 
-            BigDecimal myRate = new BigDecimal(getRate());
-            BigDecimal myAmount = baseDollars.multiply(myRate);
-            amount = myAmount.toString();
-            return myAmount;
+                BigDecimal myRate = new BigDecimal(getRate());
+                BigDecimal myAmount = baseDollars.multiply(myRate);
+                amount = myAmount.toString();
+                return myAmount;
+            } else {
+                amount = "0";
+                return BigDecimal.ZERO;
+            }
         } else {
             return null;
         }
@@ -45,9 +51,9 @@ public class SelectedCurrency extends Currency {
     }
 
     public String parse(String formattedAmount) {
-        if(!formattedAmount.equals("-")) {
+        if(!formattedAmount.equals(EMPTY_AMOUNT)) {
             try {
-                amount = getFormatter(null).parse(formattedAmount).toString();
+                amount = getFormatter().parse(formattedAmount).toString();
             }catch (ParseException pe) {
                 String msg = "Error parsing " + getCode() + " " + formattedAmount + ".";
                 throw new RuntimeException(msg, pe);
@@ -56,19 +62,19 @@ public class SelectedCurrency extends Currency {
         return amount;
     }
 
-    public String format(CurrencyMeta meta) {
+    public String format() {
         if(amount != null) {
-            return getFormatter(meta).format(new BigDecimal(amount));
+            return getFormatter().format(new BigDecimal(amount));
         } else {
-            return "-";
+            return EMPTY_AMOUNT;
         }
     }
 
-    private DecimalFormat getFormatter(CurrencyMeta meta) {
+    private DecimalFormat getFormatter() {
         // DecimalFormat will use the default locale. This still ignores the currency symbol
         // and which side of the number it goes on. Also, Locale.Category is not available.
         DecimalFormat format = new DecimalFormat();
-        format.setMaximumFractionDigits(meta != null ? meta.getMinorUnits() : 2);
+        format.setMaximumFractionDigits(getMinorUnits());
         return format;
     }
 

@@ -22,6 +22,10 @@ public class ActivityModule {
         this.activity = activity;
     }
 
+    @Provides public Activity provideActivity() {
+        return this.activity;
+    }
+
     @Provides @ActivityScope @Named("calculate")
     public CurrencyCursorAdapter provideCalculateCurrencyCursorAdapter(CurrencyMetaRepository currencyMetaRepository) {
         return new CurrencyCursorAdapter(activity, R.layout.list_item_currency_calculate, currencyMetaRepository);

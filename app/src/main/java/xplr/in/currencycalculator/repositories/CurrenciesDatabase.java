@@ -28,11 +28,6 @@ public class CurrenciesDatabase extends SquidDatabase {
     // Lazy to deal with a circular dependency. Maybe extract updater logic from the repository.
     private final Lazy<CurrencyRepository> lazyCurrencyRepository;
 
-    /**
-     * Create a new SquidDatabase
-     *
-     * @param context the Context, must not be null
-     */
     @Inject
     public CurrenciesDatabase(App context, Lazy<CurrencyRepository> lazyCurrencyRepository) {
         super(context);
@@ -46,7 +41,7 @@ public class CurrenciesDatabase extends SquidDatabase {
 
     @Override
     protected int getVersion() {
-        return 1;
+        return 5;
     }
 
     @Override
@@ -56,28 +51,43 @@ public class CurrenciesDatabase extends SquidDatabase {
 
     @Override
     protected boolean onUpgrade(SQLiteDatabaseWrapper db, int oldVersion, int newVersion) {
-        return false;
+        switch (oldVersion) {
+            case 3:
+                tryAddColumn(Currency.NAME);
+                tryAddColumn(Currency.ISSUING_COUNTRY_CODE);
+                tryAddColumn(Currency.MINOR_UNITS);
+        }
+
+        // Need this call only after app code is updated, but there's no trigger for that so
+        // remember to bump the database version when meta has changed.
+        lazyCurrencyRepository.get().updateOrInitializeMeta();
+        return true;
     }
 
     @Override
-    protected boolean onDowngrade(SQLiteDatabaseWrapper db, int oldVersion, int newVersion) {
-        return false;
+    protected void onMigrationFailed(MigrationFailedException failure) {
+        super.onMigrationFailed(failure);
+        // Blow away the entire database and set it up like new. This calls #onTablesCreated, right?
+        recreate();
     }
 
     @Override
     protected void onTablesCreated(SQLiteDatabaseWrapper db) {
         super.onTablesCreated(db);
-        lazyCurrencyRepository.get().initializeDatabase();
+        lazyCurrencyRepository.get().initializeData();
     }
 
+    /** Test helper. */
     public <T extends AbstractModel> List<T> queryAsList(Class<T> modelClass, Query query) {
         return cursorToModelList(modelClass, query(modelClass, query));
     }
 
-    public List<List<String>> rawAsList(String sql, String[] args) {
+    /** Test helper. */
+    List<List<String>> rawAsList(String sql, String[] args) {
         return cursorToList(rawQuery(sql, args));
     }
 
+    /** Test helper. */
     List<List<String>> cursorToList(Cursor cursor) {
         List<List<String>> list = new ArrayList(cursor.getCount());
         try {
@@ -95,6 +105,7 @@ public class CurrenciesDatabase extends SquidDatabase {
         return list;
     }
 
+    /** Test helper. */
     <T extends AbstractModel> List<T> cursorToModelList(Class<T> modelClass, SquidCursor cursor) {
         List<T> list = new ArrayList(cursor.getCount());
         try {

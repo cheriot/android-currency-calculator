@@ -24,7 +24,11 @@ import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.SelectedCurrency;
+import xplr.in.currencycalculator.sources.CurrencyMetaParser;
+import xplr.in.currencycalculator.sources.CurrencyMetaSource;
 import xplr.in.currencycalculator.sources.RateSource;
+import xplr.in.currencycalculator.sources.ResRawRateSource;
+import xplr.in.currencycalculator.sources.ResRawSource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -38,15 +42,21 @@ import static org.mockito.Mockito.*;
 @Config(constants = BuildConfig.class, sdk = 21)
 public class CurrencyRepositoryTest {
 
+    private App app;
+    private CurrencyMetaRepository metaRepository;
     private CurrenciesDatabase database;
 
     @Before
     public void setUp() {
-        App app = (App)RuntimeEnvironment.application;
+        app = (App)RuntimeEnvironment.application;
         // Don't actually populate the database when it's created. Let tests load smaller datasets.
         Lazy<CurrencyRepository> lazy = mock(Lazy.class);
         when(lazy.get()).thenReturn(mock(CurrencyRepository.class));
         database = new CurrenciesDatabase(app, lazy);
+        metaRepository = new CurrencyMetaRepository(
+                new CurrencyMetaSource(app),
+                new CurrencyMetaParser(),
+                new ResRawSource(app));
     }
 
     @Test
@@ -55,32 +65,26 @@ public class CurrencyRepositoryTest {
     }
 
     @Test
-    public void testFetchAllSkipsInvalid() {
-        populate();
-        assertEquals("Skips the 6th, N/A currency.", 5, database.countAll(Currency.class));
-    }
-
-    @Test
     public void testFetchAllCorrectCodeAndRate() {
         CurrencyRepository currencyRepository = populate();
-        Currency btc = currencyRepository.findByCode("BTC");
-        assertNotNull("BTC code parsed correctly.", btc);
-        assertEquals("Rate parsed correctly.", "0.0024", btc.getRate());
+        Currency BOB = currencyRepository.findByCode("BOB");
+        assertNotNull("BOB code parsed correctly.", BOB);
+        assertEquals("Rate parsed correctly.", "6.9125", BOB.getRate());
     }
 
     @Test
     public void testInitialInsert() {
         CurrencyRepository currencyRepository = populate();
 
-        Currency btc = currencyRepository.findByCode("BTC");
-        currencyRepository.insertAtPosition(1, btc);
-        assertInPosition("BTC is now first in the list.", 1, "BTC");
+        Currency BOB = currencyRepository.findByCode("BOB");
+        currencyRepository.insertAtPosition(1, BOB);
+        assertInPosition("BOB is now first in the list.", 1, "BOB");
 
         Currency amd = currencyRepository.findByCode("AMD");
         currencyRepository.insertAtPosition(1, amd);
 
         assertInPosition("AMD is now first in the list.", 1, "AMD");
-        assertInPosition("BTC has been shifted to second.", 2, "BTC");
+        assertInPosition("BOB has been shifted to second.", 2, "BOB");
         assertInPosition("ALL is still not in the list.", null, "ALL");
     }
 
@@ -88,13 +92,13 @@ public class CurrencyRepositoryTest {
     public void testMoveUp() {
         populate();
 
-        insertAt(1, "BTC");
+        insertAt(1, "BOB");
         insertAt(1, "AED");
         insertAt(1, "AMD");
         insertAt(1, "ALL");
         insertAt(1, "AFN");
 
-        // Now ordered AFN, ALL, AMD, AED, BTC.
+        // Now ordered AFN, ALL, AMD, AED, BOB.
         assertInPosition("AED starts with position 4.", 4, "AED");
 
         // Move up
@@ -104,20 +108,20 @@ public class CurrencyRepositoryTest {
         assertInPosition("AED moved to second.", 2, "AED");
         assertInPosition("ALL moved to third.",  3, "ALL");
         assertInPosition("AMD moved to fourth.", 4, "AMD");
-        assertInPosition("BTC is unchanged.",    5, "BTC");
+        assertInPosition("BOB is unchanged.",    5, "BOB");
     }
 
     @Test
     public void testMoveDown() {
         populate();
 
-        insertAt(1, "BTC");
+        insertAt(1, "BOB");
         insertAt(1, "AED");
         insertAt(1, "AMD");
         insertAt(1, "ALL");
         insertAt(1, "AFN");
 
-        // Now ordered AFN, ALL, AMD, AED, BTC.
+        // Now ordered AFN, ALL, AMD, AED, BOB.
         assertInPosition("ALL starts with position 2.", 2, "ALL");
 
         // Move down.
@@ -127,14 +131,14 @@ public class CurrencyRepositoryTest {
         assertInPosition("AMD moved to second.", 2, "AMD");
         assertInPosition("AED moved to third.",  3, "AED");
         assertInPosition("ALL moved to fourth.", 4, "ALL");
-        assertInPosition("BTC is unchanged.",    5, "BTC");
+        assertInPosition("BOB is unchanged.",    5, "BOB");
     }
 
     @Test
     public void testGetBaseCurrency() {
         CurrencyRepository currencyRepository = populate();
 
-        insertAt(1, "BTC");
+        insertAt(1, "BOB");
         insertAt(1, "AED");
         insertAt(1, "AMD");
 
@@ -154,17 +158,17 @@ public class CurrencyRepositoryTest {
         when(mockSharedPrefs.edit()).thenReturn(mockEditor);
 
         CurrencyRepository currencyRepository = new CurrencyRepository(
-                mockSharedPrefs, null, null, database, new EventBus());
+                mockSharedPrefs, null, null, metaRepository, database, new EventBus());
 
-        insertAt(1, "BTC");
+        insertAt(1, "BOB");
         insertAt(1, "AED");
         insertAt(1, "AMD");
         assertInPosition("AMD is the base currency.", 1, "AMD");
 
-        SelectedCurrency baseCurrency = currencyRepository.findByCode(SelectedCurrency.class, "BTC");
+        SelectedCurrency baseCurrency = currencyRepository.findByCode(SelectedCurrency.class, "BOB");
         baseCurrency.setAmount("100");
         currencyRepository.setBaseCurrency(baseCurrency);
-        assertInPosition("BTC is now selected.", 1, "BTC");
+        assertInPosition("BOB is now selected.", 1, "BOB");
 
         verify(mockEditor).putString("base_currency_amount", "100");
         verify(mockEditor).apply();
@@ -181,6 +185,7 @@ public class CurrencyRepositoryTest {
     private CurrencyRepository populate() {
         String json = resource("currencyResponse.json");
         CurrencyRepository currencyRepository = currencyRepository(json, null);
+        currencyRepository.updateOrInitializeMeta();
         currencyRepository.updateFromRemote();
         return currencyRepository;
     }
@@ -188,17 +193,18 @@ public class CurrencyRepositoryTest {
     private CurrencyRepository populate(String amount) {
         String json = resource("currencyResponse.json");
         CurrencyRepository currencyRepository = currencyRepository(json, amount);
+        currencyRepository.updateOrInitializeMeta();
         currencyRepository.updateFromRemote();
         return currencyRepository;
     }
 
     private CurrencyRepository currencyRepository() {
-        return new CurrencyRepository(null, null, null, database, new EventBus());
+        return new CurrencyRepository(null, null, null, metaRepository, database, new EventBus());
     }
 
     private String resource(String filename) {
         try {
-            // TODO replace with Android's Resources.get*(resId)
+            // Do not use Resources.getResource in instrumentation tests or production code!
             // http://blog.nimbledroid.com/2016/04/06/slow-ClassLoader.getResourceAsStream.html
             URL url = Resources.getResource(filename);
             return Resources.toString(url, Charset.defaultCharset());
@@ -264,6 +270,6 @@ public class CurrencyRepositoryTest {
 
             }
         }
-        return new CurrencyRepository(new MockSharedPrefs(), null, new MockRateSource(), database, new EventBus());
+        return new CurrencyRepository(new MockSharedPrefs(), new ResRawRateSource(app), new MockRateSource(), metaRepository, database, new EventBus());
     }
 }

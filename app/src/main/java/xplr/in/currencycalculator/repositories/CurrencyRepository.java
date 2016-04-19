@@ -4,9 +4,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
+import com.yahoo.squidb.data.TableModel;
 import com.yahoo.squidb.sql.Criterion;
 import com.yahoo.squidb.sql.Query;
 
@@ -14,8 +12,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -23,7 +20,10 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.models.CurrencyMeta;
+import xplr.in.currencycalculator.models.CurrencyRate;
 import xplr.in.currencycalculator.models.SelectedCurrency;
+import xplr.in.currencycalculator.sources.CurrencyRateParser;
 import xplr.in.currencycalculator.sources.RateSource;
 import xplr.in.currencycalculator.sync.SyncCompleteEvent;
 
@@ -33,11 +33,13 @@ import xplr.in.currencycalculator.sync.SyncCompleteEvent;
 @Singleton
 public class CurrencyRepository {
 
-    private static final String LOG_TAG = CurrencyRepository.class.getCanonicalName();
+    private static final String LOG_TAG = CurrencyRepository.class.getSimpleName();
+    private static final int BASE_CURRENCY_POSITION = 1;
 
     private final SharedPreferences appSharedPrefs;
     private final RateSource localRateSource;
     private final RateSource remoteRateSource;
+    private final CurrencyMetaRepository metaRepository;
     private final CurrenciesDatabase database;
     private final EventBus eventBus;
 
@@ -45,24 +47,27 @@ public class CurrencyRepository {
     public CurrencyRepository(SharedPreferences appSharedPrefs,
                               @Named("local")RateSource localRateSource,
                               @Named("remote")RateSource remoteRateSource,
+                              CurrencyMetaRepository metaRepository,
                               CurrenciesDatabase database,
                               EventBus eventBus) {
         this.appSharedPrefs = appSharedPrefs;
         this.localRateSource = localRateSource;
         this.remoteRateSource = remoteRateSource;
+        this.metaRepository = metaRepository;
         this.database = database;
         this.eventBus = eventBus;
     }
 
     public void updateFromRemote() {
         Log.v(LOG_TAG, "updateFromRemote");
-        update(remoteRateSource.get());
+        update(remoteRateSource);
         this.eventBus.post(new SyncCompleteEvent());
     }
 
-    public void initializeDatabase() {
-        Log.v(LOG_TAG, "initializeDatabase");
-        update(localRateSource.get());
+    public void initializeData() {
+        Log.v(LOG_TAG, "initializeData");
+        updateOrInitializeMeta();
+        update(localRateSource);
         // This initial state really needs to be customized for the user's locale.
         SelectedCurrency baseCurrency = findByCode(SelectedCurrency.class, "USD");
         // when initializing to a user specific base currency, convert $1 to that currency and round
@@ -75,52 +80,102 @@ public class CurrencyRepository {
         insertAtPosition(5, findByCode("RUB"));
     }
 
-    private List<Currency> update(String json) {
-        if(json == null) {
-            return Collections.emptyList();
-        }
-        Log.v(LOG_TAG, "Updating from json " + json.length() + " " + json);
+    private void update(RateSource rateSource) {
+        List<CurrencyRate> rates = rates(rateSource);
+        if(rates == null) return;
+        Log.v(LOG_TAG, "Updating "+rates.size()+" rates.");
 
-        List<RateResponse> rates = parseCurrencyJson(json);
-        if(rates == null) {
-            return Collections.emptyList();
+        for(CurrencyRate r : rates) {
+            Currency c = findByCode(r.getCode());
+            if(c == null) continue;
+            c.setRate(r);
+            if(r.getRate() == BigDecimal.ZERO) {
+                deselectCurrency(c);
+            }
+            database.persist(c);
         }
-        Log.v(LOG_TAG, "Updated "+rates.size()+" currencies.");
+        Log.v(LOG_TAG, "Updated currencies.");
 
-        List<Currency> currencies = currencyFactory(rates);
         publishDataChange("update");
-        return currencies;
     }
 
-    static final Query ALL_CURRENCIES = Query
+    private List<CurrencyRate> rates(RateSource rateSource) {
+        String json = rateSource.get();
+        if(json == null) return null;
+        Log.v(LOG_TAG, "Updating from json " + json.length() + " " + json);
+        return new CurrencyRateParser().parse(json);
+    }
+
+    public void updateOrInitializeMeta() {
+        Log.v(LOG_TAG, "updateOrInitializeMeta");
+        List<CurrencyRate> rates = rates(localRateSource);
+        Collection<CurrencyMeta> metas = metaRepository.findAll();
+        Collection<Long> updatedIds = new ArrayList<>(metas.size());
+        for(CurrencyMeta meta : metas) {
+            Currency c = findOrInstantiate(meta.getCode());
+            c.setMeta(meta);
+            if(c.getId() == TableModel.NO_ID) {
+                // Only if the DB doesn't have a more up to date rate, set the one that shipped with
+                // the app.
+                CurrencyRate rate = findRate(rates, meta.getCode());
+                if(rate != null) c.setRate(rate);
+                else c.setRate("0");
+            }
+            database.persist(c);
+            updatedIds.add(c.getId());
+        }
+
+        int delCount = database.deleteWhere(Currency.class, Currency.ID.notIn(updatedIds));
+        Log.v(LOG_TAG, "Deleted " + delCount);
+    }
+
+    private CurrencyRate findRate(List<CurrencyRate> rates, String code) {
+        for(CurrencyRate rate : rates) {
+            if(rate.getCode().equals(code)) return rate;
+        }
+        return null;
+    }
+
+    static final Query INVALID_CURRENCIES = Query
             .select()
             .from(Currency.TABLE)
+            .where(Currency.RATE.eq("0"))
             .freeze();
 
-    static final Query SELECTED_CURRENCIES = ALL_CURRENCIES
+    static final Query VALID_CURRENCIES = Query
+            .select()
+            .from(Currency.TABLE)
+            .where(Currency.RATE.isNot("0"))
+            .freeze();
+
+    static final Query SELECTED_CURRENCIES = VALID_CURRENCIES
             .where(Currency.POSITION.isNotNull())
             .orderBy(Currency.POSITION.asc())
             .freeze();
 
     static final Query CALCULATED_CURRENCIES = SELECTED_CURRENCIES
-            .where(Currency.POSITION.gt(1))
+            .where(Currency.POSITION.gt(BASE_CURRENCY_POSITION))
             .freeze();
 
     static final Query BASE_CURRENCY = SELECTED_CURRENCIES
-            .where(Currency.POSITION.eq(1))
+            .where(Currency.POSITION.eq(BASE_CURRENCY_POSITION))
             .freeze();
 
     public Cursor findSelectedCursor() {
         return database.query(Currency.class, CALCULATED_CURRENCIES);
     }
 
-    private static final Query SEARCH_CURRENCIES = ALL_CURRENCIES.orderBy(Currency.CODE.asc()).freeze();
+    private static final Query SEARCH_CURRENCIES = VALID_CURRENCIES.orderBy(Currency.CODE.asc()).freeze();
     public Cursor searchAllCursor(String query) {
-        // TODO filter by query
-        Log.v(LOG_TAG, "Search for codes like " + query + "%");
         Query search = SEARCH_CURRENCIES.fork();
         if(query != null) {
-            search.where(Currency.CODE.like(query+"%"));
+            String fieldPrefix = query + "%";
+            String wordPrefix = " " + query + "%";
+            Log.v(LOG_TAG, "Search for codes and names like " + fieldPrefix + " and " + wordPrefix);
+            search.where(
+                    Currency.CODE.like(fieldPrefix)
+                            .or(Currency.NAME.like(fieldPrefix))
+                            .or(Currency.NAME.like(wordPrefix)));
         }
         return database.query(Currency.class, search);
     }
@@ -130,12 +185,19 @@ public class CurrencyRepository {
         if (isSelected) {
             insertAtPosition(2, currency);
         } else {
-            currency.setPosition(null);
-            database.persist(currency);
+            deselectCurrency(currency);
             publishDataChange("remove selected");
         }
         Log.v(LOG_TAG, "updateSelection " + isSelected + " " + currency.toString());
         return currency;
+    }
+
+    private void deselectCurrency(Currency currency) {
+        if(currency.getPosition() == null) return;
+        // Move currencies below this one up before removing it from the list.
+        insertAtPosition(BASE_CURRENCY_POSITION-1, currency);
+        currency.setPosition(null);
+        database.persist(currency);
     }
 
     private static final String SHIFT_LIST_SQL = "update currencies set position = position";
@@ -196,7 +258,7 @@ public class CurrencyRepository {
     }
 
     <T extends Currency> T findByCode(Class<T> modelClass, String code) {
-        Query query = ALL_CURRENCIES.where(Currency.CODE.eq(code));
+        Query query = VALID_CURRENCIES.where(Currency.CODE.eq(code));
         return database.fetchByQuery(modelClass, query);
     }
 
@@ -206,90 +268,16 @@ public class CurrencyRepository {
         this.eventBus.post(new CurrencyDataChangeEvent());
     }
 
-    private static List<RateResponse> parseCurrencyJson(String json) {
-        try {
-            // Consider https://github.com/bluelinelabs/LoganSquare for performance.
-            Gson gson = new GsonBuilder().create();
-            CurrencyResponse response = gson.fromJson(json, CurrencyResponse.class);
-            return response.getQuery().getResults().getRate();
-        }
-        catch (JsonSyntaxException jse) {
-            Log.e(LOG_TAG, "Error parsing new currency rates", jse);
-            return null;
-        }
-    }
-
-    private List<Currency> currencyFactory(List<RateResponse> rates) {
-        List<Currency> currencies = new ArrayList<Currency>(rates.size());
-        for(RateResponse r : rates) {
-            if(r.isValid()) {
-                Currency c = findOrInstantiate(r.getCode());
-                c.setCode(r.getCode());
-                c.setRate(r.getRate().toString());
-                database.persist(c);
-                currencies.add(c);
-            }
-        }
-        return currencies;
+    private static List<CurrencyRate> parseCurrencyJson(String json) {
+        return new CurrencyRateParser().parse(json);
     }
 
     private Currency findOrInstantiate(String code) {
         Currency currency = findByCode(code);
-        return currency != null ? currency : new Currency();
-    }
-
-    private static class CurrencyResponse {
-        private QueryResponse query;
-
-        public QueryResponse getQuery() { return query; }
-    }
-
-    private static class QueryResponse {
-        private int count;
-        private Date created;
-        private ResultsResponse results;
-
-        public ResultsResponse getResults() { return results; }
-    }
-
-    private static class ResultsResponse {
-        private List<RateResponse> rate;
-
-        public List<RateResponse> getRate() {
-            return rate;
+        if(currency == null) {
+            currency = new Currency();
+            currency.setCode(code);
         }
-    }
-
-    private static class RateResponse {
-        private String id;
-        private String Rate;
-
-        public boolean isValid() {
-            return id.length() == 6 && id.startsWith("USD")
-                    && !"N/A".equals(Rate);
-        }
-
-        public String getCode() {
-            return id.substring(3);
-        }
-
-        public BigDecimal getRate() {
-            if(!isValid()) throw new InvalidRateException(this);
-            return new BigDecimal(Rate);
-        }
-
-        @Override
-        public String toString() {
-            return "RateResponse{" +
-                    "id='" + id + '\'' +
-                    ", Rate='" + Rate + '\'' +
-                    '}';
-        }
-    }
-
-    public static class InvalidRateException extends RuntimeException {
-        public InvalidRateException(RateResponse r) {
-            super("Invalid rate response "+r.toString());
-        }
+        return currency;
     }
 }

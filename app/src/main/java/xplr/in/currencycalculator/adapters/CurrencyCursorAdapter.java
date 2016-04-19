@@ -71,7 +71,7 @@ public class CurrencyCursorAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         CurrencyMeta meta = currencyMetaRepository.findByCode(currency.getCode());
-        String name = meta != null? meta.getName() : currency.getCode();
+        String name = currency.getCode() + " " + currency.getName();
 
         if(viewHolder.codeText != null) viewHolder.codeText.setText(name);
         if(viewHolder.checkBox != null) viewHolder.checkBox.setChecked(currency.isSelected());
@@ -79,7 +79,7 @@ public class CurrencyCursorAdapter extends CursorAdapter {
         SelectedCurrency baseCurrency = this.currencyListActivity.getBaseCurrency();
         if(viewHolder.rateText != null) {
             currency.convertFrom(baseCurrency);
-            viewHolder.rateText.setText(currency.format(meta));
+            viewHolder.rateText.setText(currency.format());
         }
 
         if(viewHolder.flagImage != null && meta != null) {
