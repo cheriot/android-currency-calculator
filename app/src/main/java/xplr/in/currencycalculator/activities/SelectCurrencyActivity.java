@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CursorAdapter;
@@ -124,6 +125,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        searchView.setImeOptions(EditorInfo.IME_ACTION_NONE|EditorInfo.IME_FLAG_FORCE_ASCII);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
