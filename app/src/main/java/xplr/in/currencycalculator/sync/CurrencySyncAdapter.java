@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import xplr.in.currencycalculator.App;
-import xplr.in.currencycalculator.repositories.CurrencyRepository;
+import xplr.in.currencycalculator.repositories.CurrencyBulkRepository;
 
 /**
  * Handle the update of currency data using Android's sync adapter framework.
@@ -21,20 +21,20 @@ import xplr.in.currencycalculator.repositories.CurrencyRepository;
 public class CurrencySyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Inject
-    CurrencyRepository currencyRepository;
+    CurrencyBulkRepository currencyBulkRepository;
 
     public CurrencySyncAdapter(
             App context,
             boolean autoInitialize,
             boolean parallelSyncs,
-            CurrencyRepository currencyRepository) {
+            CurrencyBulkRepository currencyBulkRepository) {
         super(context, autoInitialize, parallelSyncs);
-        this.currencyRepository = currencyRepository;
+        this.currencyBulkRepository = currencyBulkRepository;
     }
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        currencyRepository.updateFromRemote();
+        currencyBulkRepository.updateFromRemote();
     }
 
     @Override

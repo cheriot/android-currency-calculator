@@ -15,18 +15,18 @@ public class CurrencySpec {
 
     @ColumnSpec(constraints="not null unique")
     String code;
+    // Rate can be 0 when a currency is no longer in use. Do not use them. This is because rates
+    // are updated regularly, but CurrencyMeta is only updated with the application code. Trying
+    // to keep downloads small and fast.
     @ColumnSpec(constraints="not null")
     String rate;
-    // Position is null for unselected currencies.
+    // Position on the main screen, null for unselected currencies.
     Integer position;
-    // Name is null when there's a mismatch between meta data packaged with the app and
-    // the rate response.
+    @ColumnSpec(constraints="not null")
     String name;
-    // TODO Bullshit default value because sqlite requires one. Reset DB version before first release.
-    @ColumnSpec(constraints="not null",defaultValue="2")
+    @ColumnSpec(constraints="not null")
     int minorUnits;
-    // TODO Bullshit default value because sqlite requires one. Reset DB version before first release.
-    @ColumnSpec(constraints="not null",defaultValue="00")
+    @ColumnSpec(constraints="not null")
     String issuingCountryCode;
 
     @ModelMethod

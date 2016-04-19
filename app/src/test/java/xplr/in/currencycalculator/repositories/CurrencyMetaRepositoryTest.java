@@ -16,6 +16,7 @@ import xplr.in.currencycalculator.sources.CurrencyMetaParser;
 import xplr.in.currencycalculator.sources.CurrencyMetaSource;
 import xplr.in.currencycalculator.sources.ResRawSource;
 
+import static junit.framework.Assert.assertNull;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
@@ -58,5 +59,20 @@ public class CurrencyMetaRepositoryTest {
         assertEquals("USD code.", "USD", usd.getCode());
         assertEquals("USD name.", "US Dollar", usd.getName());
         assertEquals("USD minor units.", 2, usd.getMinorUnits());
+    }
+
+    @Test
+    public void testFindByCountryCode() {
+        CurrencyMeta usd = currencyMetaRepository.findByCountryCode("us");
+        assertNotNull("Found meta from lowercase.", usd);
+        assertEquals("Meta is USD.", "USD", usd.getCode());
+
+        assertNull("Null is null.", currencyMetaRepository.findByCountryCode(null));
+        assertNull("Empty string is null.", currencyMetaRepository.findByCountryCode(""));
+        assertNull("Whitespace strings are null.", currencyMetaRepository.findByCountryCode(" "));
+
+        CurrencyMeta eur = currencyMetaRepository.findByCountryCode("FR ");
+        assertNotNull("Found meta from caps with whitespace.", eur);
+        assertEquals("Meta is EUR.", "EUR", eur.getCode());
     }
 }

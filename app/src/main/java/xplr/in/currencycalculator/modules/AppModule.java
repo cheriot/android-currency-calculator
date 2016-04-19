@@ -3,6 +3,7 @@ package xplr.in.currencycalculator.modules;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.telephony.TelephonyManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -12,7 +13,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import xplr.in.currencycalculator.App;
-import xplr.in.currencycalculator.repositories.CurrencyRepository;
+import xplr.in.currencycalculator.repositories.CurrencyBulkRepository;
 import xplr.in.currencycalculator.sources.HttpRateSource;
 import xplr.in.currencycalculator.sources.RateSource;
 import xplr.in.currencycalculator.sources.ResRawRateSource;
@@ -62,7 +63,12 @@ public class AppModule {
     }
 
     @Provides
-    CurrencySyncAdapter providesCurrencySyncAdapter(CurrencyRepository currencyRepository) {
-        return new CurrencySyncAdapter(app, true, false, currencyRepository);
+    CurrencySyncAdapter providesCurrencySyncAdapter(CurrencyBulkRepository currencyBulkRepository) {
+        return new CurrencySyncAdapter(app, true, false, currencyBulkRepository);
+    }
+
+    @Provides
+    TelephonyManager providesTelephonyManager() {
+        return (TelephonyManager)app.getSystemService(Context.TELEPHONY_SERVICE);
     }
 }

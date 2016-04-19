@@ -133,6 +133,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
                 return search(newText);
             }
         });
+
         return true;
     }
 

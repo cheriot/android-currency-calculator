@@ -1,5 +1,7 @@
 package xplr.in.currencycalculator.repositories;
 
+import android.text.TextUtils;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,18 @@ public class CurrencyMetaRepository {
             meta.setFlagResourceId(resourceId);
             metaByCode.put(meta.getCode(), meta);
         }
+    }
+
+    public CurrencyMeta findByCountryCode(String countryCode) {
+        if(countryCode == null || TextUtils.isEmpty(countryCode.trim())) return null;
+        countryCode = countryCode.trim();
+
+        for(CurrencyMeta meta : findAll()) {
+            for(CurrencyMeta.Country cmc : meta.getCountries()) {
+                if(cmc.getCode().equalsIgnoreCase(countryCode)) return meta;
+            }
+        }
+        return null;
     }
 
     public CurrencyMeta findByCode(String code) {

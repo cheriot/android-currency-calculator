@@ -1,4 +1,4 @@
-package xplr.in.currencycalculator.databases;
+package xplr.in.currencycalculator.repositories;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +9,6 @@ import org.robolectric.annotation.Config;
 
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
-import xplr.in.currencycalculator.repositories.CurrenciesDatabase;
 
 /**
  * Created by cheriot on 4/12/16.

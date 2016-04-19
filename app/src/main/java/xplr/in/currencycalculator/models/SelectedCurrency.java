@@ -70,6 +70,19 @@ public class SelectedCurrency extends Currency {
         }
     }
 
+    public String roundNumberCloseTo(SelectedCurrency reference) {
+        convertFrom(reference);
+        BigDecimal amount = new BigDecimal(getAmount());
+        if(amount.compareTo(BigDecimal.ONE) == -1 || amount.compareTo(BigDecimal.ONE) == 0) {
+            // USD, Euro, Bitcoin, etc
+            return "1";
+        } else {
+            // Any kind of Shilling
+            double digitCount = Math.floor(Math.log10(amount.doubleValue())) + 1;
+            return Double.toString(Math.pow(10, digitCount - 1));
+        }
+    }
+
     private DecimalFormat getFormatter() {
         // DecimalFormat will use the default locale. This still ignores the currency symbol
         // and which side of the number it goes on. Also, Locale.Category is not available.

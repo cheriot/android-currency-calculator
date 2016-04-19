@@ -26,14 +26,14 @@ import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.sources.CurrencyMetaParser;
 import xplr.in.currencycalculator.sources.CurrencyMetaSource;
-import xplr.in.currencycalculator.sources.RateSource;
 import xplr.in.currencycalculator.sources.ResRawRateSource;
 import xplr.in.currencycalculator.sources.ResRawSource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by cheriot on 4/3/16.
@@ -43,20 +43,29 @@ import static org.mockito.Mockito.*;
 public class CurrencyRepositoryTest {
 
     private App app;
-    private CurrencyMetaRepository metaRepository;
     private CurrenciesDatabase database;
+    private CurrencyBulkRepository currencyBulkRepository;
 
     @Before
     public void setUp() {
         app = (App)RuntimeEnvironment.application;
         // Don't actually populate the database when it's created. Let tests load smaller datasets.
-        Lazy<CurrencyRepository> lazy = mock(Lazy.class);
-        when(lazy.get()).thenReturn(mock(CurrencyRepository.class));
+        Lazy<CurrencyBulkRepository> lazy = mock(Lazy.class);
+        when(lazy.get()).thenReturn(mock(CurrencyBulkRepository.class));
         database = new CurrenciesDatabase(app, lazy);
-        metaRepository = new CurrencyMetaRepository(
+        CurrencyMetaRepository metaRepository = new CurrencyMetaRepository(
                 new CurrencyMetaSource(app),
                 new CurrencyMetaParser(),
                 new ResRawSource(app));
+        CurrencyRepository currencyRepository = new CurrencyRepository(null, database, new EventBus());
+        currencyBulkRepository = new CurrencyBulkRepository(
+                database,
+                currencyRepository,
+                metaRepository,
+                new ResRawRateSource(app),
+                null,
+                null,
+                new EventBus());
     }
 
     @Test
@@ -158,7 +167,7 @@ public class CurrencyRepositoryTest {
         when(mockSharedPrefs.edit()).thenReturn(mockEditor);
 
         CurrencyRepository currencyRepository = new CurrencyRepository(
-                mockSharedPrefs, null, null, metaRepository, database, new EventBus());
+                mockSharedPrefs, database, new EventBus());
 
         insertAt(1, "BOB");
         insertAt(1, "AED");
@@ -183,23 +192,20 @@ public class CurrencyRepositoryTest {
     }
 
     private CurrencyRepository populate() {
-        String json = resource("currencyResponse.json");
-        CurrencyRepository currencyRepository = currencyRepository(json, null);
-        currencyRepository.updateOrInitializeMeta();
-        currencyRepository.updateFromRemote();
+        CurrencyRepository currencyRepository = currencyRepository(null);
+        currencyBulkRepository.updateOrInitMeta();
         return currencyRepository;
     }
 
     private CurrencyRepository populate(String amount) {
         String json = resource("currencyResponse.json");
-        CurrencyRepository currencyRepository = currencyRepository(json, amount);
-        currencyRepository.updateOrInitializeMeta();
-        currencyRepository.updateFromRemote();
+        CurrencyRepository currencyRepository = currencyRepository(amount);
+        currencyBulkRepository.updateOrInitMeta();
         return currencyRepository;
     }
 
     private CurrencyRepository currencyRepository() {
-        return new CurrencyRepository(null, null, null, metaRepository, database, new EventBus());
+        return new CurrencyRepository(null, database, new EventBus());
     }
 
     private String resource(String filename) {
@@ -213,14 +219,7 @@ public class CurrencyRepositoryTest {
         }
     }
 
-    private CurrencyRepository currencyRepository(final String json, final String amount) {
-        class MockRateSource implements RateSource {
-            @Override
-            public String get() {
-                return json;
-            }
-        }
-
+    private CurrencyRepository currencyRepository(final String amount) {
 
         class MockSharedPrefs implements SharedPreferences {
             @Override
@@ -270,6 +269,6 @@ public class CurrencyRepositoryTest {
 
             }
         }
-        return new CurrencyRepository(new MockSharedPrefs(), new ResRawRateSource(app), new MockRateSource(), metaRepository, database, new EventBus());
+        return new CurrencyRepository(new MockSharedPrefs(), database, new EventBus());
     }
 }

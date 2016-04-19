@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import dagger.Lazy;
 import xplr.in.currencycalculator.App;
@@ -21,17 +22,18 @@ import xplr.in.currencycalculator.models.Currency;
 /**
  * Created by cheriot on 4/9/16.
  */
+@Singleton
 public class CurrenciesDatabase extends SquidDatabase {
 
     private static final String LOG_TAG = CurrenciesDatabase.class.getName();
 
     // Lazy to deal with a circular dependency. Maybe extract updater logic from the repository.
-    private final Lazy<CurrencyRepository> lazyCurrencyRepository;
+    private final Lazy<CurrencyBulkRepository> lazyBulkRepository;
 
     @Inject
-    public CurrenciesDatabase(App context, Lazy<CurrencyRepository> lazyCurrencyRepository) {
+    public CurrenciesDatabase(App context, Lazy<CurrencyBulkRepository> lazyBulkRepository) {
         super(context);
-        this.lazyCurrencyRepository = lazyCurrencyRepository;
+        this.lazyBulkRepository = lazyBulkRepository;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class CurrenciesDatabase extends SquidDatabase {
 
     @Override
     protected int getVersion() {
-        return 5;
+        return 1;
     }
 
     @Override
@@ -52,15 +54,13 @@ public class CurrenciesDatabase extends SquidDatabase {
     @Override
     protected boolean onUpgrade(SQLiteDatabaseWrapper db, int oldVersion, int newVersion) {
         switch (oldVersion) {
-            case 3:
-                tryAddColumn(Currency.NAME);
-                tryAddColumn(Currency.ISSUING_COUNTRY_CODE);
-                tryAddColumn(Currency.MINOR_UNITS);
+            case 1:
+            // Migrations will go here.
         }
 
         // Need this call only after app code is updated, but there's no trigger for that so
         // remember to bump the database version when meta has changed.
-        lazyCurrencyRepository.get().updateOrInitializeMeta();
+        lazyBulkRepository.get().updateOrInitMeta();
         return true;
     }
 
@@ -74,7 +74,7 @@ public class CurrenciesDatabase extends SquidDatabase {
     @Override
     protected void onTablesCreated(SQLiteDatabaseWrapper db) {
         super.onTablesCreated(db);
-        lazyCurrencyRepository.get().initializeData();
+        lazyBulkRepository.get().initializeDefaultSelections();
     }
 
     /** Test helper. */

@@ -6,7 +6,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import javax.inject.Inject;
@@ -42,8 +41,7 @@ public class CurrencySyncTriggers {
     public void createSyncAccount(Context context) {
         Log.v(LOG_TAG, "createSyncAccount");
         boolean newAccount = false;
-        boolean setupComplete = PreferenceManager
-                .getDefaultSharedPreferences(context).getBoolean(PREF_SETUP_COMPLETE, false);
+        boolean setupComplete = appSharedPrefs.getBoolean(PREF_SETUP_COMPLETE, false);
 
         // Create account, if it's missing. (Either first run, or user has deleted account.)
         Account account = getAccount();
