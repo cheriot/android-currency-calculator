@@ -4,4 +4,6 @@
     <string name="title_activity_select_currency">Select Currencies</string>
     <string name="search_title">Search Currencies</string>
     <string name="search_hint">Search</string>
+    <string name="flag_content_desc">National Flag</string>
+    <string name="clear_content_desc">Clear Amount</string>
 </resources>

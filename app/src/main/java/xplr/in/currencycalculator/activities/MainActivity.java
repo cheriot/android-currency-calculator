@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.base_currency_name) TextView baseCurrencyName;
     @Bind(R.id.base_currency_amount) EditText baseCurrencyAmount;
+    @Bind(R.id.base_currency_amount_clear) ImageButton baseCurrencyAmountClear;
     @Bind(R.id.base_currency_flag) ImageView baseCurrencyFlag;
     @Bind(R.id.list_currency_calculations) ListView currencyCalculationsListView;
     @Bind(R.id.swipeContainer) SwipeRefreshLayout swipeRefreshLayout;
@@ -99,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-
         baseCurrencyAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -111,6 +112,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                     Log.v(LOG_TAG, "TEXT " + text);
                     currencyRepository.setBaseAmount(baseCurrency, text);
                     currenciesAdapter.notifyDataSetChanged();
+                }
+                if(s.length() == 0) {
+                    baseCurrencyAmountClear.setVisibility(View.INVISIBLE);
+                } else {
+                    baseCurrencyAmountClear.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -156,6 +162,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     protected void onDestroy() {
         eventBus.unregister(this);
         super.onDestroy();
+    }
+
+    public void clearBaseAmount(View view) {
+        baseCurrencyAmount.getText().clear();
+        baseCurrencyAmount.requestFocus();
     }
 
     private void displayBaseCurrency(SelectedCurrency currency, CurrencyMeta meta) {
