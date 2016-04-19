@@ -183,6 +183,11 @@ public class CurrencyRepositoryTest {
         verify(mockEditor).apply();
     }
 
+    @Test
+    public void testDeselect() {
+        // TODO verify that remaining currencies have the correct positions
+    }
+
     private void insertAt(int position, String code) {
         currencyRepository().insertAtPosition(position, currencyRepository().findByCode(code));
     }

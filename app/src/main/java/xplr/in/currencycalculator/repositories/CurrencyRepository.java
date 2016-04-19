@@ -99,8 +99,8 @@ public class CurrencyRepository {
 
     void deselectCurrency(Currency currency) {
         if(currency.getPosition() == null) return;
-        // Move currencies below this one up before removing it from the list.
-        insertAtPosition(BASE_CURRENCY_POSITION-1, currency);
+        // Move to the end of the list so currencies below the starting position will move up.
+        insertAtPosition(Integer.MAX_VALUE, currency);
         currency.setPosition(null);
         database.persist(currency);
     }
