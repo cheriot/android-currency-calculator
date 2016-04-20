@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -56,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Inject @Named("calculate") CurrencyCursorAdapter currenciesAdapter;
     SelectedCurrency baseCurrency;
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.base_currency_name) TextView baseCurrencyName;
     @Bind(R.id.base_currency_amount) EditText baseCurrencyAmount;
@@ -75,8 +73,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
         eventBus.register(this);
         new BaseCurrencyQuery().execute();
-
-        setSupportActionBar(toolbar);
 
         final Activity thisActivity = this;
         fab.setOnClickListener(new View.OnClickListener() {

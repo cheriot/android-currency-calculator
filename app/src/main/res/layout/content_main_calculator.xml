@@ -9,62 +9,67 @@
               tools:context=".activities.MainActivity"
               tools:showIn="@layout/activity_main_calculator">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:gravity="center"
-        android:minHeight="80dp"
-        android:orientation="horizontal"
-        android:focusableInTouchMode="true">
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/base_currency_flag"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:contentDescription="@string/flag_content_desc"
-            android:paddingStart="16dp"
-            android:paddingLeft="16dp"
-            android:src="@drawable/flag_eu"/>
-
-        <TextView
-            android:id="@+id/base_currency_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingLeft="16dp"
-            android:text="US Dollar"/>
+            android:background="@android:color/white"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:minHeight="80dp"
+            android:orientation="horizontal">
 
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/base_currency_flag"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="@string/flag_content_desc"
+                android:paddingLeft="16dp"
+                android:paddingStart="16dp"
+                android:src="@drawable/flag_eu"/>
 
-            <EditText
-                android:id="@+id/base_currency_amount"
+            <TextView
+                android:id="@+id/base_currency_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:ems="6"
-                android:paddingLeft="10dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="30dp"
-                android:paddingRight="30dp"
-                android:inputType="numberDecimal"/>
+                android:paddingLeft="16dp"
+                android:paddingStart="16dp"
+                android:text="US Dollar"/>
 
-            <ImageButton
-                android:id="@+id/base_currency_amount_clear"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_gravity="end|center_vertical"
-                android:src="@drawable/ic_clear_black_24dp"
-                android:onClick="clearBaseAmount"
-                android:background="@null"
-                android:contentDescription="@string/clear_content_desc"/>
-        </FrameLayout>
-    </LinearLayout>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/base_currency_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:ems="6"
+                    android:inputType="numberDecimal"
+                    android:paddingEnd="30dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="30dp"
+                    android:paddingStart="10dp"/>
+
+                <ImageButton
+                    android:id="@+id/base_currency_amount_clear"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@null"
+                    android:contentDescription="@string/clear_content_desc"
+                    android:onClick="clearBaseAmount"
+                    android:src="@drawable/ic_clear_black_24dp"/>
+            </FrameLayout>
+        </LinearLayout>
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeContainer"
@@ -77,9 +82,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"/>
+            android:scrollbarStyle="insideOverlay"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>
