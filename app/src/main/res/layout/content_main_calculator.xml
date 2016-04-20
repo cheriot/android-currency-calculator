@@ -51,6 +51,7 @@
                     android:layout_marginStart="16dp"
                     android:ems="6"
                     android:inputType="numberDecimal"
+                    android:imeOptions="actionDone"
                     android:paddingEnd="30dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="30dp"

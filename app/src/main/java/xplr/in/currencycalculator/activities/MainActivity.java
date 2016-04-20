@@ -1,6 +1,7 @@
 package xplr.in.currencycalculator.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -11,7 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
@@ -46,7 +50,7 @@ import xplr.in.currencycalculator.sync.SyncCompleteEvent;
 
 public class MainActivity extends AppCompatActivity implements CurrencyListActivity {
 
-    private static String LOG_TAG = MainActivity.class.getCanonicalName();
+    private static String LOG_TAG = MainActivity.class.getSimpleName();
 
     @Inject EventBus eventBus;
     @Inject CurrencyRepository currencyRepository;
@@ -119,6 +123,16 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             @Override
             public void afterTextChanged(Editable s) {}
         });
+        baseCurrencyAmount.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                }
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(baseCurrencyAmount.getWindowToken(), 0);
+                return true;
+            }
+        });
 
         currencyCalculationsListView.setAdapter(currenciesAdapter);
         currencyCalculationsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -163,6 +177,9 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     public void clearBaseAmount(View view) {
         baseCurrencyAmount.getText().clear();
         baseCurrencyAmount.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(baseCurrencyAmount, InputMethodManager.SHOW_FORCED);
+        Log.v(LOG_TAG, "Cleared, now show keyboard.");
     }
 
     private void displayBaseCurrency(SelectedCurrency currency, CurrencyMeta meta) {
