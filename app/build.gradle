@@ -12,12 +12,24 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        playstore {
+            // keyAlias 'mykeyalias'
+            // storeFile file('<path-to-key>.jks')
+            // storePassword System.console().readLine("\nKeystore password: ")
+            // storePassword 'xxxxx'
+            // keyPassword System.console().readLine("\nKey password: ")
+            // keyPassword 'xxxxx'
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
-            // proguard configuration needed
-            // http://jakewharton.github.io/butterknife/
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.playstore
         }
         debug {
             debuggable true
