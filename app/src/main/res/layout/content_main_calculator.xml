@@ -47,7 +47,7 @@
 
                 <EditText
                     android:id="@+id/base_currency_amount"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
@@ -55,7 +55,9 @@
                     android:inputType="numberDecimal"
                     android:imeOptions="actionDone"
                     android:paddingLeft="5dp"
-                    android:paddingStart="5dp"/>
+                    android:paddingStart="5dp"
+                    android:paddingRight="25dp"
+                    android:paddingEnd="25dp"/>
 
                 <ImageButton
                     android:id="@+id/base_currency_amount_clear"
