@@ -41,7 +41,9 @@
 
             <FrameLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp">
 
                 <EditText
                     android:id="@+id/base_currency_amount"
@@ -52,18 +54,20 @@
                     android:ems="6"
                     android:inputType="numberDecimal"
                     android:imeOptions="actionDone"
-                    android:paddingEnd="30dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="30dp"
-                    android:paddingStart="10dp"/>
+                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"/>
 
                 <ImageButton
                     android:id="@+id/base_currency_amount_clear"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
+                    android:layout_width="25dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
+                    android:paddingStart="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingEnd="12dp"
+                    android:paddingRight="12dp"
+                    android:layout_marginEnd="-5dp"
+                    android:layout_marginRight="-5dp"
                     android:background="@null"
                     android:contentDescription="@string/clear_content_desc"
                     android:onClick="clearBaseAmount"
