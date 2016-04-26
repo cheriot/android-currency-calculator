@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+
+bin/adb install -r build/apk/app-release-zipaligned.apk
+bin/adb shell monkey -p xplr.in.currencycalculator -c android.intent.category.LAUNCHER 1

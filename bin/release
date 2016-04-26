@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -e
+
+# Based on the docs at:
+# http://developer.android.com/tools/publishing/app-signing.html
+# http://developer.android.com/intl/ko/tools/building/building-cmdline.html
+
+# Generate an APK at ./app/build/outputs/apk/app-release-unsigned.apk
+./gradlew assembleRelease
+
+mkdir -p build/apk
+
+cp ./app/build/outputs/apk/app-release-unsigned.apk build/apk/app-release-unsigned.apk
+
+# Sign it. All android apps in the family need to use the same key.
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
+  -keystore ~/Dropbox/devspace/android/xplrPlaystoreKey.jks \
+  build/apk/app-release-unsigned.apk \
+  -signedjar build/apk/app-release-signed.apk \
+  xplrplaystorekey
+
+jarsigner -verify -verbose -certs \
+  -keystore ~/Dropbox/devspace/android/xplrPlaystoreKey.jks \
+  build/apk/app-release-signed.apk
+
+bin/zipalign -f -v 4 build/apk/app-release-signed.apk build/apk/app-release-zipaligned.apk
+
+ls -alh build/apk/

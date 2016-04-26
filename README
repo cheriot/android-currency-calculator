@@ -3,6 +3,24 @@ adb devices
 adb -s <device> shell
 run-as xplr.in.currencycalculator
 
+Build debug apk (signed and zipaligned)
+./gradlew assembleDebug
+
+Release
+bin/release
+
+Deploy apk
+bin/install
+
+Convert ListView to RecyclerView
+https://github.com/bleeding182/recyclerviewItemDecorations
+http://stackoverflow.com/questions/24618829/how-to-add-dividers-and-spaces-between-items-in-recyclerview
+https://blog.stylingandroid.com/material-part-5/
+
+Screenshotes
+bin/adb shell /system/bin/screencap -p /sdcard/screenshot.png
+bin/adb pull /sdcard/screenshot.png main-activity-screenshot.png
+
 Android dev stack possibilities
 pos  RxJava, RxAndroid
      http://blog.danlew.net/2014/09/15/grokking-rxjava-part-1/
@@ -44,6 +62,13 @@ https://github.com/codepath/android_guides/wiki#getting-started
 
 Marketing
 http://medyo.github.io/generate-awesome-playstore-screenshots-using-sketch
+http://www.norio.be/android-feature-graphic-generator/
+http://developer.android.com/intl/ko/distribute/tools/promote/device-art.html
+https://blog.placeit.net/make-google-play-screenshots/
+http://www.preapps.com/
+
+Usability
+https://www.usertesting.com/
 
 From the guy at BHive, Arvind
 http://getbook.co/chris?auth=3269e7e3dc5bd92bbf026ac34fc3bf9d382b6d6e

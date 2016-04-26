@@ -6,4 +6,6 @@
 .DS_Store
 /build
 /captures
-bin
+
+bin/adb
+bin/zipalign
