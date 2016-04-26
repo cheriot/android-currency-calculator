@@ -1,6 +1,7 @@
 package xplr.in.currencycalculator.loaders;
 
 import android.database.Cursor;
+import android.support.annotation.Keep;
 
 import xplr.in.currencycalculator.activities.CurrencyListActivity;
 
@@ -10,6 +11,7 @@ import xplr.in.currencycalculator.activities.CurrencyListActivity;
 public class SelectedCurrencyLoader extends AbstractCurrencyLoader {
     private static String LOG_TAG = SelectedCurrencyLoader.class.getCanonicalName();
 
+    @Keep
     public SelectedCurrencyLoader(CurrencyListActivity activity) {
         super(activity);
     }
