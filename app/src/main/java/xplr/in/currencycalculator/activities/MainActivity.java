@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
+        // Replace with butterknife's @OnTextChange?
         baseCurrencyAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}

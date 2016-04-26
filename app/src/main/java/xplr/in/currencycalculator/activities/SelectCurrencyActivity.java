@@ -98,6 +98,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         }
     }
 
+    // Use butterknife's @OnCheckedChanged?
     public void onCheckboxClicked(View view) {
         CheckBox checkBox = (CheckBox)view;
         Log.v(LOG_TAG, "Clicked checkbox " + checkBox.isChecked());
@@ -145,8 +146,8 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         Log.v(LOG_TAG, "SEARCH CHANGE" + query);
         searchQuery = query;
         getLoaderManager().restartLoader(CURRENCY_LOADER_ID, null, this);
-        // Return true to preempt the default behavior or sending an intent.
         currenciesListView.smoothScrollToPosition(0);
+        // Return true to preempt the default behavior of sending an intent.
         return true;
     }
 
