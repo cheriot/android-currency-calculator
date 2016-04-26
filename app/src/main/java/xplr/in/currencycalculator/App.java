@@ -1,6 +1,7 @@
 package xplr.in.currencycalculator;
 
 import android.app.Activity;
+import android.os.StrictMode;
 
 import javax.inject.Inject;
 
@@ -25,6 +26,18 @@ public class App extends android.app.Application {
                 .appModule(new AppModule(this))
                 .build();
         appComponent.inject(this);
+        if(BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyDialog()
+                    .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyDropBox() // What does this actually do?
+                    .build());
+        }
     }
 
     public ActivityComponent newActivityScope(Activity activity) {
