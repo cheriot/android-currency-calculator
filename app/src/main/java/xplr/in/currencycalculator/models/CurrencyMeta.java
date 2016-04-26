@@ -3,19 +3,35 @@ package xplr.in.currencycalculator.models;
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by cheriot on 4/14/16.
  */
 @JsonObject
 public class CurrencyMeta {
+
+    public enum FlagSize {
+        SQUARE("1x1"), NORMAL("4x3");
+        private String value;
+
+        FlagSize(String value) {
+            this.value = value;
+        }
+    }
+
     @JsonField String code;
     @JsonField String name;
     @JsonField int minorUnits;
     @JsonField String issuingCountryCode;
     @JsonField List<Country> countries;
-    int flagResourceId;
+    Map<FlagSize,Integer> flagResourceIds;
+
+    public CurrencyMeta() {
+        this.flagResourceIds = new HashMap<>(400); // 400 > # of currencies * # of flag sizes
+    }
 
     public String getCode() {
         return code;
@@ -33,16 +49,16 @@ public class CurrencyMeta {
         return issuingCountryCode;
     }
 
-    public int getFlagResourceId() {
-        return flagResourceId;
+    public int getFlagResourceId(FlagSize flagSize) {
+        return flagResourceIds.get(flagSize);
     }
 
-    public void setFlagResourceId(int flagResourceId) {
-        this.flagResourceId = flagResourceId;
+    public void setFlagResourceId(FlagSize flagSize, int flagResourceId) {
+        flagResourceIds.put(flagSize, flagResourceId);
     }
 
-    public String getResourceName() {
-        return "flag_" + getIssuingCountryCode().toLowerCase();
+    public String getResourceName(FlagSize flagSize) {
+        return "flag_" + flagSize.value + "_" + getIssuingCountryCode().toLowerCase();
     }
 
     public List<Country> getCountries() {

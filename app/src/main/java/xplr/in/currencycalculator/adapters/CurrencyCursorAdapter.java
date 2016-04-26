@@ -84,7 +84,7 @@ public class CurrencyCursorAdapter extends CursorAdapter {
 
         if(viewHolder.flagImage != null && meta != null) {
             Activity activity = (Activity)currencyListActivity;
-            Drawable drawable = activity.getResources().getDrawable(meta.getFlagResourceId());
+            Drawable drawable = activity.getResources().getDrawable(meta.getFlagResourceId(CurrencyMeta.FlagSize.SQUARE));
             viewHolder.flagImage.setImageDrawable(drawable);
         }
     }

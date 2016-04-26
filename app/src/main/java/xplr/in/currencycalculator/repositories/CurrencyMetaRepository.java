@@ -27,10 +27,12 @@ public class CurrencyMetaRepository {
         List<CurrencyMeta> metaList = parser.parse(source.get());
         metaByCode = new HashMap<>(metaList.size());
         for(CurrencyMeta meta : metaList) {
-            String name = meta.getResourceName();
-            int resourceId = resRawSource.getResourceIdFromName(name);
-            meta.setFlagResourceId(resourceId);
-            metaByCode.put(meta.getCode(), meta);
+            for(CurrencyMeta.FlagSize flagSize : CurrencyMeta.FlagSize.values()) {
+                String name = meta.getResourceName(flagSize);
+                int resourceId = resRawSource.getResourceIdFromName(name);
+                meta.setFlagResourceId(flagSize, resourceId);
+                metaByCode.put(meta.getCode(), meta);
+            }
         }
     }
 

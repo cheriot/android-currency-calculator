@@ -24,12 +24,10 @@
 
             <ImageView
                 android:id="@+id/base_currency_flag"
-                android:layout_width="50dp"
+                android:layout_width="67dp"
                 android:layout_height="50dp"
                 android:contentDescription="@string/flag_content_desc"
-                android:paddingLeft="16dp"
-                android:paddingStart="16dp"
-                android:src="@drawable/flag_eu"/>
+                android:src="@drawable/flag_4x3_eu"/>
 
             <TextView
                 android:id="@+id/base_currency_name"

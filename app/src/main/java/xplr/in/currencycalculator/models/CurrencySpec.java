@@ -35,11 +35,6 @@ public class CurrencySpec {
     }
 
     @ModelMethod
-    public static String getFlagResourceName(Currency c) {
-        return "flag_" + c.getIssuingCountryCode().toLowerCase();
-    }
-
-    @ModelMethod
     public static void setRate(Currency c, CurrencyRate rate) {
         c.setRate(rate.getRate().toString());
     }
