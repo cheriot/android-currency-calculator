@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -16,15 +19,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-
-import com.yahoo.squidb.data.SquidCursor;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,6 +37,7 @@ import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
+import xplr.in.currencycalculator.adapters.CurrencyRecyclerAdapter;
 import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
 import xplr.in.currencycalculator.loaders.SelectedCurrencyLoader;
 import xplr.in.currencycalculator.models.CurrencyMeta;
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Bind(R.id.base_currency_amount) EditText baseCurrencyAmount;
     @Bind(R.id.base_currency_amount_clear) ImageButton baseCurrencyAmountClear;
     @Bind(R.id.base_currency_flag) ImageView baseCurrencyFlag;
-    @Bind(R.id.list_currency_calculations) ListView currencyCalculationsListView;
+    @Bind(R.id.list_currency_calculations) RecyclerView currencyCalculationsRecyclerView;
     @Bind(R.id.swipeContainer) SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -135,24 +135,10 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             }
         });
 
-        currencyCalculationsListView.setAdapter(currenciesAdapter);
-        currencyCalculationsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.v(LOG_TAG, "Clicked currency " + position);
-                SquidCursor currencyCursor = (SquidCursor) currenciesAdapter.getItem(position);
-                SelectedCurrency currency = new SelectedCurrency();
-                currency.readPropertiesFromCursor(currencyCursor);
-                // This currency's amount will become the new selected amount.
-                currency.convertFrom(baseCurrency);
-                String formattedAmount = ((TextView)view.findViewById(R.id.currency_rate))
-                        .getText()
-                        .toString();
-                currency.parse(formattedAmount);
-                currencyRepository.setBaseCurrency(currency);
-                currencyCalculationsListView.smoothScrollToPosition(0);
-            }
-        });
+        currencyCalculationsRecyclerView.setAdapter(
+                new CurrencyRecyclerAdapter(R.layout.list_item_currency_calculate));
+        currencyCalculationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        currencyCalculationsRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         // Initialize Loader & its handler.
         CurrencyLoaderCallbacks clc = new CurrencyLoaderCallbacks(this, SelectedCurrencyLoader.class);
@@ -197,7 +183,8 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         baseCurrencyAmount.setText(currency.getAmount());
         // Move the cursor to the end as if the amount had just been typed.
         baseCurrencyAmount.setSelection(baseCurrencyAmount.length());
-        // Rebind ListView items so converted amounts are updated.
+        // Rebind RecyclerView items so converted amounts are updated. Does this need to be more
+        // fine grained?
         currenciesAdapter.notifyDataSetChanged();
     }
 
