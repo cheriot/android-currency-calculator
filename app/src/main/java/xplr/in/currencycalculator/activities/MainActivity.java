@@ -184,10 +184,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         baseCurrencyAmount.setText(currency.getAmount());
         // Move the cursor to the end as if the amount had just been typed.
         baseCurrencyAmount.setSelection(baseCurrencyAmount.length());
-        // Rebind RecyclerView items so converted amounts are updated. Does this need to be more
-        // fine grained?
+        // Rebind RecyclerView items so converted amounts are updated.
         currenciesAdapter.setBaseCurrency(baseCurrency);
         currenciesAdapter.notifyDataSetChanged();
+
+        currencyCalculationsRecyclerView.scrollToPosition(0);
     }
 
     @Subscribe(threadMode=ThreadMode.BACKGROUND)

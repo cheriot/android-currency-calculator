@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical">
 
     <ImageView
@@ -16,7 +18,7 @@
         android:src="@drawable/flag_1x1_eu"
         android:contentDescription=""/>
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
         android:id="@+id/currency_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -26,7 +28,7 @@
         android:textIsSelectable="false"
         android:text="US Dollar"/>
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
         android:id="@+id/currency_rate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

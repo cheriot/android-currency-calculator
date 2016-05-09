@@ -10,6 +10,7 @@ import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.adapters.CurrencyRecyclerAdapter;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
+import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
 /**
  * Created by cheriot on 4/14/16.
@@ -29,8 +30,8 @@ public class ActivityModule {
     }
 
     @Provides @ActivityScope @Named("calculate")
-    public CurrencyRecyclerAdapter provideCalculateCurrencyCursorAdapter(CurrencyMetaRepository currencyMetaRepository) {
-        return new CurrencyRecyclerAdapter(R.layout.list_item_currency_calculate, currencyMetaRepository);
+    public CurrencyRecyclerAdapter provideCalculateCurrencyCursorAdapter(CurrencyRepository currencyRepository, CurrencyMetaRepository currencyMetaRepository) {
+        return new CurrencyRecyclerAdapter(R.layout.list_item_currency_calculate, currencyRepository, currencyMetaRepository);
     }
 
     @Provides @ActivityScope @Named("select")
