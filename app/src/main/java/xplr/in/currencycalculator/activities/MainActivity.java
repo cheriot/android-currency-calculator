@@ -186,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         baseCurrencyAmount.setSelection(baseCurrencyAmount.length());
         // Rebind RecyclerView items so converted amounts are updated. Does this need to be more
         // fine grained?
+        currenciesAdapter.setBaseCurrency(baseCurrency);
         currenciesAdapter.notifyDataSetChanged();
     }
 

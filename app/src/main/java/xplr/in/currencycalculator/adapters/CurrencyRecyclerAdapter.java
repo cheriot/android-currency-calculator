@@ -1,12 +1,11 @@
 package xplr.in.currencycalculator.adapters;
 
-import android.support.annotation.Nullable;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,7 +14,7 @@ import com.yahoo.squidb.data.SquidCursor;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.R;
-import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 
@@ -28,6 +27,7 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
     private final int rLayout;
     private final CurrencyMetaRepository metaRepository;
     private SquidCursor cursor;
+    private SelectedCurrency baseCurrency;
 
     public CurrencyRecyclerAdapter(int rLayout, CurrencyMetaRepository metaRepository) {
         super();
@@ -37,6 +37,10 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
 
     public void swapCursor(SquidCursor newCursor) {
         this.cursor = newCursor;
+    }
+
+    public void setBaseCurrency(SelectedCurrency baseCurrency) {
+        this.baseCurrency = baseCurrency;
     }
 
     @Override
@@ -50,8 +54,7 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
     @Override
     public void onBindViewHolder(CurrencyViewHolder holder, int position) {
         SelectedCurrency currency = getCurrency(position);
-        Log.v(LOG_TAG, "onBindViewHolder " + currency.getCode());
-        holder.bindView(currency);
+        holder.bindView(currency, baseCurrency, metaRepository.findByCode(currency.getCode()));
     }
 
     @Override
@@ -77,10 +80,8 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
 
     static class CurrencyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @Bind(R.id.currency_name) TextView nameText;
-        @Nullable @Bind(R.id.currency_code) TextView codeText;
-        @Nullable @Bind(R.id.currency_rate) TextView rateText;
-        @Nullable @Bind(R.id.currency_selected) CheckBox checkBox;
-        @Nullable @Bind(R.id.currency_flag) ImageView flagImage;
+        @Bind(R.id.currency_rate) TextView rateText;
+        @Bind(R.id.currency_flag) ImageView flagImage;
 
         public CurrencyViewHolder(View itemView) {
             super(itemView);
@@ -88,10 +89,18 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
             itemView.setOnClickListener(this);
         }
 
-        public void bindView(Currency currency) {
-            Log.v(LOG_TAG, "bindView " + currency);
+        public void bindView(SelectedCurrency currency, SelectedCurrency baseCurrency, CurrencyMeta meta) {
+            Log.v(LOG_TAG, "bindView " + currency.getCode());
             nameText.setText(currency.getName());
-            rateText.setText(currency.getRate());
+
+            int resourceId = meta.getFlagResourceId(CurrencyMeta.FlagSize.SQUARE);
+            Drawable drawable = itemView.getResources().getDrawable(resourceId);
+            flagImage.setImageDrawable(drawable);
+
+            if(baseCurrency != null) {
+                currency.convertFrom(baseCurrency);
+                rateText.setText(currency.format());
+            }
         }
 
         @Override
