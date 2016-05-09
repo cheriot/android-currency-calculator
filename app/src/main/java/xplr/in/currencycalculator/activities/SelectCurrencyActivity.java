@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,7 +33,6 @@ import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.loaders.AllCurrencyLoader;
-import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
@@ -48,7 +46,6 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     @Inject EventBus eventBus;
     @Inject @Named("select") CurrencyCursorAdapter currenciesAdapter;
 
-    private CurrencyLoaderCallbacks currencyLoaderCallbacks;
     private String searchQuery = null;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -169,11 +166,6 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     @Override
     public CurrencyRepository getCurrencyRepository() {
         return currencyRepository;
-    }
-
-    @Override
-    public CursorAdapter getCurrencyCursorAdapter() {
-        return currenciesAdapter;
     }
 
     @Override

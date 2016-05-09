@@ -18,6 +18,7 @@ public abstract class AbstractCurrencyLoader extends WorkingAsyncTaskLoader<Curs
     private CurrencyListActivity activity;
 
     public AbstractCurrencyLoader(CurrencyListActivity activity) {
+        // TODO: accept eventBus and repository instead of the activity
         super((Context)activity);
         this.activity = activity;
     }

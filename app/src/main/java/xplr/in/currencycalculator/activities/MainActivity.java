@@ -1,8 +1,11 @@
 package xplr.in.currencycalculator.activities;
 
 import android.app.Activity;
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,11 +22,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.yahoo.squidb.data.SquidCursor;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,9 +40,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
-import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.adapters.CurrencyRecyclerAdapter;
-import xplr.in.currencycalculator.loaders.CurrencyLoaderCallbacks;
 import xplr.in.currencycalculator.loaders.SelectedCurrencyLoader;
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.SelectedCurrency;
@@ -48,15 +50,16 @@ import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
 import xplr.in.currencycalculator.sync.SyncCompleteEvent;
 
-public class MainActivity extends AppCompatActivity implements CurrencyListActivity {
+public class MainActivity extends AppCompatActivity implements CurrencyListActivity, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final int LOADER_ID = 1;
 
     @Inject EventBus eventBus;
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencySyncTriggers currencySyncTriggers;
     @Inject CurrencyMetaRepository currencyMetaRepository;
-    @Inject @Named("calculate") CurrencyCursorAdapter currenciesAdapter;
+    @Inject @Named("calculate") CurrencyRecyclerAdapter currenciesAdapter;
     SelectedCurrency baseCurrency;
 
     @Bind(R.id.fab) FloatingActionButton fab;
@@ -135,14 +138,12 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             }
         });
 
-        currencyCalculationsRecyclerView.setAdapter(
-                new CurrencyRecyclerAdapter(R.layout.list_item_currency_calculate));
+        currencyCalculationsRecyclerView.setAdapter(currenciesAdapter);
         currencyCalculationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         currencyCalculationsRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         // Initialize Loader & its handler.
-        CurrencyLoaderCallbacks clc = new CurrencyLoaderCallbacks(this, SelectedCurrencyLoader.class);
-        getLoaderManager().initLoader(CurrencyLoaderCallbacks.LOADER_ID, null, clc);
+        getLoaderManager().initLoader(LOADER_ID, null, this);
 
         // TODO There's a "30 frames skipped" message...
         // Setup the sync account on another thread?
@@ -207,11 +208,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     }
 
     @Override
-    public CursorAdapter getCurrencyCursorAdapter() {
-        return currenciesAdapter;
-    }
-
-    @Override
     public EventBus getEventBus() {
         return eventBus;
     }
@@ -219,6 +215,24 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Override
     public SelectedCurrency getBaseCurrency() {
         return baseCurrency;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new SelectedCurrencyLoader(this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.v(LOG_TAG, "onLoadFinished " + data);
+        currenciesAdapter.swapCursor((SquidCursor)data);
+        currenciesAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        Log.v(LOG_TAG, "ONLOADERRESET");
+        currenciesAdapter.swapCursor(null);
     }
 
     public class BaseCurrencyQuery extends AsyncTask<Void, Void, SelectedCurrency> {

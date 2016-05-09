@@ -8,6 +8,7 @@ import dagger.Module;
 import dagger.Provides;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
+import xplr.in.currencycalculator.adapters.CurrencyRecyclerAdapter;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 
 /**
@@ -16,6 +17,7 @@ import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 @Module
 public class ActivityModule {
 
+    private static final String LOG_TAG = ActivityModule.class.getSimpleName();
     private Activity activity;
 
     public ActivityModule(Activity activity) {
@@ -27,8 +29,8 @@ public class ActivityModule {
     }
 
     @Provides @ActivityScope @Named("calculate")
-    public CurrencyCursorAdapter provideCalculateCurrencyCursorAdapter(CurrencyMetaRepository currencyMetaRepository) {
-        return new CurrencyCursorAdapter(activity, R.layout.list_item_currency_calculate, currencyMetaRepository);
+    public CurrencyRecyclerAdapter provideCalculateCurrencyCursorAdapter(CurrencyMetaRepository currencyMetaRepository) {
+        return new CurrencyRecyclerAdapter(R.layout.list_item_currency_calculate, currencyMetaRepository);
     }
 
     @Provides @ActivityScope @Named("select")
