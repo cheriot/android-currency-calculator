@@ -52,7 +52,7 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
         View itemView = LayoutInflater
                 .from(parent.getContext())
                 .inflate(rLayout, parent, false);
-        return new CurrencyViewHolder(itemView);
+        return new CurrencyViewHolder(itemView, currencyRepository);
     }
 
     @Override
@@ -82,16 +82,18 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
         return currency;
     }
 
-    class CurrencyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class CurrencyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @Bind(R.id.currency_name) TextView nameText;
         @Bind(R.id.currency_rate) TextView rateText;
         @Bind(R.id.currency_flag) ImageView flagImage;
         private SelectedCurrency currency;
+        private CurrencyRepository currencyRepository;
 
-        public CurrencyViewHolder(View itemView) {
+        public CurrencyViewHolder(View itemView, CurrencyRepository currencyRepository) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
+            this.currencyRepository = currencyRepository;
         }
 
         public void bindView(SelectedCurrency currency, SelectedCurrency baseCurrency, CurrencyMeta meta) {
@@ -107,6 +109,10 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
                 currency.convertFrom(baseCurrency);
                 rateText.setText(currency.format());
             }
+        }
+
+        public void onSwipe() {
+            currencyRepository.updateSelection(currency.getId(), false);
         }
 
         @Override

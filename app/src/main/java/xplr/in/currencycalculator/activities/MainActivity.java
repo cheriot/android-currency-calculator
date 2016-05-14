@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -141,6 +142,22 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         currencyCalculationsRecyclerView.setAdapter(currenciesAdapter);
         currencyCalculationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         currencyCalculationsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false; // no drag and drop
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                Log.v(LOG_TAG, "onSwiped " + swipeDir + " " + viewHolder.getItemId());
+                ((CurrencyRecyclerAdapter.CurrencyViewHolder)viewHolder).onSwipe();
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(currencyCalculationsRecyclerView);
+
 
         // Initialize Loader & its handler.
         getLoaderManager().initLoader(LOADER_ID, null, this);
