@@ -17,12 +17,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,6 +37,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
+import xplr.in.currencycalculator.adapters.CurrencyArrayAdapter;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.loaders.AllCurrencyLoader;
 import xplr.in.currencycalculator.models.Currency;
@@ -45,11 +52,13 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     @Inject CurrencyRepository currencyRepository;
     @Inject EventBus eventBus;
     @Inject @Named("select") CurrencyCursorAdapter currenciesAdapter;
+    // @Inject CurrencyArrayAdapter currencyArrayAdapter;
 
     private String searchQuery = null;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.list_currency_calculations) ListView currenciesListView;
+    @Bind(R.id.list_suggested_currencies) ListView suggestedListView;
+    @Bind(R.id.list_all_currencies) ListView allListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +75,24 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
 
         handleSearch(getIntent());
 
-        currenciesListView.setAdapter(currenciesAdapter);
-        currenciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        Currency a = new Currency();
+        a.setCode("AAA");
+        a.setName("A");
+        a.setRate("1");
+        a.setPosition(null);
+        a.setMinorUnits(2);
+        a.setIssuingCountryCode("aa");
+        Currency b = new Currency();
+        b.setCode("BBB");
+        b.setName("B");
+        b.setRate("2");
+        b.setPosition(null);
+        b.setMinorUnits(2);
+        b.setIssuingCountryCode("bb");
+        List<Currency> currencies = new ArrayList<>(Arrays.asList(new Currency[] {a, b}));
+        suggestedListView.setAdapter(new CurrencyArrayAdapter(this, R.layout.list_item_currency_select, currencies));
+        allListView.setAdapter(currenciesAdapter);
+        allListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.v(LOG_TAG, "Clicked currency " + position + " " + view.getClass());
@@ -76,6 +101,8 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
                 toggleCurrencySelection(position, checkBox);
             }
         });
+        ListUtils.setDynamicHeight(suggestedListView);
+        ListUtils.setDynamicHeight(allListView);
 
         getLoaderManager().initLoader(CURRENCY_LOADER_ID, null, this);
     }
@@ -99,7 +126,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     public void onCheckboxClicked(View view) {
         CheckBox checkBox = (CheckBox)view;
         Log.v(LOG_TAG, "Clicked checkbox " + checkBox.isChecked());
-        int position = currenciesListView.getPositionForView(checkBox);
+        int position = allListView.getPositionForView(checkBox);
         toggleCurrencySelection(position, checkBox);
     }
 
@@ -143,7 +170,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         Log.v(LOG_TAG, "SEARCH CHANGE" + query);
         searchQuery = query;
         getLoaderManager().restartLoader(CURRENCY_LOADER_ID, null, this);
-        currenciesListView.smoothScrollToPosition(0);
+        allListView.smoothScrollToPosition(0);
         // Return true to preempt the default behavior of sending an intent.
         return true;
     }
@@ -156,11 +183,13 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         currenciesAdapter.swapCursor(cursor);
+        ListUtils.setDynamicHeight(allListView);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         currenciesAdapter.swapCursor(null);
+        ListUtils.setDynamicHeight(allListView);
     }
 
     @Override
@@ -198,8 +227,32 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         protected void onPostExecute(Currency currency) {
             Log.v(LOG_TAG, "Completed update.");
             String message = (currency.isSelected() ? "Selected " : "Removed ") + currency.getCode() + ".";
-            Snackbar.make(currenciesListView, message, Snackbar.LENGTH_LONG)
+            Snackbar.make(allListView, message, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
+        }
+    }
+
+    /**
+     * If this gets any more complicated, use a single recylcerview whose adapter has multiple
+     * view types.
+     */
+    public static class ListUtils {
+        public static void setDynamicHeight(ListView mListView) {
+            ListAdapter mListAdapter = mListView.getAdapter();
+            if (mListAdapter == null || mListAdapter.getCount() <= 0) {
+                return;
+            }
+
+            // Height of the list *** assuming all list items are the same height ***
+            int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+            View firstListItem = mListAdapter.getView(0, null, mListView);
+            firstListItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            int height = firstListItem.getMeasuredHeight() * mListAdapter.getCount();
+
+            ViewGroup.LayoutParams params = mListView.getLayoutParams();
+            params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
+            mListView.setLayoutParams(params);
+            mListView.requestLayout();
         }
     }
 }

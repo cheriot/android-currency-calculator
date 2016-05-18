@@ -47,9 +47,6 @@ public class CurrencyCursorAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        // Is newView called significantly less than bindView? If so, create a view holder and
-        // use setTag/getTag.
-
         View view = LayoutInflater
                 .from(context)
                 .inflate(listItemLayout, parent, false);
