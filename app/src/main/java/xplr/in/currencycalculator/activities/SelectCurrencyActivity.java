@@ -26,8 +26,7 @@ import android.widget.ListView;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -40,14 +39,54 @@ import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyArrayAdapter;
 import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.loaders.AllCurrencyLoader;
+import xplr.in.currencycalculator.loaders.PopularCurrencyLoader;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
-public class SelectCurrencyActivity extends AppCompatActivity implements CurrencyListActivity, LoaderManager.LoaderCallbacks<Cursor> {
+public class SelectCurrencyActivity extends AppCompatActivity implements CurrencyListActivity {
 
-    public static String LOG_TAG = SelectCurrencyActivity.class.getCanonicalName();
-    public final static int CURRENCY_LOADER_ID = 0;
+    private static String LOG_TAG = SelectCurrencyActivity.class.getSimpleName();
+    private final static int ALL_CURRENCIES_LOADER_ID = 0;
+    private final static int POPULAR_CURRENCIES_LOADER_ID = 1;
+
+    private final LoaderManager.LoaderCallbacks<Cursor> allCurrenciesCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return new AllCurrencyLoader(SelectCurrencyActivity.this, searchQuery);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            currenciesAdapter.swapCursor(data);
+            ListUtils.setDynamicHeight(allListView);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            currenciesAdapter.swapCursor(null);
+            ListUtils.setDynamicHeight(allListView);
+        }
+    };
+
+    private final LoaderManager.LoaderCallbacks<List<Currency>> popularCurrenciesCallbacks = new LoaderManager.LoaderCallbacks<List<Currency>>() {
+        @Override
+        public Loader<List<Currency>> onCreateLoader(int id, Bundle args) {
+            return new PopularCurrencyLoader(SelectCurrencyActivity.this, currencyRepository);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<Currency>> loader, List<Currency> data) {
+            suggestedListView.setAdapter(new CurrencyArrayAdapter(SelectCurrencyActivity.this, R.layout.list_item_currency_select, data));
+            ListUtils.setDynamicHeight(suggestedListView);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<Currency>> loader) {
+            suggestedListView.setAdapter(new CurrencyArrayAdapter(SelectCurrencyActivity.this, R.layout.list_item_currency_select, Collections.<Currency>emptyList()));
+            ListUtils.setDynamicHeight(suggestedListView);
+        }
+    };
 
     @Inject CurrencyRepository currencyRepository;
     @Inject EventBus eventBus;
@@ -67,30 +106,13 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
 
         ((App)getApplication()).newActivityScope(this).inject(this);
         ButterKnife.bind(this);
-
-
+        
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         handleSearch(getIntent());
 
-        Currency a = new Currency();
-        a.setCode("AAA");
-        a.setName("A");
-        a.setRate("1");
-        a.setPosition(null);
-        a.setMinorUnits(2);
-        a.setIssuingCountryCode("aa");
-        Currency b = new Currency();
-        b.setCode("BBB");
-        b.setName("B");
-        b.setRate("2");
-        b.setPosition(null);
-        b.setMinorUnits(2);
-        b.setIssuingCountryCode("bb");
-        List<Currency> currencies = new ArrayList<>(Arrays.asList(new Currency[] {a, b}));
-        suggestedListView.setAdapter(new CurrencyArrayAdapter(this, R.layout.list_item_currency_select, currencies));
         allListView.setAdapter(currenciesAdapter);
         allListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -101,10 +123,10 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
                 toggleCurrencySelection(position, checkBox);
             }
         });
-        ListUtils.setDynamicHeight(suggestedListView);
         ListUtils.setDynamicHeight(allListView);
 
-        getLoaderManager().initLoader(CURRENCY_LOADER_ID, null, this);
+        getLoaderManager().initLoader(ALL_CURRENCIES_LOADER_ID, null, allCurrenciesCallbacks);
+        getLoaderManager().initLoader(POPULAR_CURRENCIES_LOADER_ID, null, popularCurrenciesCallbacks);
     }
 
     @Override
@@ -169,27 +191,10 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     private boolean search(String query) {
         Log.v(LOG_TAG, "SEARCH CHANGE" + query);
         searchQuery = query;
-        getLoaderManager().restartLoader(CURRENCY_LOADER_ID, null, this);
+        getLoaderManager().restartLoader(ALL_CURRENCIES_LOADER_ID, null, allCurrenciesCallbacks);
         allListView.smoothScrollToPosition(0);
         // Return true to preempt the default behavior of sending an intent.
         return true;
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new AllCurrencyLoader(this, searchQuery);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        currenciesAdapter.swapCursor(cursor);
-        ListUtils.setDynamicHeight(allListView);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        currenciesAdapter.swapCursor(null);
-        ListUtils.setDynamicHeight(allListView);
     }
 
     @Override
