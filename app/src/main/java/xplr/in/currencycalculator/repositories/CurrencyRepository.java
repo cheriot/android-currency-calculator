@@ -9,6 +9,8 @@ import com.yahoo.squidb.sql.Query;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -85,6 +87,24 @@ public class CurrencyRepository {
         return database.query(Currency.class, search);
     }
 
+    public List<Currency> findPopularCurrencies() {
+        Currency a = new Currency();
+        a.setCode("AAA");
+        a.setName("A");
+        a.setRate("1");
+        a.setPosition(null);
+        a.setMinorUnits(2);
+        a.setIssuingCountryCode("aa");
+        Currency b = new Currency();
+        b.setCode("BBB");
+        b.setName("B");
+        b.setRate("2");
+        b.setPosition(null);
+        b.setMinorUnits(2);
+        b.setIssuingCountryCode("bb");
+        return new ArrayList<>(Arrays.asList(new Currency[] {a, b}));
+    }
+
     public Currency updateSelection(long id, boolean isSelected) {
         Currency currency = database.fetch(Currency.class, id, Currency.PROPERTIES);
         if (isSelected) {
@@ -139,7 +159,7 @@ public class CurrencyRepository {
     }
 
     private static final String BASE_CURRENCY_AMOUNT_KEY = "base_currency_amount";
-    public SelectedCurrency getBaseCurrency() {
+    public SelectedCurrency findBaseCurrency() {
         SelectedCurrency baseCurrency = database.fetchByQuery(SelectedCurrency.class, BASE_CURRENCY);
         baseCurrency.setAmount(appSharedPrefs.getString(BASE_CURRENCY_AMOUNT_KEY, null));
         return baseCurrency;

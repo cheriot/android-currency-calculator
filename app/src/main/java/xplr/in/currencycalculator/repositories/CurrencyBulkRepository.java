@@ -85,7 +85,7 @@ public class CurrencyBulkRepository {
 
         // When initializing a base currency, convert $1 to that currency
         // and round to make it pretty.
-        SelectedCurrency baseCurrency = currencyRepository.getBaseCurrency();
+        SelectedCurrency baseCurrency = currencyRepository.findBaseCurrency();
         SelectedCurrency usd = currencyRepository.findByCode(SelectedCurrency.class, "USD");
         usd.setAmount("10");
         String amount = baseCurrency.roundNumberCloseTo(usd);

@@ -2,8 +2,6 @@ package xplr.in.currencycalculator.loaders;
 
 import android.content.Context;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import xplr.in.currencycalculator.models.Currency;
@@ -23,23 +21,7 @@ public class PopularCurrencyLoader extends WorkingAsyncTaskLoader<List<Currency>
 
     @Override
     public List<Currency> loadInBackground() {
-        // return getActivity().getCurrencyRepository().findPopularCurrencies();
-
-        Currency a = new Currency();
-        a.setCode("AAA");
-        a.setName("A");
-        a.setRate("1");
-        a.setPosition(null);
-        a.setMinorUnits(2);
-        a.setIssuingCountryCode("aa");
-        Currency b = new Currency();
-        b.setCode("BBB");
-        b.setName("B");
-        b.setRate("2");
-        b.setPosition(null);
-        b.setMinorUnits(2);
-        b.setIssuingCountryCode("bb");
-        return new ArrayList<>(Arrays.asList(new Currency[] {a, b}));
+        return currencyRepository.findPopularCurrencies();
     }
 
     @Override

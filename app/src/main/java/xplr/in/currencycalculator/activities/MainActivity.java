@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
         @Override
         protected SelectedCurrency doInBackground(Void... params) {
-            return currencyRepository.getBaseCurrency();
+            return currencyRepository.findBaseCurrency();
         }
 
         @Override
