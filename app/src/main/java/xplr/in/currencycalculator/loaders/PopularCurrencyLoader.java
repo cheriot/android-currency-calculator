@@ -4,24 +4,29 @@ import android.content.Context;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import xplr.in.currencycalculator.models.Currency;
-import xplr.in.currencycalculator.repositories.CurrencyRepository;
+import xplr.in.currencycalculator.modules.ActivityScope;
+import xplr.in.currencycalculator.repositories.PopularCurrenciesRepository;
 
 /**
  * Created by cheriot on 5/19/16.
  */
+@ActivityScope
 public class PopularCurrencyLoader extends WorkingAsyncTaskLoader<List<Currency>>  {
 
-    private final CurrencyRepository currencyRepository;
+    private final PopularCurrenciesRepository popularCurrenciesRepository;
 
-    public PopularCurrencyLoader(Context context, CurrencyRepository currencyRepository) {
+    @Inject
+    public PopularCurrencyLoader(Context context, PopularCurrenciesRepository popularCurrenciesRepository) {
         super(context);
-        this.currencyRepository = currencyRepository;
+        this.popularCurrenciesRepository = popularCurrenciesRepository;
     }
 
     @Override
     public List<Currency> loadInBackground() {
-        return currencyRepository.findPopularCurrencies();
+        return popularCurrenciesRepository.findPopularCurrencies();
     }
 
     @Override

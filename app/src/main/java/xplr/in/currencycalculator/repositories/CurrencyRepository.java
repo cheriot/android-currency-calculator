@@ -9,8 +9,6 @@ import com.yahoo.squidb.sql.Query;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -85,24 +83,6 @@ public class CurrencyRepository {
                             .or(Function.lower(Currency.NAME).like(wordPrefix.toLowerCase())));
         }
         return database.query(Currency.class, search);
-    }
-
-    public List<Currency> findPopularCurrencies() {
-        Currency a = new Currency();
-        a.setCode("AAA");
-        a.setName("A");
-        a.setRate("1");
-        a.setPosition(null);
-        a.setMinorUnits(2);
-        a.setIssuingCountryCode("aa");
-        Currency b = new Currency();
-        b.setCode("BBB");
-        b.setName("B");
-        b.setRate("2");
-        b.setPosition(null);
-        b.setMinorUnits(2);
-        b.setIssuingCountryCode("bb");
-        return new ArrayList<>(Arrays.asList(new Currency[] {a, b}));
     }
 
     public Currency updateSelection(long id, boolean isSelected) {

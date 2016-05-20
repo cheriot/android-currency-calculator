@@ -72,7 +72,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     private final LoaderManager.LoaderCallbacks<List<Currency>> popularCurrenciesCallbacks = new LoaderManager.LoaderCallbacks<List<Currency>>() {
         @Override
         public Loader<List<Currency>> onCreateLoader(int id, Bundle args) {
-            return new PopularCurrencyLoader(SelectCurrencyActivity.this, currencyRepository);
+            return popularCurrencyLoader;
         }
 
         @Override
@@ -89,6 +89,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     };
 
     @Inject CurrencyRepository currencyRepository;
+    @Inject PopularCurrencyLoader popularCurrencyLoader;
     @Inject EventBus eventBus;
     @Inject @Named("select") CurrencyCursorAdapter currenciesAdapter;
     // @Inject CurrencyArrayAdapter currencyArrayAdapter;

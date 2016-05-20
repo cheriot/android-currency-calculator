@@ -1,6 +1,7 @@
 package xplr.in.currencycalculator.modules;
 
 import android.app.Activity;
+import android.content.Context;
 
 import javax.inject.Named;
 
@@ -28,6 +29,8 @@ public class ActivityModule {
     @Provides public Activity provideActivity() {
         return this.activity;
     }
+
+    @Provides public Context provideContext() { return this.activity; }
 
     @Provides @ActivityScope @Named("calculate")
     public CurrencyRecyclerAdapter provideCalculateCurrencyCursorAdapter(CurrencyRepository currencyRepository, CurrencyMetaRepository currencyMetaRepository) {
