@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -97,7 +99,9 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     private String searchQuery = null;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.label_popular) TextView labelPopular;
     @Bind(R.id.list_suggested_currencies) ListView suggestedListView;
+    @Bind(R.id.label_all) TextView labelAll;
     @Bind(R.id.list_all_currencies) ListView allListView;
 
     @Override
@@ -109,7 +113,6 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         ButterKnife.bind(this);
         
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         handleSearch(getIntent());
@@ -208,9 +211,20 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         Log.v(LOG_TAG, "SEARCH CHANGE" + query);
         searchQuery = query;
         getLoaderManager().restartLoader(ALL_CURRENCIES_LOADER_ID, null, allCurrenciesCallbacks);
-        allListView.smoothScrollToPosition(0);
+        if(!TextUtils.isEmpty(query)) {
+            allListView.smoothScrollToPosition(0);
+            setPopularVisibility(View.GONE);
+        } else {
+            setPopularVisibility(View.VISIBLE);
+        }
         // Return true to preempt the default behavior of sending an intent.
         return true;
+    }
+
+    private void setPopularVisibility(int visibility) {
+        labelPopular.setVisibility(visibility);
+        suggestedListView.setVisibility(visibility);
+        labelAll.setVisibility(visibility);
     }
 
     @Override
