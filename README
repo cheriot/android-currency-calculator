@@ -12,21 +12,15 @@ bin/release
 Deploy apk
 bin/install
 
-Convert ListView to RecyclerView
-https://github.com/bleeding182/recyclerviewItemDecorations
-http://stackoverflow.com/questions/24618829/how-to-add-dividers-and-spaces-between-items-in-recyclerview
-https://blog.stylingandroid.com/material-part-5/
-
 Screenshotes
 bin/adb shell /system/bin/screencap -p /sdcard/screenshot.png
 bin/adb pull /sdcard/screenshot.png main-activity-screenshot.png
 
 Android dev stack possibilities
-pos  RxJava, RxAndroid
+pos  RxJava
      http://blog.danlew.net/2014/09/15/grokking-rxjava-part-1/
      http://rxwiki.wikidot.com/101samples
 pos  debugging with https://github.com/JakeWharton/hugo
-if adapters become a mess, https://github.com/ribot/easy-adapter
 
 ic_launcher came from:
 https://romannurik.github.io/AndroidAssetStudio/icons-launcher.html#foreground.type=text&foreground.space.trim=1&foreground.space.pad=0.15&foreground.text.text=%24%E2%82%AC%C2%A3&foreground.text.font=Helvetica&foreColor=4caf50%2C0&crop=0&backgroundShape=square&backColor=ffffff%2C100&effects=none
@@ -61,6 +55,7 @@ https://github.com/googlesamples/android-testing
 https://github.com/codepath/android_guides/wiki#getting-started
 
 Marketing
+https://favorr.io/
 http://medyo.github.io/generate-awesome-playstore-screenshots-using-sketch
 http://www.norio.be/android-feature-graphic-generator/
 http://developer.android.com/intl/ko/distribute/tools/promote/device-art.html
