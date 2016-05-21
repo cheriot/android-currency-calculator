@@ -47,7 +47,9 @@ public class PopularCurrenciesRepository {
     }
 
     private Currency findByCountryCode(String countryCode) {
+        if(countryCode == null) return null;
         CurrencyMeta meta = metaRepository.findByCountryCode(countryCode);
+        if(meta == null) return null;
         return currencyRepository.findByCode(meta.getCode());
     }
 
@@ -56,6 +58,7 @@ public class PopularCurrenciesRepository {
         popular.add(findNetworkCurrency());
         popular.add(findSimCurrency());
         popular.add(findLocaleCurrency());
+        popular.remove(null); // any of the above can be null
 
         // https://en.wikipedia.org/wiki/World_Tourism_rankings
         popular.add(currencyRepository.findByCode("EUR"));

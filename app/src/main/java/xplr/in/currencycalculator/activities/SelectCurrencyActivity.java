@@ -118,13 +118,17 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         allListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.v(LOG_TAG, "Clicked currency " + position + " " + view.getClass());
-                CheckBox checkBox = (CheckBox)view.findViewById(R.id.currency_selected);
-                checkBox.setChecked(!checkBox.isChecked());
-                toggleCurrencySelection(position, checkBox);
+                toggleAllListSelection(view, position);
             }
         });
         ListUtils.setDynamicHeight(allListView);
+
+        suggestedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                toggleSuggestedListSelection(view, position);
+            }
+        });
 
         getLoaderManager().initLoader(ALL_CURRENCIES_LOADER_ID, null, allCurrenciesCallbacks);
         getLoaderManager().initLoader(POPULAR_CURRENCIES_LOADER_ID, null, popularCurrenciesCallbacks);
@@ -145,16 +149,27 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
         }
     }
 
-    // Use butterknife's @OnCheckedChanged?
-    public void onCheckboxClicked(View view) {
-        CheckBox checkBox = (CheckBox)view;
-        Log.v(LOG_TAG, "Clicked checkbox " + checkBox.isChecked());
-        int position = allListView.getPositionForView(checkBox);
-        toggleCurrencySelection(position, checkBox);
+    private void toggleAllListSelection(View view, int position) {
+        Log.v(LOG_TAG, "Clicked currency " + position + " " + view.getClass());
+        CheckBox checkBox = toggleCheckbox(view);
+        Currency currency = currenciesAdapter.getCurrency(position);
+        persistCheckboxState(checkBox, currency);
     }
 
-    private void toggleCurrencySelection(int position, CheckBox checkBox) {
-        Currency currency = currenciesAdapter.getCurrency(position);
+    private void toggleSuggestedListSelection(View view, int position) {
+        Log.v(LOG_TAG, "Clicked currency " + position + " " + view.getClass());
+        CheckBox checkBox = toggleCheckbox(view);
+        Currency currency = (Currency)suggestedListView.getAdapter().getItem(position);
+        persistCheckboxState(checkBox, currency);
+    }
+
+    private CheckBox toggleCheckbox(View view) {
+        CheckBox checkBox = (CheckBox)view.findViewById(R.id.currency_selected);
+        checkBox.setChecked(!checkBox.isChecked());
+        return checkBox;
+    }
+
+    private void persistCheckboxState(CheckBox checkBox, Currency currency) {
         boolean isSelected = checkBox.isChecked();
         new PersistCurrencySelection(currency, isSelected).execute();
     }
