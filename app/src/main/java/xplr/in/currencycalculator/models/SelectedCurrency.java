@@ -46,6 +46,11 @@ public class SelectedCurrency extends Currency {
         return amount;
     }
 
+    public String getDisplayedAmount() {
+        if(amount == null) return null;
+        return parse(format());
+    }
+
     public void setAmount(String amount) {
         this.amount = amount;
     }

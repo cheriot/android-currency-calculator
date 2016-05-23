@@ -43,7 +43,6 @@ import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.loaders.AllCurrencyLoader;
 import xplr.in.currencycalculator.loaders.PopularCurrencyLoader;
 import xplr.in.currencycalculator.models.Currency;
-import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
 public class SelectCurrencyActivity extends AppCompatActivity implements CurrencyListActivity {
@@ -235,11 +234,6 @@ public class SelectCurrencyActivity extends AppCompatActivity implements Currenc
     @Override
     public EventBus getEventBus() {
         return eventBus;
-    }
-
-    @Override
-    public SelectedCurrency getBaseCurrency() {
-        return null;
     }
 
     public class PersistCurrencySelection extends AsyncTask<Void, Void, Currency> {

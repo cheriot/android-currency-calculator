@@ -146,7 +146,7 @@ public class CurrencyRepository {
     }
 
     public void setBaseCurrency(SelectedCurrency currency) {
-        setBaseAmount(currency, currency.getAmount());
+        setBaseAmount(currency, currency.getDisplayedAmount());
         insertAtPosition(1, currency);
     }
 

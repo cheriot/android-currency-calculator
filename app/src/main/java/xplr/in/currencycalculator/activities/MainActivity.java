@@ -159,8 +159,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(currencyCalculationsRecyclerView);
 
-
-        // Initialize Loader & its handler.
         getLoaderManager().initLoader(LOADER_ID, null, this);
 
         // TODO There's a "30 frames skipped" message...
@@ -230,11 +228,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Override
     public EventBus getEventBus() {
         return eventBus;
-    }
-
-    @Override
-    public SelectedCurrency getBaseCurrency() {
-        return baseCurrency;
     }
 
     @Override
