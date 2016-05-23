@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/white"
             android:focusableInTouchMode="true"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:minHeight="80dp"
             android:orientation="horizontal">
 
@@ -26,13 +26,15 @@
                 android:id="@+id/base_currency_flag"
                 android:layout_width="67dp"
                 android:layout_height="50dp"
-                android:contentDescription="@string/flag_content_desc"
+                android:paddingLeft="16dp"
+                android:paddingStart="16dp"
                 android:src="@drawable/flag_4x3_eu"/>
 
             <TextView
                 android:id="@+id/base_currency_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:paddingLeft="16dp"
                 android:paddingStart="16dp"
                 android:text="US Dollar"/>

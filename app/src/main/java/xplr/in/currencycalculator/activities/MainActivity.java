@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         baseCurrency = currency;
         baseCurrencyName.setText(currency.getName());
         if(meta != null) {
-            Drawable drawable = getResources().getDrawable(meta.getFlagResourceId(CurrencyMeta.FlagSize.NORMAL));
+            Drawable drawable = getResources().getDrawable(meta.getFlagResourceId(CurrencyMeta.FlagSize.SQUARE));
             baseCurrencyFlag.setImageDrawable(drawable);
         }
         baseCurrencyAmount.setText(currency.getAmount());
