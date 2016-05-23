@@ -15,8 +15,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:src="@drawable/flag_1x1_eu"
-        android:contentDescription=""/>
+        android:src="@drawable/flag_1x1_eu"/>
 
     <TextView
         android:id="@+id/currency_name"
@@ -24,18 +23,21 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:paddingLeft="16dp"
+        android:paddingStart="16dp"
         android:focusable="false"
         android:textIsSelectable="false"
         android:text="US Dollar"/>
 
     <TextView
+        style="@style/ResultFont"
         android:id="@+id/currency_rate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:paddingRight="16dp"
+        android:paddingEnd="16dp"
         android:focusable="false"
         android:textIsSelectable="false"
-        android:text="100.00"/>
+        android:textColor="#000"/>
 
 </LinearLayout>
