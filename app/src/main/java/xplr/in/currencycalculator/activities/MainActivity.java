@@ -1,6 +1,5 @@
 package xplr.in.currencycalculator.activities;
 
-import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
@@ -81,13 +80,13 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         eventBus.register(this);
         new BaseCurrencyQuery().execute();
 
-        final Activity thisActivity = this;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(thisActivity, SelectCurrencyActivity.class));
+                startActivity(new Intent(MainActivity.this, SelectCurrencyActivity.class));
             }
         });
+        // TODO startActivity for the new buttons
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
