@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
         // Setup a scheduled sync if that hasn't happened already. This will trigger an initial
         // sync if one has not occurred.
-        currencySyncTriggers.createSyncAccount(this);
+        currencySyncTriggers.initSyncAccount(this);
     }
 
     @Override

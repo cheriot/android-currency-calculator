@@ -38,8 +38,8 @@ public class CurrencySyncTriggers {
      *
      * @param context Context
      */
-    public void createSyncAccount(Context context) {
-        Log.v(LOG_TAG, "createSyncAccount");
+    public void initSyncAccount(Context context) {
+        Log.v(LOG_TAG, "initSyncAccount");
         boolean newAccount = false;
         boolean setupComplete = appSharedPrefs.getBoolean(PREF_SETUP_COMPLETE, false);
 
