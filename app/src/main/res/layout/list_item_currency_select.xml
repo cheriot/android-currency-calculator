@@ -11,7 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:focusable="false"
-        android:textIsSelectable="false"/>
+        android:textIsSelectable="false"
+        android:onClick="onCheckboxClicked"
+        />
 
     <TextView
         android:id="@+id/currency_name"
