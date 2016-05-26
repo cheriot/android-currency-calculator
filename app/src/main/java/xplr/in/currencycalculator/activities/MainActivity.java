@@ -1,7 +1,6 @@
 package xplr.in.currencycalculator.activities;
 
 import android.app.LoaderManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -18,12 +17,8 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -48,6 +43,7 @@ import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
 import xplr.in.currencycalculator.sync.SyncCompleteEvent;
+import xplr.in.currencycalculator.views.ClearableEditText;
 
 public class MainActivity extends AppCompatActivity implements CurrencyListActivity, LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -63,10 +59,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.base_currency_name) TextView baseCurrencyName;
-    @Bind(R.id.base_currency_amount) EditText baseCurrencyAmount;
-    @Bind(R.id.base_currency_amount_clear) ImageButton baseCurrencyAmountClear;
+    @Bind(R.id.base_currency_amount) ClearableEditText baseCurrencyAmount;
     @Bind(R.id.base_currency_flag) ImageView baseCurrencyFlag;
     @Bind(R.id.list_currency_calculations) RecyclerView listCurrencyCalculations;
+    @Bind(R.id.rate_comparison_button) Button rateComparisonButton;
+    @Bind(R.id.offer_comparison_button) Button offerComparisonButton;
     @Bind(R.id.swipeContainer) SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -87,6 +84,18 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             }
         });
         // TODO startActivity for the new buttons
+        rateComparisonButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, RateComparisonActivity.class));
+            }
+        });
+        offerComparisonButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, OfferComparisonActivity.class));
+            }
+        });
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -104,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                 android.R.color.holo_red_light);
 
         // Replace with butterknife's @OnTextChange?
-        baseCurrencyAmount.addTextChangedListener(new TextWatcher() {
+        baseCurrencyAmount.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -116,25 +125,10 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                     currencyRepository.setBaseAmount(baseCurrency, text);
                     currenciesAdapter.notifyDataSetChanged();
                 }
-                if(s.length() == 0) {
-                    baseCurrencyAmountClear.setVisibility(View.INVISIBLE);
-                } else {
-                    baseCurrencyAmountClear.setVisibility(View.VISIBLE);
-                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {}
-        });
-        baseCurrencyAmount.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                }
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(baseCurrencyAmount.getWindowToken(), 0);
-                return true;
-            }
         });
 
         listCurrencyCalculations.setAdapter(currenciesAdapter);
@@ -176,14 +170,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         super.onDestroy();
     }
 
-    public void clearBaseAmount(View view) {
-        baseCurrencyAmount.getText().clear();
-        baseCurrencyAmount.requestFocus();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(baseCurrencyAmount, InputMethodManager.SHOW_FORCED);
-        Log.v(LOG_TAG, "Cleared, now show keyboard.");
-    }
-
     private void displayBaseCurrency(SelectedCurrency currency, CurrencyMeta meta) {
         if (baseCurrency != null
                 && baseCurrency.sameDisplay(currency)) return;
@@ -195,9 +181,9 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             Drawable drawable = getResources().getDrawable(meta.getFlagResourceId(CurrencyMeta.FlagSize.SQUARE));
             baseCurrencyFlag.setImageDrawable(drawable);
         }
-        baseCurrencyAmount.setText(currency.getAmount());
+        baseCurrencyAmount.getEditText().setText(currency.getAmount());
         // Move the cursor to the end as if the amount had just been typed.
-        baseCurrencyAmount.setSelection(baseCurrencyAmount.length());
+        baseCurrencyAmount.moveCursorToEnd();
         // Rebind RecyclerView items so converted amounts are updated.
         currenciesAdapter.setBaseCurrency(baseCurrency);
         currenciesAdapter.notifyDataSetChanged();

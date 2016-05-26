@@ -39,43 +39,12 @@
                 android:paddingStart="16dp"
                 android:text="US Dollar"/>
 
-            <FrameLayout
+            <xplr.in.currencycalculator.views.ClearableEditText
+                android:id="@+id/base_currency_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingEnd="10dp"
-                android:paddingRight="10dp">
-
-                <EditText
-                    style="@style/ResultFont"
-                    android:id="@+id/base_currency_amount"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginStart="16dp"
-                    android:ems="6"
-                    android:imeOptions="actionDone"
-                    android:inputType="numberDecimal"
-                    android:paddingEnd="25dp"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="25dp"
-                    android:paddingStart="5dp"/>
-
-                <ImageButton
-                    android:id="@+id/base_currency_amount_clear"
-                    android:layout_width="25dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="-5dp"
-                    android:layout_marginRight="-5dp"
-                    android:background="@null"
-                    android:contentDescription="@string/clear_content_desc"
-                    android:onClick="clearBaseAmount"
-                    android:paddingEnd="12dp"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="12dp"
-                    android:paddingStart="5dp"
-                    android:src="@drawable/ic_clear_black_24dp"/>
-            </FrameLayout>
+                android:paddingRight="10dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -86,12 +55,14 @@
 
             <Button
                 style="@style/Widget.AppCompat.Button.Borderless"
+                android:id="@+id/rate_comparison_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Rate"/>
 
             <Button
                 style="@style/Widget.AppCompat.Button.Borderless"
+                android:id="@+id/offer_comparison_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Offer"/>
