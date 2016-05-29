@@ -46,6 +46,24 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activities.RateComparisonActivity"
+                  android:label="@string/title_activity_rate_comparison"
+                  android:parentActivityName=".activities.MainActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity"/>
+        </activity>
+
+        <activity android:name=".activities.OfferComparisonActivity"
+                  android:label="@string/title_activity_offer_comparison"
+                  android:parentActivityName=".activities.MainActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity"/>
+        </activity>
+
         <!-- This implements the account we'll use as an attachment point for our SyncAdapter. Since
         our SyncAdapter doesn't need to authenticate the current user, this account's implementation
         is largely empty.
