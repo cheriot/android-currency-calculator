@@ -1,47 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list_selectable_currencies"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dip">
+        android:layout_height="match_parent"/>
 
-        <TextView
-            android:id="@+id/label_popular"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
-            android:gravity="center_vertical"
-            android:text="Popular"/>
-
-        <ListView
-            android:id="@+id/list_suggested_currencies"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
-
-        <TextView
-            android:id="@+id/label_all"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
-            android:gravity="center_vertical"
-            android:text="All Currencies"/>
-
-        <ListView
-            android:id="@+id/list_all_currencies"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
-
-    </LinearLayout>
-</ScrollView>
+</FrameLayout>

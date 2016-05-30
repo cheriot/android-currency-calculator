@@ -3,13 +3,11 @@ package xplr.in.currencycalculator.modules;
 import android.app.Activity;
 import android.content.Context;
 
-import javax.inject.Named;
-
 import dagger.Module;
 import dagger.Provides;
 import xplr.in.currencycalculator.R;
-import xplr.in.currencycalculator.adapters.CurrencyCursorAdapter;
 import xplr.in.currencycalculator.adapters.CurrencyRecyclerAdapter;
+import xplr.in.currencycalculator.adapters.SelectCurrencyCombinedAdapter;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
@@ -32,13 +30,13 @@ public class ActivityModule {
 
     @Provides public Context provideContext() { return this.activity; }
 
-    @Provides @ActivityScope @Named("calculate")
+    @Provides @ActivityScope
     public CurrencyRecyclerAdapter provideCalculateCurrencyCursorAdapter(CurrencyRepository currencyRepository, CurrencyMetaRepository currencyMetaRepository) {
         return new CurrencyRecyclerAdapter(R.layout.list_item_currency_calculate, currencyRepository, currencyMetaRepository);
     }
 
-    @Provides @ActivityScope @Named("select")
-    public CurrencyCursorAdapter provideSelectCurrencyCursorAdapter(CurrencyMetaRepository currencyMetaRepository) {
-        return new CurrencyCursorAdapter(activity, R.layout.list_item_currency_select, currencyMetaRepository);
+    @Provides @ActivityScope
+    public SelectCurrencyCombinedAdapter provideSelectCurrencyCursorAdapter() {
+        return new SelectCurrencyCombinedAdapter((SelectCurrencyCombinedAdapter.CurrencySelectionChangeListener)activity);
     }
 }

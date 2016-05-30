@@ -8,11 +8,11 @@ import xplr.in.currencycalculator.activities.CurrencyListActivity;
 /**
  * Created by cheriot on 4/6/16.
  */
-public class SelectedCurrencyLoader extends AbstractCurrencyLoader {
-    private static String LOG_TAG = SelectedCurrencyLoader.class.getCanonicalName();
+public class SelectedCurrenciesLoader extends AbstractCurrencyLoader {
+    private static String LOG_TAG = SelectedCurrenciesLoader.class.getCanonicalName();
 
     @Keep
-    public SelectedCurrencyLoader(CurrencyListActivity activity) {
+    public SelectedCurrenciesLoader(CurrencyListActivity activity) {
         super(activity);
     }
 

@@ -35,14 +35,13 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.CurrencyRecyclerAdapter;
-import xplr.in.currencycalculator.loaders.SelectedCurrencyLoader;
+import xplr.in.currencycalculator.loaders.SelectedCurrenciesLoader;
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencySyncTriggers currencySyncTriggers;
     @Inject CurrencyMetaRepository currencyMetaRepository;
-    @Inject @Named("calculate") CurrencyRecyclerAdapter currenciesAdapter;
+    @Inject CurrencyRecyclerAdapter currenciesAdapter;
     SelectedCurrency baseCurrency;
 
     @Bind(R.id.fab) FloatingActionButton fab;
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Bind(R.id.base_currency_amount) EditText baseCurrencyAmount;
     @Bind(R.id.base_currency_amount_clear) ImageButton baseCurrencyAmountClear;
     @Bind(R.id.base_currency_flag) ImageView baseCurrencyFlag;
-    @Bind(R.id.list_currency_calculations) RecyclerView currencyCalculationsRecyclerView;
+    @Bind(R.id.list_currency_calculations) RecyclerView listCurrencyCalculations;
     @Bind(R.id.swipeContainer) SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -139,9 +138,9 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             }
         });
 
-        currencyCalculationsRecyclerView.setAdapter(currenciesAdapter);
-        currencyCalculationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        currencyCalculationsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        listCurrencyCalculations.setAdapter(currenciesAdapter);
+        listCurrencyCalculations.setLayoutManager(new LinearLayoutManager(this));
+        listCurrencyCalculations.setItemAnimator(new DefaultItemAnimator());
 
         // http://nemanjakovacevic.net/blog/english/2016/01/12/recyclerview-swipe-to-delete-no-3rd-party-lib-necessary/
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -157,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(currencyCalculationsRecyclerView);
+        itemTouchHelper.attachToRecyclerView(listCurrencyCalculations);
 
         getLoaderManager().initLoader(LOADER_ID, null, this);
 
@@ -204,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         currenciesAdapter.setBaseCurrency(baseCurrency);
         currenciesAdapter.notifyDataSetChanged();
 
-        currencyCalculationsRecyclerView.scrollToPosition(0);
+        listCurrencyCalculations.scrollToPosition(0);
     }
 
     @Subscribe(threadMode=ThreadMode.BACKGROUND)
@@ -232,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new SelectedCurrencyLoader(this);
+        return new SelectedCurrenciesLoader(this);
     }
 
     @Override
