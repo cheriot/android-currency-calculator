@@ -6,7 +6,7 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import xplr.in.currencycalculator.R;
-import xplr.in.currencycalculator.adapters.CurrencyRecyclerAdapter;
+import xplr.in.currencycalculator.adapters.SelectedCurrencyAdapter;
 import xplr.in.currencycalculator.adapters.SelectCurrencyCombinedAdapter;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
@@ -31,8 +31,8 @@ public class ActivityModule {
     @Provides public Context provideContext() { return this.activity; }
 
     @Provides @ActivityScope
-    public CurrencyRecyclerAdapter provideCalculateCurrencyCursorAdapter(CurrencyRepository currencyRepository, CurrencyMetaRepository currencyMetaRepository) {
-        return new CurrencyRecyclerAdapter(R.layout.list_item_currency_calculate, currencyRepository, currencyMetaRepository);
+    public SelectedCurrencyAdapter provideCalculateCurrencyCursorAdapter(CurrencyRepository currencyRepository, CurrencyMetaRepository currencyMetaRepository) {
+        return new SelectedCurrencyAdapter(R.layout.list_item_currency_calculate, currencyRepository, currencyMetaRepository);
     }
 
     @Provides @ActivityScope

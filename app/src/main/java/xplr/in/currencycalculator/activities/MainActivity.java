@@ -40,7 +40,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
-import xplr.in.currencycalculator.adapters.CurrencyRecyclerAdapter;
+import xplr.in.currencycalculator.adapters.SelectedCurrencyAdapter;
 import xplr.in.currencycalculator.loaders.SelectedCurrenciesLoader;
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.SelectedCurrency;
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencySyncTriggers currencySyncTriggers;
     @Inject CurrencyMetaRepository currencyMetaRepository;
-    @Inject CurrencyRecyclerAdapter currenciesAdapter;
+    @Inject SelectedCurrencyAdapter currenciesAdapter;
     SelectedCurrency baseCurrency;
 
     @Bind(R.id.fab) FloatingActionButton fab;
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 Log.v(LOG_TAG, "onSwiped " + swipeDir + " " + viewHolder.getItemId());
-                ((CurrencyRecyclerAdapter.CurrencyViewHolder)viewHolder).onSwipe();
+                ((SelectedCurrencyAdapter.CurrencyViewHolder)viewHolder).onSwipe();
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);

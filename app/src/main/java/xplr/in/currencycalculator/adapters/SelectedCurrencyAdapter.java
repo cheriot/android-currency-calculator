@@ -22,16 +22,16 @@ import xplr.in.currencycalculator.repositories.CurrencyRepository;
 /**
  * Created by cheriot on 5/9/16.
  */
-public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecyclerAdapter.CurrencyViewHolder> {
+public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurrencyAdapter.CurrencyViewHolder> {
 
-    private static final String LOG_TAG = CurrencyRecyclerAdapter.class.getSimpleName();
+    private static final String LOG_TAG = SelectedCurrencyAdapter.class.getSimpleName();
     private final int rLayout;
     private final CurrencyRepository currencyRepository;
     private final CurrencyMetaRepository metaRepository;
     private SquidCursor cursor;
     private SelectedCurrency baseCurrency;
 
-    public CurrencyRecyclerAdapter(int rLayout, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
+    public SelectedCurrencyAdapter(int rLayout, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
         super();
         setHasStableIds(true);
         this.rLayout = rLayout;
