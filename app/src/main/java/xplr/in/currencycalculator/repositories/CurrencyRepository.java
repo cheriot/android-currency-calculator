@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.yahoo.squidb.sql.Criterion;
 import com.yahoo.squidb.sql.Function;
 import com.yahoo.squidb.sql.Query;
 
@@ -51,8 +52,9 @@ public class CurrencyRepository {
             .where(Currency.RATE.isNot("0"))
             .freeze();
 
+    static final Criterion SELECTED_CRITERION = Currency.POSITION.isNotNull();
     static final Query SELECTED_CURRENCIES = VALID_CURRENCIES
-            .where(Currency.POSITION.isNotNull())
+            .where(SELECTED_CRITERION)
             .orderBy(Currency.POSITION.asc())
             .freeze();
 
@@ -83,6 +85,10 @@ public class CurrencyRepository {
                             .or(Function.lower(Currency.NAME).like(wordPrefix.toLowerCase())));
         }
         return database.query(Currency.class, search);
+    }
+
+    public int countSelected() {
+        return database.count(Currency.class, SELECTED_CRITERION);
     }
 
     public Currency updateSelection(long id, boolean isSelected) {

@@ -13,24 +13,25 @@ import xplr.in.currencycalculator.models.SelectedCurrency;
  * Created by cheriot on 5/30/16.
  */
 public class SelectableCurrencies {
+
+    private static final String LOG_TAG = SelectableCurrencies.class.getSimpleName();
+    private static final int MIN_SELECTED = 2;
+
     private final List<Currency> popular;
     private final Cursor all;
-
+    private final int selectedCount;
     // If we limit the display by a search query then hide headers and the popular list.
     private final boolean isSearching;
 
-    public SelectableCurrencies(List<Currency> popular, Cursor all, boolean isSearching) {
+    public SelectableCurrencies(List<Currency> popular, Cursor all, int selectedCount, boolean isSearching) {
         this.popular = popular;
         this.all = all;
+        this.selectedCount = selectedCount;
         this.isSearching = isSearching;
     }
 
-    public List<Currency> getPopular() {
-        return popular;
-    }
-
-    public Cursor getAll() {
-        return all;
+    public void close() {
+        all.close();
     }
 
     public int getCount() {
@@ -39,6 +40,10 @@ public class SelectableCurrencies {
         } else {
             return popular.size() + all.getCount() + 2; // +2 for the headers
         }
+    }
+
+    public boolean allowDeselect() {
+        return selectedCount - MIN_SELECTED > 0;
     }
 
     public boolean isHeader(int displayPosition) {

@@ -6,8 +6,9 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import xplr.in.currencycalculator.R;
-import xplr.in.currencycalculator.adapters.SelectedCurrencyAdapter;
+import xplr.in.currencycalculator.adapters.CurrencySelectionChangeListener;
 import xplr.in.currencycalculator.adapters.SelectCurrencyCombinedAdapter;
+import xplr.in.currencycalculator.adapters.SelectedCurrencyAdapter;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
@@ -37,6 +38,6 @@ public class ActivityModule {
 
     @Provides @ActivityScope
     public SelectCurrencyCombinedAdapter provideSelectCurrencyCursorAdapter() {
-        return new SelectCurrencyCombinedAdapter((SelectCurrencyCombinedAdapter.CurrencySelectionChangeListener)activity);
+        return new SelectCurrencyCombinedAdapter((CurrencySelectionChangeListener)activity);
     }
 }

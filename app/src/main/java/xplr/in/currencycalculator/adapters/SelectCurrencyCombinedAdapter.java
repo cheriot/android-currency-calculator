@@ -18,7 +18,8 @@ import xplr.in.currencycalculator.presenters.SelectableCurrencies;
 /**
  * Created by cheriot on 5/29/16.
  */
-public class SelectCurrencyCombinedAdapter extends RecyclerView.Adapter<SelectCurrencyCombinedAdapter.CombinedViewHolder> {
+public class SelectCurrencyCombinedAdapter
+        extends RecyclerView.Adapter<SelectCurrencyCombinedAdapter.CombinedViewHolder> {
 
     private static final String LOG_TAG = SelectCurrencyCombinedAdapter.class.getSimpleName();
     private static final int CURRENCY_TYPE = 1;
@@ -37,7 +38,6 @@ public class SelectCurrencyCombinedAdapter extends RecyclerView.Adapter<SelectCu
     }
 
     public void resetData() {
-        if(selectableCurrencies != null) selectableCurrencies.getAll().close();
         selectableCurrencies = null;
     }
 
@@ -120,12 +120,13 @@ public class SelectCurrencyCombinedAdapter extends RecyclerView.Adapter<SelectCu
             // Stop listening to the checkbox while we change it.
             checkBox.setOnCheckedChangeListener(null);
             checkBox.setChecked(currency.isSelected());
+            checkBox.setEnabled(!currency.isSelected() || selectableCurrencies.allowDeselect());
             checkBox.setOnCheckedChangeListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            checkBox.setChecked(!checkBox.isChecked());
+            if(checkBox.isEnabled()) checkBox.setChecked(!checkBox.isChecked());
         }
 
         @Override
@@ -133,9 +134,5 @@ public class SelectCurrencyCombinedAdapter extends RecyclerView.Adapter<SelectCu
             Log.v(LOG_TAG, "onCheckedChanged persist selection " + currency.getCode() + " " + isChecked);
             selectionListener.onCurrencySelectionChange(currency, isChecked);
         }
-    }
-
-    public interface CurrencySelectionChangeListener {
-        void onCurrencySelectionChange(Currency currency, boolean isSelected);
     }
 }

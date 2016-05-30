@@ -28,6 +28,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
+import xplr.in.currencycalculator.adapters.CurrencySelectionChangeListener;
 import xplr.in.currencycalculator.adapters.SelectCurrencyCombinedAdapter;
 import xplr.in.currencycalculator.loaders.SelectableCurrenciesLoader;
 import xplr.in.currencycalculator.models.Currency;
@@ -35,9 +36,10 @@ import xplr.in.currencycalculator.presenters.SelectableCurrencies;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.repositories.PopularCurrenciesRepository;
 
-public class SelectCurrencyActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<SelectableCurrencies>, SelectCurrencyCombinedAdapter.CurrencySelectionChangeListener {
+public class SelectCurrencyActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<SelectableCurrencies>, CurrencySelectionChangeListener {
 
-    private static String LOG_TAG = SelectCurrencyActivity.class.getSimpleName();
+    private static final String LOG_TAG = SelectCurrencyActivity.class.getSimpleName();
     private final static int COMBINED_CURRENCIES_LOADER_ID = 2;
 
     @Inject PopularCurrenciesRepository popularCurrenciesRepository;
@@ -149,6 +151,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements LoaderM
         @Override
         protected void onPostExecute(Currency currency) {
             Log.v(LOG_TAG, "Completed update.");
+            getLoaderManager().restartLoader(COMBINED_CURRENCIES_LOADER_ID, null, SelectCurrencyActivity.this);
             String message = (currency.isSelected() ? "Selected " : "Removed ") + currency.getCode() + ".";
             Snackbar.make(listSelectableCurrencies, message, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();

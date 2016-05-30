@@ -33,14 +33,15 @@ public class SelectableCurrenciesLoader extends WorkingAsyncTaskLoader<Selectabl
 
     @Override
     protected void releaseResources(SelectableCurrencies data) {
-        // close cursor?
+        data.close();
     }
 
     @Override
     public SelectableCurrencies loadInBackground() {
+        int selectedCount = currencyRepository.countSelected();
         boolean isSearching = !TextUtils.isEmpty(searchQuery);
         List<Currency> popular = isSearching ?
                 Collections.<Currency>emptyList() : popularCurrenciesRepository.findPopularCurrencies();
-        return new SelectableCurrencies(popular, currencyRepository.searchAllCursor(searchQuery), isSearching);
+        return new SelectableCurrencies(popular, currencyRepository.searchAllCursor(searchQuery), selectedCount, isSearching);
     }
 }
