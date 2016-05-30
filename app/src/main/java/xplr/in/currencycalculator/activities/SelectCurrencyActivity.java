@@ -3,7 +3,6 @@ package xplr.in.currencycalculator.activities;
 import android.app.LoaderManager;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.Loader;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -64,19 +63,11 @@ public class SelectCurrencyActivity extends AppCompatActivity implements LoaderM
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        handleSearch(getIntent());
-
         listSelectableCurrencies.setAdapter(currenciesAdapter);
         listSelectableCurrencies.setLayoutManager(new LinearLayoutManager(this));
         listSelectableCurrencies.setItemAnimator(new DefaultItemAnimator());
 
         getLoaderManager().initLoader(COMBINED_CURRENCIES_LOADER_ID, null, this);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleSearch(intent);
     }
 
     @Override
@@ -92,15 +83,6 @@ public class SelectCurrencyActivity extends AppCompatActivity implements LoaderM
     @Override
     public void onLoaderReset(Loader<SelectableCurrencies> loader) {
         currenciesAdapter.resetData();
-    }
-
-    private void handleSearch(Intent intent) {
-        if(Intent.ACTION_SEARCH.equals(intent)) {
-            String q = intent.getStringExtra(SearchManager.QUERY);
-            // The OnQueryTextListener will prevent the intent from being sent.
-            // Handle searches there.
-            Log.e(LOG_TAG, "ERROR: " + intent.getAction() + " received, but not handled: " + q);
-        }
     }
 
     @Override
@@ -134,7 +116,7 @@ public class SelectCurrencyActivity extends AppCompatActivity implements LoaderM
     }
 
     private boolean search(String query) {
-        Log.v(LOG_TAG, "SEARCH CHANGE" + query);
+        Log.v(LOG_TAG, "SEARCH CHANGE " + query);
         searchQuery = query;
         getLoaderManager().restartLoader(COMBINED_CURRENCIES_LOADER_ID, null, this);
         if(!TextUtils.isEmpty(query)) {

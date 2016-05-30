@@ -33,7 +33,7 @@ public class SelectableCurrenciesLoader extends WorkingAsyncTaskLoader<Selectabl
 
     @Override
     protected void releaseResources(SelectableCurrencies data) {
-
+        // close cursor?
     }
 
     @Override
