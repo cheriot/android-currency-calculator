@@ -4,7 +4,6 @@ import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,13 +13,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.yahoo.squidb.data.SquidCursor;
 
@@ -36,14 +31,13 @@ import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.SelectedCurrencyAdapter;
 import xplr.in.currencycalculator.loaders.SelectedCurrenciesLoader;
-import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
 import xplr.in.currencycalculator.sync.SyncCompleteEvent;
-import xplr.in.currencycalculator.views.ClearableEditText;
+import xplr.in.currencycalculator.views.BaseCurrencyView;
 
 public class MainActivity extends AppCompatActivity implements CurrencyListActivity, LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -58,9 +52,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     SelectedCurrency baseCurrency;
 
     @Bind(R.id.fab) FloatingActionButton fab;
-    @Bind(R.id.base_currency_name) TextView baseCurrencyName;
-    @Bind(R.id.base_currency_amount) ClearableEditText baseCurrencyAmount;
-    @Bind(R.id.base_currency_flag) ImageView baseCurrencyFlag;
+    @Bind(R.id.base_currency) BaseCurrencyView baseCurrencyView;
     @Bind(R.id.list_currency_calculations) RecyclerView listCurrencyCalculations;
     @Bind(R.id.rate_comparison_button) Button rateComparisonButton;
     @Bind(R.id.offer_comparison_button) Button offerComparisonButton;
@@ -112,23 +104,12 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        // Replace with butterknife's @OnTextChange?
-        baseCurrencyAmount.getEditText().addTextChangedListener(new TextWatcher() {
+        baseCurrencyView.init(currencyRepository, currencyMetaRepository);
+        baseCurrencyView.setCurrencyAmountChangeListener(new BaseCurrencyView.CurrencyAmountChangeListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String text = s.toString();
-                if(baseCurrency != null && !text.equals(baseCurrency.getAmount())) {
-                    Log.v(LOG_TAG, "TEXT " + text);
-                    currencyRepository.setBaseAmount(baseCurrency, text);
-                    currenciesAdapter.notifyDataSetChanged();
-                }
+            public void onCurrencyAmountChange() {
+                currenciesAdapter.notifyDataSetChanged();
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
         });
 
         listCurrencyCalculations.setAdapter(currenciesAdapter);
@@ -170,21 +151,13 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         super.onDestroy();
     }
 
-    private void displayBaseCurrency(SelectedCurrency currency, CurrencyMeta meta) {
-        if (baseCurrency != null
-                && baseCurrency.sameDisplay(currency)) return;
-
-        Log.v(LOG_TAG, "displayBaseCurrency " + currency.getCode());
+    private void displayBaseCurrency(SelectedCurrency currency) {
+        Log.v(LOG_TAG, "displayBaseCurrency " + currency);
+        if (baseCurrency != null && baseCurrency.sameDisplay(currency)) return;
         baseCurrency = currency;
-        baseCurrencyName.setText(currency.getName());
-        if(meta != null) {
-            Drawable drawable = getResources().getDrawable(meta.getFlagResourceId(CurrencyMeta.FlagSize.SQUARE));
-            baseCurrencyFlag.setImageDrawable(drawable);
-        }
-        baseCurrencyAmount.getEditText().setText(currency.getAmount());
-        // Move the cursor to the end as if the amount had just been typed.
-        baseCurrencyAmount.moveCursorToEnd();
+
         // Rebind RecyclerView items so converted amounts are updated.
+        baseCurrencyView.setBaseCurrency(baseCurrency);
         currenciesAdapter.setBaseCurrency(baseCurrency);
         currenciesAdapter.notifyDataSetChanged();
 
@@ -228,12 +201,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.v(LOG_TAG, "ONLOADERRESET");
+        Log.v(LOG_TAG, "onLoaderReset");
         currenciesAdapter.swapCursor(null);
     }
 
     public class BaseCurrencyQuery extends AsyncTask<Void, Void, SelectedCurrency> {
-
         @Override
         protected SelectedCurrency doInBackground(Void... params) {
             return currencyRepository.findBaseCurrency();
@@ -243,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         protected void onPostExecute(SelectedCurrency currency) {
             Log.v(LOG_TAG, "Base currency is " + currency);
             if (currency != null) {
-                displayBaseCurrency(currency, currencyMetaRepository.findByCode(currency.getCode()));
+                displayBaseCurrency(currency);
             }
         }
     }

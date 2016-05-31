@@ -32,6 +32,7 @@ public class BaseCurrencyView extends LinearLayout {
 
     private CurrencyRepository currencyRepository;
     private CurrencyMetaRepository metaRepository;
+    private CurrencyAmountChangeListener changeListener;
     private SelectedCurrency baseCurrency;
 
     public BaseCurrencyView(Context context, AttributeSet attrs) {
@@ -40,7 +41,8 @@ public class BaseCurrencyView extends LinearLayout {
         ButterKnife.bind(this);
 
         // properties of <merge /> don't get merged. Set them here.
-        setMinimumHeight(80);
+        float density = context.getResources().getDisplayMetrics().density;
+        setMinimumHeight((int) (80*density));
         setFocusableInTouchMode(true);
         setGravity(Gravity.CENTER_VERTICAL);
 
@@ -55,7 +57,7 @@ public class BaseCurrencyView extends LinearLayout {
                 if(baseCurrency != null && !text.equals(baseCurrency.getAmount())) {
                     Log.v(LOG_TAG, "TEXT " + text);
                     currencyRepository.setBaseAmount(baseCurrency, text);
-                    // TODO call listener currenciesAdapter.notifyDataSetChanged();
+                    if(changeListener != null) changeListener.onCurrencyAmountChange();
                 }
             }
 
@@ -67,6 +69,10 @@ public class BaseCurrencyView extends LinearLayout {
     public void init(CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
         this.currencyRepository = currencyRepository;
         this.metaRepository = metaRepository;
+    }
+
+    public void setCurrencyAmountChangeListener(CurrencyAmountChangeListener changeListener) {
+        this.changeListener = changeListener;
     }
 
     public void setBaseCurrency(SelectedCurrency baseCurrency) {
@@ -86,5 +92,9 @@ public class BaseCurrencyView extends LinearLayout {
         baseCurrencyAmount.getEditText().setText(currency.getAmount());
         // Move the cursor to the end as if the amount had just been typed.
         baseCurrencyAmount.moveCursorToEnd();
+    }
+
+    public interface CurrencyAmountChangeListener {
+        void onCurrencyAmountChange();
     }
 }
