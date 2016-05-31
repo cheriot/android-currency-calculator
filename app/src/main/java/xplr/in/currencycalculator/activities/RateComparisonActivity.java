@@ -35,6 +35,8 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
     @Bind(R.id.base_currency) BaseCurrencyView baseCurrencyView;
     @Bind(R.id.purchase_question_name) TextView purchaseQuestionNameText;
     @Bind(R.id.rate_form) View rateForm;
+    @Bind(R.id.base_currency_code) TextView baseCurrencyCode;
+    @Bind(R.id.target_currency_code) TextView targetCurrencyCode;
     @Bind(R.id.rate_to_compare) ClearableEditText rateToCompare;
     @Bind(R.id.trade_form) View tradeForm;
     @Bind(R.id.results) View results;
@@ -90,6 +92,8 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
         rateComparison = data;
         baseCurrencyView.setBaseCurrency(rateComparison.getBaseCurrency());
         purchaseQuestionNameText.setText(rateComparison.getBaseCurrency().getName());
+        baseCurrencyCode.setText(rateComparison.getBaseCurrency().getCode());
+        targetCurrencyCode.setText(rateComparison.getTargetCurrency().getCode());
         // TODO calculate the rate from baseCurrency
         rateToCompare.setHint(rateComparison.getTargetCurrency().getRate());
     }
