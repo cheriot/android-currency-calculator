@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -16,6 +17,7 @@ import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.loaders.RateComparisonLoader;
+import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.presenters.RateComparison;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
@@ -39,8 +41,8 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
     @Bind(R.id.target_currency_code) TextView targetCurrencyCode;
     @Bind(R.id.rate_to_compare) ClearableEditText rateToCompare;
     @Bind(R.id.trade_form) View tradeForm;
+    @Bind(R.id.compare_button) Button compareButton;
     @Bind(R.id.results) View results;
-    private RateComparison rateComparison;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,10 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
         tradeForm.setVisibility(View.GONE);
     }
 
+    public void compare(View view) {
+        results.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public Loader<RateComparison> onCreateLoader(int id, Bundle args) {
         return new RateComparisonLoader(this, currencyRepository);
@@ -89,17 +95,20 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
 
     @Override
     public void onLoadFinished(Loader<RateComparison> loader, RateComparison data) {
-        rateComparison = data;
-        baseCurrencyView.setBaseCurrency(rateComparison.getBaseCurrency());
-        purchaseQuestionNameText.setText(rateComparison.getBaseCurrency().getName());
-        baseCurrencyCode.setText(rateComparison.getBaseCurrency().getCode());
-        targetCurrencyCode.setText(rateComparison.getTargetCurrency().getCode());
-        // TODO calculate the rate from baseCurrency
-        rateToCompare.setHint(rateComparison.getTargetCurrency().getRate());
+        baseCurrencyView.setBaseCurrency(data.getBaseCurrency());
+        purchaseQuestionNameText.setText(data.getBaseCurrency().getName());
+        baseCurrencyCode.setText(data.getBaseCurrency().getCode());
+        targetCurrencyCode.setText(data.getTargetCurrency().getCode());
+        // Calculate the rate between base and target currencies.
+        SelectedCurrency one = new SelectedCurrency();
+        one.setAmount("1");
+        one.setRate(data.getBaseCurrency().getRate());
+        data.getTargetCurrency().convertFrom(one);
+        rateToCompare.setHint(data.getTargetCurrency().format());
     }
 
     @Override
     public void onLoaderReset(Loader<RateComparison> loader) {
-        this.rateComparison = null;
+        // nothing to do
     }
 }
