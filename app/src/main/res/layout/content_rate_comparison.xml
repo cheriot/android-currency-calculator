@@ -4,35 +4,10 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <LinearLayout
+    <xplr.in.currencycalculator.views.BaseCurrencyView
+        android:id="@+id/base_currency"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:focusableInTouchMode="true"
-        android:gravity="center_vertical"
-        android:minHeight="80dp"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/base_currency_flag"
-            android:layout_width="67dp"
-            android:layout_height="50dp"
-            android:paddingLeft="16dp"
-            android:paddingStart="16dp"
-            android:src="@drawable/flag_4x3_eu"/>
-
-        <TextView
-            android:id="@+id/base_currency_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="16dp"
-            android:paddingStart="16dp"
-            android:text="US Dollar"/>
-
-        <xplr.in.currencycalculator.views.ClearableEditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+        android:layout_height="wrap_content"/>
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"

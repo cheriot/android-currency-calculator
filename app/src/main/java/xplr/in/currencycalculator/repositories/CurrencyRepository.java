@@ -32,6 +32,7 @@ public class CurrencyRepository {
 
     private static final String LOG_TAG = CurrencyRepository.class.getSimpleName();
     private static final int BASE_CURRENCY_POSITION = 1;
+    private static final int TARGET_CURRENCY_POSITION = BASE_CURRENCY_POSITION + 1;
 
     private final SharedPreferences appSharedPrefs;
     private final CurrenciesDatabase database;
@@ -64,6 +65,10 @@ public class CurrencyRepository {
 
     static final Query BASE_CURRENCY = SELECTED_CURRENCIES
             .where(Currency.POSITION.eq(BASE_CURRENCY_POSITION))
+            .freeze();
+
+    static final Query TARGET_CURRENCY = SELECTED_CURRENCIES
+            .where(Currency.POSITION.eq(TARGET_CURRENCY_POSITION))
             .freeze();
 
     public Cursor findSelectedCursor() {
@@ -149,6 +154,10 @@ public class CurrencyRepository {
         SelectedCurrency baseCurrency = database.fetchByQuery(SelectedCurrency.class, BASE_CURRENCY);
         baseCurrency.setAmount(appSharedPrefs.getString(BASE_CURRENCY_AMOUNT_KEY, null));
         return baseCurrency;
+    }
+
+    public SelectedCurrency findTargetCurrency() {
+        return database.fetchByQuery(SelectedCurrency.class, TARGET_CURRENCY);
     }
 
     public void setBaseCurrency(SelectedCurrency currency) {

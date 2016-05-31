@@ -34,7 +34,7 @@ public class ClearableEditText extends FrameLayout {
         // https://developer.android.com/training/custom-views/create-view.html
         super(context, attributeSet);
 
-        LayoutInflater.from(getContext()).inflate(R.layout.view_clearable_edit_text, this, true);
+        LayoutInflater.from(context).inflate(R.layout.view_clearable_edit_text, this, true);
         ButterKnife.bind(this);
 
         // Hide the X when there's no text to clear.
