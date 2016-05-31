@@ -1,6 +1,7 @@
 package xplr.in.currencycalculator.views;
 
 import android.content.Context;
+import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -26,6 +27,7 @@ public class ClearableEditText extends FrameLayout {
 
     private static final String LOG_TAG = ClearableEditText.class.getSimpleName();
 
+    @Bind(R.id.text_intput_layout) TextInputLayout textInputLayout;
     @Bind(R.id.edit_text) EditText editText;
     @Bind(R.id.clear_button) ImageButton clearButton;
 
@@ -82,6 +84,17 @@ public class ClearableEditText extends FrameLayout {
 
     public EditText getEditText() {
         return editText;
+    }
+
+    public void setHint(String hint) {
+        textInputLayout.setHint(hint);
+        // Undo the negative margin that will hide the hint.
+        MarginLayoutParams textInputLayoutParams = (MarginLayoutParams)textInputLayout.getLayoutParams();
+        textInputLayoutParams.setMargins(0,0,0,0);
+        // Showing the hint above the editText moves the baseline. Realign the clear button.
+        MarginLayoutParams clearButtonParams = (MarginLayoutParams)clearButton.getLayoutParams();
+        float density = getContext().getResources().getDisplayMetrics().density;
+        clearButtonParams.setMargins(0, (int)(6*density), 0, 0);
     }
 
     public void moveCursorToEnd() {

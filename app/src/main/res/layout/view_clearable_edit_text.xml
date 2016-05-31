@@ -4,20 +4,30 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <EditText
-        style="@style/ResultFont"
-        android:id="@+id/edit_text"
-        android:layout_width="100dp"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_intput_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:ems="6"
-        android:imeOptions="actionDone"
-        android:inputType="numberDecimal"
-        android:paddingEnd="25dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="25dp"
-        android:paddingStart="5dp"/>
+        android:layout_marginTop="-12dp">
+        <!--
+        -12 margin so the EditText aligns as if the TextInputLayout were not there.
+        This is especially needed for places that don't have a hint.
+        -->
+        <android.support.design.widget.TextInputEditText
+            style="@style/ResultFont"
+            android:id="@+id/edit_text"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:ems="6"
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal"
+            android:paddingEnd="25dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="25dp"
+            android:paddingStart="5dp"/>
+    </android.support.design.widget.TextInputLayout>
 
     <ImageButton
         android:id="@+id/clear_button"
