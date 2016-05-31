@@ -34,43 +34,85 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Are there fees or taxes?"/>
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="At what rate will the bank buy a US Dollar?"
-        android:textColor="#000"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="32.5 TWD"
-        android:textColor="#000"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000"
+            android:text="Are there fees or taxes?"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="setFeesYes"
+            android:text="yes"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="setFeesNo"
+            android:text="no"/>
+    </RadioGroup>
 
     <LinearLayout
+        android:id="@+id/rate_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusableInTouchMode="true"
-        android:gravity="center_vertical"
-        android:minHeight="80dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1 USD = "
+            android:text="At what rate will the bank buy a US Dollar?"
             android:textColor="#000"/>
-        <xplr.in.currencycalculator.views.ClearableEditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TWD"
+            android:text="32.5 TWD"
             android:textColor="#000"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:gravity="center_vertical"
+            android:minHeight="80dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 USD = "
+                android:textColor="#000"/>
+
+            <xplr.in.currencycalculator.views.ClearableEditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TWD"
+                android:textColor="#000"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/trade_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trade inputs here."/>
     </LinearLayout>
 
     <TextView
