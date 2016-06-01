@@ -23,19 +23,19 @@ import xplr.in.currencycalculator.repositories.CurrencyRepository;
 /**
  * Created by cheriot on 5/31/16.
  */
-public class BaseCurrencyView extends LinearLayout {
-    private static final String LOG_TAG = BaseCurrencyView.class.getSimpleName();
+public class CurrencyAmountEditorView extends LinearLayout {
+    private static final String LOG_TAG = CurrencyAmountEditorView.class.getSimpleName();
 
-    @Bind(R.id.base_currency_flag) ImageView baseCurrencyFlag;
-    @Bind(R.id.base_currency_name) TextView baseCurrencyName;
-    @Bind(R.id.base_currency_amount) ClearableEditText baseCurrencyAmount;
+    @Bind(R.id.currency_flag) ImageView currencyFlag;
+    @Bind(R.id.currency_name) TextView currencyName;
+    @Bind(R.id.currency_amount) ClearableEditText currencyAmount;
 
     private CurrencyRepository currencyRepository;
     private CurrencyMetaRepository metaRepository;
     private CurrencyAmountChangeListener changeListener;
-    private SelectedCurrency baseCurrency;
+    private SelectedCurrency selectedCurrency;
 
-    public BaseCurrencyView(Context context, AttributeSet attrs) {
+    public CurrencyAmountEditorView(Context context, AttributeSet attrs) {
         super(context, attrs);
         LayoutInflater.from(context).inflate(R.layout.view_base_currency, this, true);
         ButterKnife.bind(this);
@@ -47,16 +47,16 @@ public class BaseCurrencyView extends LinearLayout {
         setGravity(Gravity.CENTER_VERTICAL);
 
         // Replace with butterknife's @OnTextChange?
-        baseCurrencyAmount.getEditText().addTextChangedListener(new TextWatcher() {
+        currencyAmount.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String text = s.toString();
-                if(baseCurrency != null && !text.equals(baseCurrency.getAmount())) {
+                if(selectedCurrency != null && !text.equals(selectedCurrency.getAmount())) {
                     Log.v(LOG_TAG, "TEXT " + text);
-                    currencyRepository.setBaseAmount(baseCurrency, text);
+                    currencyRepository.setBaseAmount(selectedCurrency, text);
                     if(changeListener != null) changeListener.onCurrencyAmountChange();
                 }
             }
@@ -75,23 +75,23 @@ public class BaseCurrencyView extends LinearLayout {
         this.changeListener = changeListener;
     }
 
-    public void setBaseCurrency(SelectedCurrency baseCurrency) {
-        this.baseCurrency = baseCurrency;
-        displayBaseCurrency(this.baseCurrency);
+    public void setSelectedCurrency(SelectedCurrency selectedCurrency) {
+        this.selectedCurrency = selectedCurrency;
+        displayBaseCurrency(this.selectedCurrency);
     }
 
     private void displayBaseCurrency(SelectedCurrency currency) {
         Log.v(LOG_TAG, "displayBaseCurrency " + currency.getCode());
 
-        baseCurrencyName.setText(currency.getName());
+        currencyName.setText(currency.getName());
         CurrencyMeta meta = metaRepository.findByCode(currency.getCode());
         if(meta != null) {
             Drawable drawable = getResources().getDrawable(meta.getFlagResourceId(CurrencyMeta.FlagSize.SQUARE));
-            baseCurrencyFlag.setImageDrawable(drawable);
+            currencyFlag.setImageDrawable(drawable);
         }
-        baseCurrencyAmount.getEditText().setText(currency.getAmount());
+        currencyAmount.getEditText().setText(currency.getAmount());
         // Move the cursor to the end as if the amount had just been typed.
-        baseCurrencyAmount.moveCursorToEnd();
+        currencyAmount.moveCursorToEnd();
     }
 
     public interface CurrencyAmountChangeListener {

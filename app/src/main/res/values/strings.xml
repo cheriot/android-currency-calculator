@@ -9,4 +9,5 @@
     <string name="title_activity_rate_comparison">Rate Comparison</string>
     <string name="title_activity_offer_comparison">Offer Comparison</string>
     <string name="rate_compare_result">The bank makes %1$s, %2$s %3$s, or %4$s %5$s in revenue.</string>
+    <string name="trade_input_prompt">With all the taxes and fees, how many Euros are you being offered?</string>
 </resources>

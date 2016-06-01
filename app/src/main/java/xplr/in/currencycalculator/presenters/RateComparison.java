@@ -72,7 +72,7 @@ public class RateComparison {
             Number n = new DecimalFormat().parse(str);
             return new BigDecimal(n.toString());
         } catch (ParseException e) {
-            Log.e(LOG_TAG, "Error parsing the rate to compare <" + str + ">.", e);
+            Log.e(LOG_TAG, "Error parsing the rate to compareRate <" + str + ">.", e);
             return BigDecimal.ZERO;
         }
     }

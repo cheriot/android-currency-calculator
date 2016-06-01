@@ -24,21 +24,21 @@ import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.presenters.RateComparison;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
-import xplr.in.currencycalculator.views.BaseCurrencyView;
+import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
 import xplr.in.currencycalculator.views.ClearableEditText;
 
 /**
  * Created by cheriot on 5/24/16.
  */
 public class RateComparisonActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<RateComparison>, BaseCurrencyView.CurrencyAmountChangeListener {
+        implements LoaderManager.LoaderCallbacks<RateComparison>, CurrencyAmountEditorView.CurrencyAmountChangeListener {
 
     private static final String LOG_TAG = RateComparisonActivity.class.getSimpleName();
     private static final int RATE_COMPARISON_LOADER_ID = 1;
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencyMetaRepository metaRepository;
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.base_currency) BaseCurrencyView baseCurrencyView;
+    @Bind(R.id.base_currency) CurrencyAmountEditorView currencyAmountEditorView;
     @Bind(R.id.purchase_question_name) TextView purchaseQuestionNameText;
     @Bind(R.id.rate_form) View rateForm;
     @Bind(R.id.base_currency_code) TextView baseCurrencyCode;
@@ -46,8 +46,8 @@ public class RateComparisonActivity extends AppCompatActivity
     @Bind(R.id.rate_to_compare) ClearableEditText rateToCompare;
     @Bind(R.id.trade_form) View tradeForm;
     @Bind(R.id.compare_button) Button compareButton;
-    @Bind(R.id.results) View results;
-    @Bind(R.id.result_text) TextView resultText;
+    @Bind(R.id.exchange_result_text) TextView exchangeResultText;
+    @Bind(R.id.trade_result_text) TextView tradeResultText;
     private RateComparison rateComparison;
 
     @Override
@@ -61,13 +61,18 @@ public class RateComparisonActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        baseCurrencyView.init(currencyRepository, metaRepository);
+        currencyAmountEditorView.init(currencyRepository, metaRepository);
+
+        // Rate form
         rateForm.setVisibility(View.GONE);
         tradeForm.setVisibility(View.GONE);
-        results.setVisibility(View.GONE);
+        exchangeResultText.setVisibility(View.GONE);
         compareButton.setEnabled(false);
 
-        baseCurrencyView.setCurrencyAmountChangeListener(this);
+        // Trade form
+        tradeResultText.setVisibility(View.GONE);
+
+        currencyAmountEditorView.setCurrencyAmountChangeListener(this);
         rateToCompare.getEditText().addTextChangedListener(new RateInputChangeListener());
         getLoaderManager().initLoader(RATE_COMPARISON_LOADER_ID, null, this);
 
@@ -92,7 +97,7 @@ public class RateComparisonActivity extends AppCompatActivity
         tradeForm.setVisibility(View.GONE);
     }
 
-    public void compare(View view) {
+    public void compareRate(View view) {
         if(TextUtils.isEmpty(rateToCompare.getEditText().getText())) return;
 
         boolean success = rateComparison.calculate(rateToCompare.getText());
@@ -106,13 +111,18 @@ public class RateComparisonActivity extends AppCompatActivity
                     rateComparison.getBankRevenueTargetCurrency(),
                     rateComparison.getTargetCurrency().getCode());
             Log.v(LOG_TAG, msg);
-            resultText.setText(msg);
-            results.setVisibility(View.VISIBLE);
+            exchangeResultText.setText(msg);
+            exchangeResultText.setVisibility(View.VISIBLE);
             compareButton.setEnabled(false);
         } else {
             Log.e(LOG_TAG, "Unable to calculate a result.");
-            results.setVisibility(View.GONE);
+            exchangeResultText.setVisibility(View.GONE);
         }
+    }
+
+    public void compareTrade(View view) {
+        tradeResultText.setVisibility(View.VISIBLE);
+        tradeResultText.setText("Results go here.");
     }
 
     @Override
@@ -123,12 +133,12 @@ public class RateComparisonActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<RateComparison> loader, RateComparison data) {
         rateComparison = data;
-        baseCurrencyView.setBaseCurrency((SelectedCurrency)data.getBaseCurrency());
+        currencyAmountEditorView.setSelectedCurrency((SelectedCurrency)data.getBaseCurrency());
         purchaseQuestionNameText.setText(data.getBaseCurrency().getName());
         baseCurrencyCode.setText(data.getBaseCurrency().getCode());
         targetCurrencyCode.setText(data.getTargetCurrency().getCode());
         rateToCompare.setHint(data.getMarketRate());
-        compare(compareButton);
+        compareRate(compareButton);
     }
 
     @Override
@@ -145,7 +155,7 @@ public class RateComparisonActivity extends AppCompatActivity
         // is the new value actually different? 7, 7., 7.0???
         if(rateComparison.sameRateToCompare(rateToCompare.getText())) return;
         compareButton.setEnabled(!TextUtils.isEmpty(rateToCompare.getText()));
-        results.setVisibility(View.GONE);
+        exchangeResultText.setVisibility(View.GONE);
         rateComparison.clearResults();
     }
 

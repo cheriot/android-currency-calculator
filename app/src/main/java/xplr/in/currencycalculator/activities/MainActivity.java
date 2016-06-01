@@ -37,7 +37,7 @@ import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
 import xplr.in.currencycalculator.sync.SyncCompleteEvent;
-import xplr.in.currencycalculator.views.BaseCurrencyView;
+import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
 
 public class MainActivity extends AppCompatActivity implements CurrencyListActivity, LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     SelectedCurrency baseCurrency;
 
     @Bind(R.id.fab) FloatingActionButton fab;
-    @Bind(R.id.base_currency) BaseCurrencyView baseCurrencyView;
+    @Bind(R.id.base_currency) CurrencyAmountEditorView currencyAmountEditorView;
     @Bind(R.id.list_currency_calculations) RecyclerView listCurrencyCalculations;
     @Bind(R.id.rate_comparison_button) Button rateComparisonButton;
     @Bind(R.id.offer_comparison_button) Button offerComparisonButton;
@@ -104,8 +104,8 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        baseCurrencyView.init(currencyRepository, currencyMetaRepository);
-        baseCurrencyView.setCurrencyAmountChangeListener(new BaseCurrencyView.CurrencyAmountChangeListener() {
+        currencyAmountEditorView.init(currencyRepository, currencyMetaRepository);
+        currencyAmountEditorView.setCurrencyAmountChangeListener(new CurrencyAmountEditorView.CurrencyAmountChangeListener() {
             @Override
             public void onCurrencyAmountChange() {
                 currenciesAdapter.notifyDataSetChanged();
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         baseCurrency = currency;
 
         // Rebind RecyclerView items so converted amounts are updated.
-        baseCurrencyView.setBaseCurrency(baseCurrency);
+        currencyAmountEditorView.setSelectedCurrency(baseCurrency);
         currenciesAdapter.setBaseCurrency(baseCurrency);
         currenciesAdapter.notifyDataSetChanged();
 
