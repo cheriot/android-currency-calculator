@@ -82,6 +82,10 @@ public class ClearableEditText extends FrameLayout {
         });
     }
 
+    public String getText() {
+        return editText.getText().toString();
+    }
+
     public EditText getEditText() {
         return editText;
     }

@@ -1,5 +1,6 @@
 package xplr.in.currencycalculator.presenters;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.math.BigDecimal;
@@ -27,6 +28,8 @@ public class RateComparison {
     private Money bankRevenueBaseCurrency;
     private Money bankRevenueTargetCurrency;
 
+    private BigDecimal rateToCompare;
+
     public RateComparison(SelectedCurrency baseCurrency, SelectedCurrency targetCurrency) {
         this.baseMoney = new Money(baseCurrency, baseCurrency.getAmountBigDecimal());
         this.targetCurrency = targetCurrency;
@@ -39,7 +42,7 @@ public class RateComparison {
 
     public boolean calculate(String rateToCompareStr) {
         Log.v(LOG_TAG, "calculate " + rateToCompareStr);
-        BigDecimal rateToCompare = parseUserInputNumber(rateToCompareStr);
+        rateToCompare = parseUserInputNumber(rateToCompareStr);
         if(rateToCompare.equals(BigDecimal.ZERO)) return false;
 
         bankRevenueRate = marketRate.subtract(rateToCompare)
@@ -47,6 +50,21 @@ public class RateComparison {
         bankRevenueBaseCurrency = baseMoney.multiply(bankRevenueRate);
         bankRevenueTargetCurrency = bankRevenueBaseCurrency.convertTo(targetCurrency);
         return true;
+    }
+
+    public boolean sameRateToCompare(String rateToCompareStr) {
+        Log.v(LOG_TAG, rateToCompareStr);
+        if(TextUtils.isEmpty(rateToCompareStr)) return false;
+        if(rateToCompare == null) return false;
+        BigDecimal newRate = parseUserInputNumber(rateToCompareStr);
+        return rateToCompare.equals(newRate);
+    }
+
+    public void clearResults() {
+        rateToCompare = null;
+        bankRevenueRate = null;
+        bankRevenueBaseCurrency = null;
+        bankRevenueTargetCurrency = null;
     }
 
     private BigDecimal parseUserInputNumber(String str) {

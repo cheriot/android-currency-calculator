@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -29,7 +30,8 @@ import xplr.in.currencycalculator.views.ClearableEditText;
 /**
  * Created by cheriot on 5/24/16.
  */
-public class RateComparisonActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<RateComparison> {
+public class RateComparisonActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<RateComparison>, BaseCurrencyView.CurrencyAmountChangeListener {
 
     private static final String LOG_TAG = RateComparisonActivity.class.getSimpleName();
     private static final int RATE_COMPARISON_LOADER_ID = 1;
@@ -63,15 +65,19 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
         rateForm.setVisibility(View.GONE);
         tradeForm.setVisibility(View.GONE);
         results.setVisibility(View.GONE);
+        compareButton.setEnabled(false);
 
+        baseCurrencyView.setCurrencyAmountChangeListener(this);
         rateToCompare.getEditText().addTextChangedListener(new RateInputChangeListener());
         getLoaderManager().initLoader(RATE_COMPARISON_LOADER_ID, null, this);
 
-        // Add off input text.
+        // Add offer input text.
         // Add new calculate button and result text.
 
         // improve display of result text
         // highlight/dim calculate button to reflect calculated state
+        // hide keyboard on calculate
+        // calculate on keyboard's enter
     }
 
     public void setFeesYes(View view) {
@@ -87,7 +93,9 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
     }
 
     public void compare(View view) {
-        boolean success = rateComparison.calculate(rateToCompare.getEditText().getText().toString());
+        if(TextUtils.isEmpty(rateToCompare.getEditText().getText())) return;
+
+        boolean success = rateComparison.calculate(rateToCompare.getText());
         if(success) {
             String msg = rateComparison.getBankRevenuePercent() + "%, "
                     + rateComparison.getBankRevenueBaseCurrency() + " " + rateComparison.getBaseCurrency().getCode() + ", or "
@@ -95,6 +103,7 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
             Log.v(LOG_TAG, msg);
             resultText.setText(msg);
             results.setVisibility(View.VISIBLE);
+            compareButton.setEnabled(false);
         } else {
             Log.e(LOG_TAG, "Unable to calculate a result.");
             results.setVisibility(View.GONE);
@@ -114,11 +123,25 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
         baseCurrencyCode.setText(data.getBaseCurrency().getCode());
         targetCurrencyCode.setText(data.getTargetCurrency().getCode());
         rateToCompare.setHint(data.getMarketRate());
+        compare(compareButton);
     }
 
     @Override
     public void onLoaderReset(Loader<RateComparison> loader) {
         // nothing to do
+    }
+
+    @Override
+    public void onCurrencyAmountChange() {
+        getLoaderManager().restartLoader(RATE_COMPARISON_LOADER_ID, null, this);
+    }
+
+    public void invalidateNoFeeResults() {
+        // is the new value actually different? 7, 7., 7.0???
+        if(rateComparison.sameRateToCompare(rateToCompare.getText())) return;
+        compareButton.setEnabled(!TextUtils.isEmpty(rateToCompare.getText()));
+        results.setVisibility(View.GONE);
+        rateComparison.clearResults();
     }
 
     class RateInputChangeListener implements TextWatcher {
@@ -127,8 +150,7 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // TODO highlight the compare button
-            results.setVisibility(View.GONE);
+            invalidateNoFeeResults();
         }
 
         @Override
