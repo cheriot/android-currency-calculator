@@ -118,32 +118,18 @@
             android:onClick="compare"
             android:text="Compare"/>
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/results"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="The bank makes "
-                android:textColor="#000"/>
-
             <TextView
                 android:id="@+id/result_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="3%, 66 TWD, or 2 USD"
                 android:textColor="#000"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" in revenue."
-                android:textColor="#000"/>
-        </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout

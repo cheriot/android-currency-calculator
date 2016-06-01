@@ -97,9 +97,14 @@ public class RateComparisonActivity extends AppCompatActivity
 
         boolean success = rateComparison.calculate(rateToCompare.getText());
         if(success) {
-            String msg = rateComparison.getBankRevenuePercent() + "%, "
-                    + rateComparison.getBankRevenueBaseCurrency() + " " + rateComparison.getBaseCurrency().getCode() + ", or "
-                    + rateComparison.getBankRevenueTargetCurrency() + " " + rateComparison.getTargetCurrency().getCode();
+            String template = getString(R.string.rate_compare_result);
+            String msg = String.format(
+                    template,
+                    rateComparison.getBankRevenuePercent(),
+                    rateComparison.getBankRevenueBaseCurrency(),
+                    rateComparison.getBaseCurrency().getCode(),
+                    rateComparison.getBankRevenueTargetCurrency(),
+                    rateComparison.getTargetCurrency().getCode());
             Log.v(LOG_TAG, msg);
             resultText.setText(msg);
             results.setVisibility(View.VISIBLE);
