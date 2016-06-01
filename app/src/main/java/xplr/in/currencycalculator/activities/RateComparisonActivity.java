@@ -5,6 +5,8 @@ import android.content.Loader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -61,17 +63,15 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
         rateForm.setVisibility(View.GONE);
         tradeForm.setVisibility(View.GONE);
         results.setVisibility(View.GONE);
+
+        rateToCompare.getEditText().addTextChangedListener(new RateInputChangeListener());
         getLoaderManager().initLoader(RATE_COMPARISON_LOADER_ID, null, this);
 
-        // Grab the base currency
-        // Grab the desired currency
-        // Hide/show based on fees and taxes
-        // Accept rate input
-        // Calculate!
+        // Add off input text.
+        // Add new calculate button and result text.
 
-        // Better display:
-        // Use material guidelines to show example text while typing (market exchange rate)
-        //
+        // improve display of result text
+        // highlight/dim calculate button to reflect calculated state
     }
 
     public void setFeesYes(View view) {
@@ -87,13 +87,18 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
     }
 
     public void compare(View view) {
-        results.setVisibility(View.VISIBLE);
-        rateComparison.calculate(rateToCompare.getEditText().getText().toString());
-        String msg = rateComparison.getBankRevenuePercent() + "%, "
-                + rateComparison.getBankRevenueBaseCurrency() + " " + rateComparison.getBaseCurrency().getCode() + ", or "
-                + rateComparison.getBankRevenueTargetCurrency() + " " + rateComparison.getTargetCurrency().getCode();
-        Log.v(LOG_TAG, msg);
-        resultText.setText(msg);
+        boolean success = rateComparison.calculate(rateToCompare.getEditText().getText().toString());
+        if(success) {
+            String msg = rateComparison.getBankRevenuePercent() + "%, "
+                    + rateComparison.getBankRevenueBaseCurrency() + " " + rateComparison.getBaseCurrency().getCode() + ", or "
+                    + rateComparison.getBankRevenueTargetCurrency() + " " + rateComparison.getTargetCurrency().getCode();
+            Log.v(LOG_TAG, msg);
+            resultText.setText(msg);
+            results.setVisibility(View.VISIBLE);
+        } else {
+            Log.e(LOG_TAG, "Unable to calculate a result.");
+            results.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -114,5 +119,19 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
     @Override
     public void onLoaderReset(Loader<RateComparison> loader) {
         // nothing to do
+    }
+
+    class RateInputChangeListener implements TextWatcher {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            // TODO highlight the compare button
+            results.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {}
     }
 }

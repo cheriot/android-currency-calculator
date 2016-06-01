@@ -37,15 +37,16 @@ public class RateComparison {
         return new DecimalFormat().format(marketRate);
     }
 
-    public void calculate(String rateToCompareStr) {
+    public boolean calculate(String rateToCompareStr) {
         Log.v(LOG_TAG, "calculate " + rateToCompareStr);
         BigDecimal rateToCompare = parseUserInputNumber(rateToCompareStr);
-        if(rateToCompare.equals(BigDecimal.ZERO)) return;
+        if(rateToCompare.equals(BigDecimal.ZERO)) return false;
 
         bankRevenueRate = marketRate.subtract(rateToCompare)
                 .divide(marketRate, MathContext.DECIMAL128);
         bankRevenueBaseCurrency = baseMoney.multiply(bankRevenueRate);
         bankRevenueTargetCurrency = bankRevenueBaseCurrency.convertTo(targetCurrency);
+        return true;
     }
 
     private BigDecimal parseUserInputNumber(String str) {

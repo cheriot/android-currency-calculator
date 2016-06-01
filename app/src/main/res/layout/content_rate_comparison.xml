@@ -38,14 +38,14 @@
         android:id="@+id/rate_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -77,22 +77,24 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:text="1 "
-                android:textColor="#000"
-                android:layout_marginTop="6dp"/>
+                android:textColor="#000"/>
+
             <TextView
                 android:id="@+id/base_currency_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:text="USD"
-                android:textColor="#000"
-                android:layout_marginTop="6dp"/>
+                android:textColor="#000"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:text=" ="
-                android:textColor="#000"
-                android:layout_marginTop="6dp"/>
+                android:textColor="#000"/>
 
             <xplr.in.currencycalculator.views.ClearableEditText
                 android:id="@+id/rate_to_compare"
@@ -103,51 +105,56 @@
                 android:id="@+id/target_currency_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:text="TWD"
-                android:textColor="#000"
-                android:layout_marginTop="6dp"/>
+                android:textColor="#000"/>
         </LinearLayout>
+
         <Button
             android:id="@+id/compare_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Compare"
-            android:onClick="compare"/>
+            android:onClick="compare"
+            android:text="Compare"/>
+
+        <LinearLayout
+            android:id="@+id/results"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="The bank makes "
+                android:textColor="#000"/>
+
+            <TextView
+                android:id="@+id/result_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3%, 66 TWD, or 2 USD"
+                android:textColor="#000"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" in revenue."
+                android:textColor="#000"/>
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/trade_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Trade inputs here."/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/results"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="The bank makes "
-            android:textColor="#000"/>
-        <TextView
-            android:id="@+id/result_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="3%, 66 TWD, or 2 USD"
-            android:textColor="#000"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" in revenue."
-            android:textColor="#000"/>
     </LinearLayout>
 </LinearLayout>
