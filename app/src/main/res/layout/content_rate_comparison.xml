@@ -119,8 +119,8 @@
         android:id="@+id/trade_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
+        android:orientation="vertical"
+        android:gravity="center">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -131,20 +131,23 @@
         android:id="@+id/results"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
+        android:orientation="horizontal"
+        android:gravity="center">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#FFF"
-            android:text="The bank makes a profit of 3%, 66 TWD, or 2 USD"
+            android:text="The bank makes "
             android:textColor="#000"/>
-
+        <TextView
+            android:id="@+id/result_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3%, 66 TWD, or 2 USD"
+            android:textColor="#000"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#FFF"
-            android:text="If the smallest Taiwan Dollar unit is 1 and the smallest US Dollar amount is 1 then you are owed 6352 TWD."
+            android:text=" in revenue."
             android:textColor="#000"/>
     </LinearLayout>
 </LinearLayout>

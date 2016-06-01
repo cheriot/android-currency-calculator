@@ -4,6 +4,8 @@ import com.yahoo.squidb.annotations.ColumnSpec;
 import com.yahoo.squidb.annotations.ModelMethod;
 import com.yahoo.squidb.annotations.TableModelSpec;
 
+import java.math.BigDecimal;
+
 /**
  * TODO Custom data type for BigDecimal
  * https://github.com/yahoo/squidb/wiki/Writing-plugins-for-custom-data-types
@@ -44,6 +46,12 @@ public class CurrencySpec {
         c.setName(meta.getName());
         c.setIssuingCountryCode(meta.getIssuingCountryCode());
         c.setMinorUnits(meta.getMinorUnits());
+    }
+
+    @ModelMethod
+    public static BigDecimal rateTo(Currency baseCurrency, Currency targetCurrency) {
+        Money one = new Money(baseCurrency, BigDecimal.ONE);
+        return one.convertTo(targetCurrency).getAmount();
     }
 
     @ModelMethod

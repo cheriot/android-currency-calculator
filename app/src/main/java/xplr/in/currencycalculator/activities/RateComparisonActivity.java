@@ -43,6 +43,8 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
     @Bind(R.id.trade_form) View tradeForm;
     @Bind(R.id.compare_button) Button compareButton;
     @Bind(R.id.results) View results;
+    @Bind(R.id.result_text) TextView resultText;
+    private RateComparison rateComparison;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +88,12 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
 
     public void compare(View view) {
         results.setVisibility(View.VISIBLE);
+        rateComparison.calculate(rateToCompare.getEditText().getText().toString());
+        String msg = rateComparison.getBankRevenuePercent() + "%, "
+                + rateComparison.getBankRevenueBaseCurrency() + " " + rateComparison.getBaseCurrency().getCode() + ", or "
+                + rateComparison.getBankRevenueTargetCurrency() + " " + rateComparison.getTargetCurrency().getCode();
+        Log.v(LOG_TAG, msg);
+        resultText.setText(msg);
     }
 
     @Override
@@ -95,16 +103,12 @@ public class RateComparisonActivity extends AppCompatActivity implements LoaderM
 
     @Override
     public void onLoadFinished(Loader<RateComparison> loader, RateComparison data) {
-        baseCurrencyView.setBaseCurrency(data.getBaseCurrency());
+        rateComparison = data;
+        baseCurrencyView.setBaseCurrency((SelectedCurrency)data.getBaseCurrency());
         purchaseQuestionNameText.setText(data.getBaseCurrency().getName());
         baseCurrencyCode.setText(data.getBaseCurrency().getCode());
         targetCurrencyCode.setText(data.getTargetCurrency().getCode());
-        // Calculate the rate between base and target currencies.
-        SelectedCurrency one = new SelectedCurrency();
-        one.setAmount("1");
-        one.setRate(data.getBaseCurrency().getRate());
-        data.getTargetCurrency().convertFrom(one);
-        rateToCompare.setHint(data.getTargetCurrency().format());
+        rateToCompare.setHint(data.getMarketRate());
     }
 
     @Override

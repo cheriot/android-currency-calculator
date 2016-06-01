@@ -46,6 +46,10 @@ public class SelectedCurrency extends Currency {
         return amount;
     }
 
+    public BigDecimal getAmountBigDecimal() {
+        return new BigDecimal(amount);
+    }
+
     public String getDisplayedAmount() {
         if(amount == null) return null;
         return parse(format());
