@@ -2,13 +2,13 @@ package xplr.in.currencycalculator.loaders;
 
 import android.content.Context;
 
-import xplr.in.currencycalculator.presenters.RateComparison;
+import xplr.in.currencycalculator.presenters.ComparisonPresenter;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
 /**
  * Created by cheriot on 5/31/16.
  */
-public class RateComparisonLoader extends WorkingAsyncTaskLoader<RateComparison> {
+public class RateComparisonLoader extends WorkingAsyncTaskLoader<ComparisonPresenter> {
 
     private final CurrencyRepository currencyRepository;
 
@@ -18,13 +18,13 @@ public class RateComparisonLoader extends WorkingAsyncTaskLoader<RateComparison>
     }
 
     @Override
-    protected void releaseResources(RateComparison data) {
+    protected void releaseResources(ComparisonPresenter data) {
         // nothing to do
     }
 
     @Override
-    public RateComparison loadInBackground() {
-        return new RateComparison(
+    public ComparisonPresenter loadInBackground() {
+        return new ComparisonPresenter(
                 currencyRepository.findBaseCurrency(),
                 currencyRepository.findTargetCurrency());
     }
