@@ -24,6 +24,7 @@ import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.presenters.ComparisonPresenter;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
+import xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView;
 import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
 import xplr.in.currencycalculator.views.ClearableEditText;
 
@@ -39,7 +40,7 @@ public class RateComparisonActivity extends AppCompatActivity
     @Inject CurrencyMetaRepository metaRepository;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.base_currency) CurrencyAmountEditorView baseCurrencyEditorView;
+    @Bind(R.id.base_currency) BaseCurrencyAmountEditorView baseCurrencyEditorView;
     // Exchange form views
     @Bind(R.id.purchase_question_name) TextView purchaseQuestionNameText;
     @Bind(R.id.rate_form) View rateForm;
@@ -105,6 +106,7 @@ public class RateComparisonActivity extends AppCompatActivity
     }
 
     public void compareRate(View view) {
+        Log.v(LOG_TAG, "compareRate");
         boolean success = comparisonPresenter.getRateCompare().calculate(rateToCompare.getText());
         if(success) {
             String template = getString(R.string.rate_compare_result);
@@ -120,6 +122,7 @@ public class RateComparisonActivity extends AppCompatActivity
     }
 
     public void compareTrade(View view) {
+        Log.v(LOG_TAG, "compareTrade");
         // TODO get the amount from CurrencyAmountEditorView
         // boolean success = comparisonPresenter.getTradeCompare().calculate("");
         tradeResultText.setVisibility(View.VISIBLE);
@@ -150,10 +153,12 @@ public class RateComparisonActivity extends AppCompatActivity
 
     @Override
     public void onCurrencyAmountChange() {
+        Log.v(LOG_TAG, "onCurrencyAmountChange base");
         getLoaderManager().restartLoader(RATE_COMPARISON_LOADER_ID, null, this);
     }
 
     public void invalidateNoFeeResults() {
+        Log.v(LOG_TAG, "invalidateNoFeeResults");
         // is the new value actually different? 7, 7., 7.0???
         if(comparisonPresenter.getRateCompare().isSameComparison(rateToCompare.getText())) return;
         compareButton.setEnabled(!TextUtils.isEmpty(rateToCompare.getText()));
@@ -162,7 +167,11 @@ public class RateComparisonActivity extends AppCompatActivity
     }
 
     public void invalidateYesFeeResults() {
-        //if(comparisonPresenter.sameTradeToCompare(tradeForCurrencyEditorView))
+        Log.v(LOG_TAG, "invalidateYesFeeResults");
+        String userInput = tradeForCurrencyEditorView.getSelectedCurrency().getAmount();
+        if(!comparisonPresenter.getTradeCompare().isSameComparison(userInput)) {
+            Log.v(LOG_TAG, "New userInput " + userInput);
+        }
     }
 
     class RateInputChangeListener implements TextWatcher {
@@ -181,6 +190,7 @@ public class RateComparisonActivity extends AppCompatActivity
     class TradeAmountChangeListener implements CurrencyAmountEditorView.CurrencyAmountChangeListener {
         @Override
         public void onCurrencyAmountChange() {
+            Log.v(LOG_TAG, "onCurrencyAmountChange target");
             invalidateYesFeeResults();
         }
     }

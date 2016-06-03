@@ -37,6 +37,7 @@ import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
 import xplr.in.currencycalculator.sync.SyncCompleteEvent;
+import xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView;
 import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
 
 public class MainActivity extends AppCompatActivity implements CurrencyListActivity, LoaderManager.LoaderCallbacks<Cursor> {
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     SelectedCurrency baseCurrency;
 
     @Bind(R.id.fab) FloatingActionButton fab;
-    @Bind(R.id.base_currency) CurrencyAmountEditorView currencyAmountEditorView;
+    @Bind(R.id.base_currency) BaseCurrencyAmountEditorView currencyAmountEditorView;
     @Bind(R.id.list_currency_calculations) RecyclerView listCurrencyCalculations;
     @Bind(R.id.rate_comparison_button) Button rateComparisonButton;
     @Bind(R.id.offer_comparison_button) Button offerComparisonButton;

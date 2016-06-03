@@ -30,6 +30,8 @@ public class CurrencyAmountEditorView extends LinearLayout {
     @Bind(R.id.currency_name) TextView currencyName;
     @Bind(R.id.currency_amount) ClearableEditText currencyAmount;
 
+    private TextWatcher textWatcher;
+
     private CurrencyRepository currencyRepository;
     private CurrencyMetaRepository metaRepository;
     private CurrencyAmountChangeListener changeListener;
@@ -46,24 +48,21 @@ public class CurrencyAmountEditorView extends LinearLayout {
         setFocusableInTouchMode(true);
         setGravity(Gravity.CENTER_VERTICAL);
 
-        // Replace with butterknife's @OnTextChange?
-        currencyAmount.getEditText().addTextChangedListener(new TextWatcher() {
+        textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String text = s.toString();
-                if(selectedCurrency != null && !text.equals(selectedCurrency.getAmount())) {
-                    Log.v(LOG_TAG, "TEXT " + text);
-                    currencyRepository.setBaseAmount(selectedCurrency, text);
-                    if(changeListener != null) changeListener.onCurrencyAmountChange();
-                }
+                Log.v(LOG_TAG, "TEXT " + text);
+                setAmount(selectedCurrency, text);
+                if(changeListener != null) changeListener.onCurrencyAmountChange();
             }
 
             @Override
             public void afterTextChanged(Editable s) {}
-        });
+        };
     }
 
     public void init(CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
@@ -76,8 +75,10 @@ public class CurrencyAmountEditorView extends LinearLayout {
     }
 
     public void setSelectedCurrency(SelectedCurrency selectedCurrency) {
+        currencyAmount.getEditText().removeTextChangedListener(textWatcher);
         this.selectedCurrency = selectedCurrency;
         displayBaseCurrency(this.selectedCurrency);
+        currencyAmount.getEditText().addTextChangedListener(textWatcher);
     }
 
     private void displayBaseCurrency(SelectedCurrency currency) {
@@ -92,6 +93,18 @@ public class CurrencyAmountEditorView extends LinearLayout {
         currencyAmount.getEditText().setText(currency.getAmount());
         // Move the cursor to the end as if the amount had just been typed.
         currencyAmount.moveCursorToEnd();
+    }
+
+    protected void setAmount(SelectedCurrency currency, String amount) {
+        currency.setAmount(amount);
+    }
+
+    public CurrencyRepository getCurrencyRepository() {
+        return currencyRepository;
+    }
+
+    public SelectedCurrency getSelectedCurrency() {
+        return selectedCurrency;
     }
 
     public interface CurrencyAmountChangeListener {
