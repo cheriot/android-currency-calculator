@@ -25,6 +25,7 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
 
     private static final String LOG_TAG = TradeFormView.class.getSimpleName();
 
+    @Bind(R.id.trade_form_instructions) TextView tradeFormInstructionsView;
     @Bind(R.id.trade_for_currency) CurrencyAmountEditorView tradeForCurrencyEditorView;
     @Bind(R.id.trade_compare_button) Button tradeCompareButton;
     @Bind(R.id.trade_result_text) TextView tradeResultText;
@@ -89,6 +90,11 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
     @Override
     public void onClick(View v) {
         compare();
+    }
+
+    public void showInstructions(int stringId) {
+        String str = getResources().getString(stringId);
+        tradeFormInstructionsView.setText(str);
     }
 
     class TradeAmountChangeListener implements CurrencyAmountEditorView.CurrencyAmountChangeListener {

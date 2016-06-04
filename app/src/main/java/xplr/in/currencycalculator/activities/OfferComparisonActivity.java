@@ -58,9 +58,9 @@ public class OfferComparisonActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         baseCurrencyEditorView.init(currencyRepository, metaRepository);
         baseCurrencyEditorView.setCurrencyAmountChangeListener(this);
+        tradeFormView.showInstructions(R.string.trade_input_prompt);
 
         tradeFormView.init(currencyRepository, metaRepository, tradeKeyboardDoneListener);
         getLoaderManager().initLoader(TRADE_COMPARISON_LOADER_ID, null, this);

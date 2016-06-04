@@ -98,6 +98,7 @@ public class RateComparisonActivity extends AppCompatActivity
         // Trade form
         tradeFormView.init(currencyRepository, metaRepository, tradeKeyboardDoneListener);
         tradeFormView.setVisibility(View.GONE);
+        tradeFormView.showInstructions(R.string.trade_input_prompt_fees);
 
         getLoaderManager().initLoader(COMPARISON_LOADER_ID, null, this);
 

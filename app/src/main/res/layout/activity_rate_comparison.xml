@@ -29,5 +29,4 @@
 
         <include layout="@layout/content_rate_comparison"/>
     </LinearLayout>
-
-</android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
