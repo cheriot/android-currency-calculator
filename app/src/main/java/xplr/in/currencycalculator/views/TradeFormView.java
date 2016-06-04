@@ -60,7 +60,6 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
     @Override
     public void compare() {
         Log.v(LOG_TAG, "compareTrade");
-        // TODO get the amount from CurrencyAmountEditorView
         String userInput = tradeForCurrencyEditorView.getSelectedCurrency().getAmount();
         boolean success = tradeCompare.calculate(userInput);
         if(success) {
@@ -68,6 +67,7 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
             String msg = tradeCompare.formatResults(template);
             tradeResultText.setText(msg);
             tradeResultText.setVisibility(View.VISIBLE);
+            tradeCompareButton.setEnabled(false);
             hideKeyboard();
         } else {
             Log.e(LOG_TAG, "Unable to compareTrade.");

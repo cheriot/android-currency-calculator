@@ -39,13 +39,13 @@ public class RateComparisonActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<ComparisonPresenter>, CurrencyAmountEditorView.CurrencyAmountChangeListener {
 
     private static final String LOG_TAG = RateComparisonActivity.class.getSimpleName();
-    private static final int RATE_COMPARISON_LOADER_ID = 1;
+    private static final int COMPARISON_LOADER_ID = 1;
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencyMetaRepository metaRepository;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.base_currency) BaseCurrencyAmountEditorView baseCurrencyEditorView;
-    // Rate form views
+    // Rate form
     @Bind(R.id.rate_prompt_question) TextView ratePromptQuestion;
     @Bind(R.id.rate_form) View rateForm;
     @Bind(R.id.base_currency_code) TextView baseCurrencyCode;
@@ -53,9 +53,11 @@ public class RateComparisonActivity extends AppCompatActivity
     @Bind(R.id.rate_to_compare) ClearableEditText rateToCompare;
     @Bind(R.id.rate_compare_button) Button rateCompareButton;
     @Bind(R.id.rate_result_text) TextView rateResultText;
+    // Trade form
     @Bind(R.id.trade_form) TradeFormView tradeFormView;
 
-    TextView.OnEditorActionListener rateKeyboardDoneListener = new TextView.OnEditorActionListener() {
+    private ComparisonPresenter comparisonPresenter;
+    private TextView.OnEditorActionListener rateKeyboardDoneListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             Log.v(LOG_TAG, "rateKeybaordDonListener");
@@ -63,8 +65,7 @@ public class RateComparisonActivity extends AppCompatActivity
             return true;
         }
     };
-
-    TextView.OnEditorActionListener tradeKeyboardDoneListener = new TextView.OnEditorActionListener() {
+    private TextView.OnEditorActionListener tradeKeyboardDoneListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             Log.v(LOG_TAG, "tradeKeyboardDoneListener");
@@ -72,8 +73,6 @@ public class RateComparisonActivity extends AppCompatActivity
             return true;
         }
     };
-
-    private ComparisonPresenter comparisonPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +99,7 @@ public class RateComparisonActivity extends AppCompatActivity
         tradeFormView.init(currencyRepository, metaRepository, tradeKeyboardDoneListener);
         tradeFormView.setVisibility(View.GONE);
 
-        getLoaderManager().initLoader(RATE_COMPARISON_LOADER_ID, null, this);
+        getLoaderManager().initLoader(COMPARISON_LOADER_ID, null, this);
 
         // improve display of result text
         // calculateRate on keyboard's enter
@@ -168,7 +167,7 @@ public class RateComparisonActivity extends AppCompatActivity
     @Override
     public void onCurrencyAmountChange() {
         Log.v(LOG_TAG, "onCurrencyAmountChange base");
-        getLoaderManager().restartLoader(RATE_COMPARISON_LOADER_ID, null, this);
+        getLoaderManager().restartLoader(COMPARISON_LOADER_ID, null, this);
     }
 
     public void invalidateNoFeeResults() {
