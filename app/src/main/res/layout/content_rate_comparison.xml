@@ -54,7 +54,7 @@
                 android:textColor="#000"/>
 
             <TextView
-                android:id="@+id/purchase_question_name"
+                android:id="@+id/rate_prompt_question"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="US Dollar"
@@ -111,7 +111,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/compare_button"
+            android:id="@+id/rate_compare_button"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -119,7 +119,7 @@
             android:text="Compare Rate"/>
 
         <TextView
-            android:id="@+id/exchange_result_text"
+            android:id="@+id/rate_result_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000"/>

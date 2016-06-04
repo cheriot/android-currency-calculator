@@ -76,7 +76,7 @@ public class ClearableEditText extends FrameLayout {
                 editText.getText().clear();
                 editText.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
+                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
                 Log.v(LOG_TAG, "Cleared, now show keyboard.");
             }
         });
@@ -84,6 +84,12 @@ public class ClearableEditText extends FrameLayout {
 
     public String getText() {
         return editText.getText().toString();
+    }
+
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.hideSoftInputFromInputMethod();
+        Log.v(LOG_TAG, "Cleared, now show keyboard.");
     }
 
     public EditText getEditText() {

@@ -157,9 +157,9 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         if (baseCurrency != null && baseCurrency.sameDisplay(currency)) return;
         baseCurrency = currency;
 
-        // Rebind RecyclerView items so converted amounts are updated.
         currencyAmountEditorView.setSelectedCurrency(baseCurrency);
         currenciesAdapter.setBaseCurrency(baseCurrency);
+        // Rebind RecyclerView items so converted amounts are updated.
         currenciesAdapter.notifyDataSetChanged();
 
         listCurrencyCalculations.scrollToPosition(0);

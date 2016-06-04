@@ -1,6 +1,7 @@
 package xplr.in.currencycalculator.activities;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -42,16 +44,17 @@ public class RateComparisonActivity extends AppCompatActivity
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.base_currency) BaseCurrencyAmountEditorView baseCurrencyEditorView;
     // Exchange form views
-    @Bind(R.id.purchase_question_name) TextView purchaseQuestionNameText;
+    @Bind(R.id.rate_prompt_question) TextView ratePromptQuestion;
     @Bind(R.id.rate_form) View rateForm;
     @Bind(R.id.base_currency_code) TextView baseCurrencyCode;
     @Bind(R.id.target_currency_code) TextView targetCurrencyCode;
     @Bind(R.id.rate_to_compare) ClearableEditText rateToCompare;
-    @Bind(R.id.compare_button) Button compareButton;
-    @Bind(R.id.exchange_result_text) TextView exchangeResultText;
+    @Bind(R.id.rate_compare_button) Button rateCompareButton;
+    @Bind(R.id.rate_result_text) TextView rateResultText;
     // Trade form views
     @Bind(R.id.trade_form) View tradeForm;
     @Bind(R.id.trade_for_currency) CurrencyAmountEditorView tradeForCurrencyEditorView;
+    @Bind(R.id.trade_compare_button) Button tradeCompareButton;
     @Bind(R.id.trade_result_text) TextView tradeResultText;
 
     private ComparisonPresenter comparisonPresenter;
@@ -75,8 +78,8 @@ public class RateComparisonActivity extends AppCompatActivity
         // Rate form
         rateForm.setVisibility(View.GONE);
         tradeForm.setVisibility(View.GONE);
-        exchangeResultText.setVisibility(View.GONE);
-        compareButton.setEnabled(false);
+        rateResultText.setVisibility(View.GONE);
+        rateCompareButton.setEnabled(false);
 
         // Trade form
         tradeResultText.setVisibility(View.GONE);
@@ -112,12 +115,13 @@ public class RateComparisonActivity extends AppCompatActivity
             String template = getString(R.string.rate_compare_result);
             String msg = comparisonPresenter.getRateCompare().formatResults(template);
             Log.v(LOG_TAG, msg);
-            exchangeResultText.setText(msg);
-            exchangeResultText.setVisibility(View.VISIBLE);
-            compareButton.setEnabled(false);
+            rateResultText.setText(msg);
+            rateResultText.setVisibility(View.VISIBLE);
+            rateCompareButton.setEnabled(false);
+            hideKeyboard();
         } else {
             Log.e(LOG_TAG, "Unable to compareTrade.");
-            exchangeResultText.setVisibility(View.GONE);
+            rateResultText.setVisibility(View.GONE);
         }
     }
 
@@ -131,6 +135,7 @@ public class RateComparisonActivity extends AppCompatActivity
             String msg = comparisonPresenter.getTradeCompare().formatResults(template);
             tradeResultText.setText(msg);
             tradeResultText.setVisibility(View.VISIBLE);
+            hideKeyboard();
         } else {
             Log.e(LOG_TAG, "Unable to compareTrade.");
             tradeResultText.setVisibility(View.GONE);
@@ -150,11 +155,11 @@ public class RateComparisonActivity extends AppCompatActivity
             // HACK: the amount on the trade currency is not persisted so don't set it if there's alredy a value
             tradeForCurrencyEditorView.setSelectedCurrency((SelectedCurrency) data.getTargetCurrency());
         }
-        purchaseQuestionNameText.setText(data.getBaseCurrency().getName());
+        ratePromptQuestion.setText(data.getBaseCurrency().getName());
         baseCurrencyCode.setText(data.getBaseCurrency().getCode());
         targetCurrencyCode.setText(data.getTargetCurrency().getCode());
         if(data.getMarketRate() != null ) rateToCompare.setHint(data.getMarketRate());
-        compareRate(compareButton);
+        compareRate(rateCompareButton);
     }
 
     @Override
@@ -172,16 +177,26 @@ public class RateComparisonActivity extends AppCompatActivity
         Log.v(LOG_TAG, "invalidateNoFeeResults");
         // is the new value actually different? 7, 7., 7.0???
         if(comparisonPresenter.getRateCompare().isSameComparison(rateToCompare.getText())) return;
-        compareButton.setEnabled(!TextUtils.isEmpty(rateToCompare.getText()));
-        exchangeResultText.setVisibility(View.GONE);
+        rateCompareButton.setEnabled(!TextUtils.isEmpty(rateToCompare.getText()));
+        rateResultText.setVisibility(View.GONE);
         comparisonPresenter.getRateCompare().clearResults();
     }
 
     public void invalidateYesFeeResults() {
         Log.v(LOG_TAG, "invalidateYesFeeResults");
         String userInput = tradeForCurrencyEditorView.getSelectedCurrency().getAmount();
-        if(!comparisonPresenter.getTradeCompare().isSameComparison(userInput)) {
-            Log.v(LOG_TAG, "New userInput " + userInput);
+        if(comparisonPresenter.getTradeCompare().isSameComparison(userInput)) return;
+        Log.v(LOG_TAG, "New userInput " + userInput);
+        tradeCompareButton.setEnabled(!TextUtils.isEmpty(userInput));
+        tradeResultText.setVisibility(View.GONE);
+        comparisonPresenter.getTradeCompare().clearResults();
+    }
+
+    private void hideKeyboard() {
+        if(getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            Log.v(LOG_TAG, "Keyboard hidden.");
         }
     }
 
