@@ -90,7 +90,7 @@ public class CurrencyAmountEditorView extends LinearLayout {
             Drawable drawable = getResources().getDrawable(meta.getFlagResourceId(CurrencyMeta.FlagSize.SQUARE));
             currencyFlag.setImageDrawable(drawable);
         }
-        currencyAmount.getEditText().setText(currency.getAmount());
+        currencyAmount.setText(currency.getAmount());
         // Move the cursor to the end as if the amount had just been typed.
         currencyAmount.moveCursorToEnd();
     }
@@ -109,5 +109,9 @@ public class CurrencyAmountEditorView extends LinearLayout {
 
     public interface CurrencyAmountChangeListener {
         void onCurrencyAmountChange();
+    }
+
+    public ClearableEditText getCurrencyAmount() {
+        return currencyAmount;
     }
 }

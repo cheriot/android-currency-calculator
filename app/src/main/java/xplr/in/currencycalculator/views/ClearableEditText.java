@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -30,6 +29,8 @@ public class ClearableEditText extends FrameLayout {
     @Bind(R.id.text_intput_layout) TextInputLayout textInputLayout;
     @Bind(R.id.edit_text) EditText editText;
     @Bind(R.id.clear_button) ImageButton clearButton;
+
+    private TextView.OnEditorActionListener onEditorActionListener;
 
     public ClearableEditText(Context context, AttributeSet attributeSet) {
         // Accept an attributeSet to work with Android Studio.
@@ -61,10 +62,9 @@ public class ClearableEditText extends FrameLayout {
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                }
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                if(onEditorActionListener != null) onEditorActionListener.onEditorAction(v, actionId, event);
                 return true;
             }
         });
@@ -80,6 +80,10 @@ public class ClearableEditText extends FrameLayout {
                 Log.v(LOG_TAG, "Cleared, now show keyboard.");
             }
         });
+    }
+
+    public void setText(String text) {
+        editText.setText(text);
     }
 
     public String getText() {
@@ -105,6 +109,10 @@ public class ClearableEditText extends FrameLayout {
         MarginLayoutParams clearButtonParams = (MarginLayoutParams)clearButton.getLayoutParams();
         float density = getContext().getResources().getDisplayMetrics().density;
         clearButtonParams.setMargins(0, (int)(6*density), 0, 0);
+    }
+
+    public void setOnEditorActionListener(TextView.OnEditorActionListener onEditorActionListener) {
+        this.onEditorActionListener = onEditorActionListener;
     }
 
     public void moveCursorToEnd() {

@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -57,6 +58,21 @@ public class RateComparisonActivity extends AppCompatActivity
     @Bind(R.id.trade_compare_button) Button tradeCompareButton;
     @Bind(R.id.trade_result_text) TextView tradeResultText;
 
+    TextView.OnEditorActionListener rateKeyboardDoneListener = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            compareRate(rateCompareButton);
+            return true;
+        }
+    };
+    TextView.OnEditorActionListener tradeKeyboardDoneListener = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            compareTrade(tradeCompareButton);
+            return true;
+        }
+    };
+
     private ComparisonPresenter comparisonPresenter;
 
     @Override
@@ -77,22 +93,18 @@ public class RateComparisonActivity extends AppCompatActivity
 
         // Rate form
         rateForm.setVisibility(View.GONE);
-        tradeForm.setVisibility(View.GONE);
         rateResultText.setVisibility(View.GONE);
         rateCompareButton.setEnabled(false);
 
         // Trade form
+        tradeForm.setVisibility(View.GONE);
         tradeResultText.setVisibility(View.GONE);
+        tradeCompareButton.setEnabled(false);
         rateToCompare.getEditText().addTextChangedListener(new RateInputChangeListener());
 
         getLoaderManager().initLoader(RATE_COMPARISON_LOADER_ID, null, this);
 
-        // Add offer input text.
-        // Add new calculateRate button and result text.
-
         // improve display of result text
-        // highlight/dim calculateRate button to reflect calculated state
-        // hide keyboard on calculateRate
         // calculateRate on keyboard's enter
     }
 
@@ -100,12 +112,16 @@ public class RateComparisonActivity extends AppCompatActivity
         Log.v(LOG_TAG, "setFeesYes");
         rateForm.setVisibility(View.GONE);
         tradeForm.setVisibility(View.VISIBLE);
+        baseCurrencyEditorView.getCurrencyAmount().setOnEditorActionListener(tradeKeyboardDoneListener);
+        tradeForCurrencyEditorView.getCurrencyAmount().setOnEditorActionListener(tradeKeyboardDoneListener);
     }
 
     public void setFeesNo(View view) {
         Log.v(LOG_TAG, "setFeesNo");
         rateForm.setVisibility(View.VISIBLE);
         tradeForm.setVisibility(View.GONE);
+        baseCurrencyEditorView.getCurrencyAmount().setOnEditorActionListener(rateKeyboardDoneListener);
+        rateToCompare.setOnEditorActionListener(rateKeyboardDoneListener    );
     }
 
     public void compareRate(View view) {
