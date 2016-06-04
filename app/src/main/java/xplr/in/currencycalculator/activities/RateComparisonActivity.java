@@ -61,6 +61,7 @@ public class RateComparisonActivity extends AppCompatActivity
     TextView.OnEditorActionListener rateKeyboardDoneListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            Log.v(LOG_TAG, "rateKeybaordDonListener");
             compareRate(rateCompareButton);
             return true;
         }
@@ -68,6 +69,7 @@ public class RateComparisonActivity extends AppCompatActivity
     TextView.OnEditorActionListener tradeKeyboardDoneListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            Log.v(LOG_TAG, "tradeKeyboardDoneListener");
             compareTrade(tradeCompareButton);
             return true;
         }
@@ -175,7 +177,8 @@ public class RateComparisonActivity extends AppCompatActivity
         baseCurrencyCode.setText(data.getBaseCurrency().getCode());
         targetCurrencyCode.setText(data.getTargetCurrency().getCode());
         if(data.getMarketRate() != null ) rateToCompare.setHint(data.getMarketRate());
-        compareRate(rateCompareButton);
+        invalidateNoFeeResults();
+        invalidateYesFeeResults();
     }
 
     @Override

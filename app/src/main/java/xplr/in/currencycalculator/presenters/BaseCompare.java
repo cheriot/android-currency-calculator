@@ -69,7 +69,7 @@ public abstract class BaseCompare {
     }
 
     public boolean isSameComparison(String userInput) {
-        Log.v(LOG_TAG, userInput);
+        Log.v(LOG_TAG, userInput + ""); // +"" because logging null will error
         if(TextUtils.isEmpty(userInput)) return false;
         if(userNumber == null) return false;
         BigDecimal newRate = parseUserInputNumber(userInput);
