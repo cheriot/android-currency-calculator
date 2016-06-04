@@ -30,6 +30,7 @@ import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView;
 import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
 import xplr.in.currencycalculator.views.ClearableEditText;
+import xplr.in.currencycalculator.views.TradeFormView;
 
 /**
  * Created by cheriot on 5/24/16.
@@ -44,7 +45,7 @@ public class RateComparisonActivity extends AppCompatActivity
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.base_currency) BaseCurrencyAmountEditorView baseCurrencyEditorView;
-    // Exchange form views
+    // Rate form views
     @Bind(R.id.rate_prompt_question) TextView ratePromptQuestion;
     @Bind(R.id.rate_form) View rateForm;
     @Bind(R.id.base_currency_code) TextView baseCurrencyCode;
@@ -52,11 +53,7 @@ public class RateComparisonActivity extends AppCompatActivity
     @Bind(R.id.rate_to_compare) ClearableEditText rateToCompare;
     @Bind(R.id.rate_compare_button) Button rateCompareButton;
     @Bind(R.id.rate_result_text) TextView rateResultText;
-    // Trade form views
-    @Bind(R.id.trade_form) View tradeForm;
-    @Bind(R.id.trade_for_currency) CurrencyAmountEditorView tradeForCurrencyEditorView;
-    @Bind(R.id.trade_compare_button) Button tradeCompareButton;
-    @Bind(R.id.trade_result_text) TextView tradeResultText;
+    @Bind(R.id.trade_form) TradeFormView tradeFormView;
 
     TextView.OnEditorActionListener rateKeyboardDoneListener = new TextView.OnEditorActionListener() {
         @Override
@@ -66,11 +63,12 @@ public class RateComparisonActivity extends AppCompatActivity
             return true;
         }
     };
+
     TextView.OnEditorActionListener tradeKeyboardDoneListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             Log.v(LOG_TAG, "tradeKeyboardDoneListener");
-            compareTrade(tradeCompareButton);
+            tradeFormView.compare();
             return true;
         }
     };
@@ -90,19 +88,17 @@ public class RateComparisonActivity extends AppCompatActivity
 
         baseCurrencyEditorView.init(currencyRepository, metaRepository);
         baseCurrencyEditorView.setCurrencyAmountChangeListener(this);
-        tradeForCurrencyEditorView.init(currencyRepository, metaRepository);
-        tradeForCurrencyEditorView.setCurrencyAmountChangeListener(new TradeAmountChangeListener());
 
         // Rate form
         rateForm.setVisibility(View.GONE);
         rateResultText.setVisibility(View.GONE);
         rateCompareButton.setEnabled(false);
+        rateToCompare.getEditText().addTextChangedListener(new RateInputChangeListener());
+        rateToCompare.setOnEditorActionListener(rateKeyboardDoneListener);
 
         // Trade form
-        tradeForm.setVisibility(View.GONE);
-        tradeResultText.setVisibility(View.GONE);
-        tradeCompareButton.setEnabled(false);
-        rateToCompare.getEditText().addTextChangedListener(new RateInputChangeListener());
+        tradeFormView.init(currencyRepository, metaRepository, tradeKeyboardDoneListener);
+        tradeFormView.setVisibility(View.GONE);
 
         getLoaderManager().initLoader(RATE_COMPARISON_LOADER_ID, null, this);
 
@@ -113,17 +109,15 @@ public class RateComparisonActivity extends AppCompatActivity
     public void setFeesYes(View view) {
         Log.v(LOG_TAG, "setFeesYes");
         rateForm.setVisibility(View.GONE);
-        tradeForm.setVisibility(View.VISIBLE);
+        tradeFormView.setVisibility(View.VISIBLE);
         baseCurrencyEditorView.getCurrencyAmount().setOnEditorActionListener(tradeKeyboardDoneListener);
-        tradeForCurrencyEditorView.getCurrencyAmount().setOnEditorActionListener(tradeKeyboardDoneListener);
     }
 
     public void setFeesNo(View view) {
         Log.v(LOG_TAG, "setFeesNo");
         rateForm.setVisibility(View.VISIBLE);
-        tradeForm.setVisibility(View.GONE);
+        tradeFormView.setVisibility(View.GONE);
         baseCurrencyEditorView.getCurrencyAmount().setOnEditorActionListener(rateKeyboardDoneListener);
-        rateToCompare.setOnEditorActionListener(rateKeyboardDoneListener    );
     }
 
     public void compareRate(View view) {
@@ -143,23 +137,6 @@ public class RateComparisonActivity extends AppCompatActivity
         }
     }
 
-    public void compareTrade(View view) {
-        Log.v(LOG_TAG, "compareTrade");
-        // TODO get the amount from CurrencyAmountEditorView
-        String userInput = tradeForCurrencyEditorView.getSelectedCurrency().getAmount();
-        boolean success = comparisonPresenter.getTradeCompare().calculate(userInput);
-        if(success) {
-            String template = getString(R.string.rate_compare_result);
-            String msg = comparisonPresenter.getTradeCompare().formatResults(template);
-            tradeResultText.setText(msg);
-            tradeResultText.setVisibility(View.VISIBLE);
-            hideKeyboard();
-        } else {
-            Log.e(LOG_TAG, "Unable to compareTrade.");
-            tradeResultText.setVisibility(View.GONE);
-        }
-    }
-
     @Override
     public Loader<ComparisonPresenter> onCreateLoader(int id, Bundle args) {
         return new RateComparisonLoader(this, currencyRepository);
@@ -169,16 +146,18 @@ public class RateComparisonActivity extends AppCompatActivity
     public void onLoadFinished(Loader<ComparisonPresenter> loader, ComparisonPresenter data) {
         comparisonPresenter = data;
         baseCurrencyEditorView.setSelectedCurrency((SelectedCurrency)data.getBaseCurrency());
-        if(tradeForCurrencyEditorView.getSelectedCurrency() == null) {
-            // HACK: the amount on the trade currency is not persisted so don't set it if there's alredy a value
-            tradeForCurrencyEditorView.setSelectedCurrency((SelectedCurrency) data.getTargetCurrency());
-        }
+
+        // Rate form
         ratePromptQuestion.setText(data.getBaseCurrency().getName());
         baseCurrencyCode.setText(data.getBaseCurrency().getCode());
         targetCurrencyCode.setText(data.getTargetCurrency().getCode());
         if(data.getMarketRate() != null ) rateToCompare.setHint(data.getMarketRate());
         invalidateNoFeeResults();
-        invalidateYesFeeResults();
+
+        // Trade form
+        tradeFormView.populate(data.getTradeCompare(), data.getTargetCurrency());
+        // Data will be reloaded when the base amount changes.
+        tradeFormView.invalidateResults();
     }
 
     @Override
@@ -201,17 +180,8 @@ public class RateComparisonActivity extends AppCompatActivity
         comparisonPresenter.getRateCompare().clearResults();
     }
 
-    public void invalidateYesFeeResults() {
-        Log.v(LOG_TAG, "invalidateYesFeeResults");
-        String userInput = tradeForCurrencyEditorView.getSelectedCurrency().getAmount();
-        if(comparisonPresenter.getTradeCompare().isSameComparison(userInput)) return;
-        Log.v(LOG_TAG, "New userInput " + userInput);
-        tradeCompareButton.setEnabled(!TextUtils.isEmpty(userInput));
-        tradeResultText.setVisibility(View.GONE);
-        comparisonPresenter.getTradeCompare().clearResults();
-    }
-
     private void hideKeyboard() {
+        // TODO kill this copy
         if(getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
@@ -230,13 +200,5 @@ public class RateComparisonActivity extends AppCompatActivity
 
         @Override
         public void afterTextChanged(Editable s) {}
-    }
-
-    class TradeAmountChangeListener implements CurrencyAmountEditorView.CurrencyAmountChangeListener {
-        @Override
-        public void onCurrencyAmountChange() {
-            Log.v(LOG_TAG, "onCurrencyAmountChange target");
-            invalidateYesFeeResults();
-        }
     }
 }
