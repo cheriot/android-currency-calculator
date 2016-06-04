@@ -22,14 +22,11 @@ public class RateCompare extends BaseCompare {
     @Override
     public boolean calculate(BigDecimal rateToCompare) {
         Log.v(LOG_TAG, "calculateRate " + rateToCompare);
-        if(rateToCompare.equals(BigDecimal.ZERO)) return false;
 
-        BigDecimal marketRate = base.rateTo(target);
-        revenueRate = marketRate.subtract(rateToCompare)
-                .divide(marketRate, MathContext.DECIMAL128);
+        revenueRate = getMarketRate().subtract(rateToCompare)
+                .divide(getMarketRate(), MathContext.DECIMAL128);
         revenueBaseCurrency = base.multiply(revenueRate);
         revenueTargetCurrency = revenueBaseCurrency.convertTo(target);
-
         return true;
     }
 }

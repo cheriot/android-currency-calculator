@@ -31,15 +31,21 @@ public class Money {
         return new Money(currency, amount.multiply(rhs));
     }
 
-    public Money divide(BigDecimal divisor) {
-        return new Money(currency, amount.divide(divisor, MATH_CONTEXT));
+    public BigDecimal divide(Money divisor) {
+        checkUnits(divisor);
+        return amount.divide(divisor.getAmount(), MATH_CONTEXT);
+    }
+
+    public Money subtract(Money rhs) {
+        checkUnits(rhs);
+        return new Money(currency, amount.subtract(rhs.getAmount()));
     }
 
     public Money convertTo(Currency targetCurrency) {
         BigDecimal dollarsAmount = convertToUSD();
         BigDecimal targetUSDRate = new BigDecimal(targetCurrency.getRate());
         BigDecimal targetAmount = dollarsAmount.multiply(targetUSDRate);
-        return new Money(currency, targetAmount);
+        return new Money(targetCurrency, targetAmount);
     }
 
     public BigDecimal rateTo(Currency targetCurrency) {
@@ -64,6 +70,12 @@ public class Money {
         DecimalFormat format = new DecimalFormat();
         format.setMaximumFractionDigits(currency.getMinorUnits());
         return format.format(amount);
+    }
+
+    private void checkUnits(Money other) {
+        if(!currency.equals(other.getCurrency())) {
+            throw new IllegalStateException("Money math must have matching currencies. <" + currency + "> <" + other.getCurrency() + ">.");
+        }
     }
 
     @Override

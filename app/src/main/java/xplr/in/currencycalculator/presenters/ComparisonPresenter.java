@@ -1,5 +1,8 @@
 package xplr.in.currencycalculator.presenters;
 
+import android.text.TextUtils;
+
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 import xplr.in.currencycalculator.models.Currency;
@@ -13,29 +16,29 @@ public class ComparisonPresenter {
 
     private static final String LOG_TAG = ComparisonPresenter.class.getSimpleName();
 
+    private Currency baseCurrency;
     private RateCompare rateCompare;
     private TradeCompare tradeCompare;
 
     public ComparisonPresenter(SelectedCurrency baseCurrency, Currency target) {
-        Money base = new Money(baseCurrency, baseCurrency.getAmountBigDecimal());
+        this.baseCurrency = baseCurrency;
+        // Set the base amount to one so at least a market rate can be calculated.
+        Money base = TextUtils.isEmpty(baseCurrency.getAmount()) ?
+                new Money(baseCurrency, BigDecimal.ONE) : new Money(baseCurrency, baseCurrency.getAmountBigDecimal());
         rateCompare = new RateCompare(base, target);
         tradeCompare = new TradeCompare(base, target);
     }
 
     public String getMarketRate() {
-        return new DecimalFormat().format(rateCompare.getMarketRate());
-    }
-
-    public boolean calculateRate(String rateToCompareStr) {
-        return rateCompare.calculate(rateToCompareStr);
-    }
-
-    public boolean calculateTrade(String tradeToCompareStr) {
-        return tradeCompare.calculate(tradeToCompareStr);
+        if(rateCompare.getMarketRate() != null) {
+            return new DecimalFormat().format(rateCompare.getMarketRate());
+        } else {
+            return null;
+        }
     }
 
     public Currency getBaseCurrency() {
-        return rateCompare.getBase().getCurrency();
+        return baseCurrency;
     }
 
     public Currency getTargetCurrency() {

@@ -20,7 +20,9 @@ public abstract class BaseCompare {
 
     protected Money base;
     protected Currency target;
-    protected BigDecimal marketRate;
+
+    private BigDecimal marketRate;
+    private Money marketRateTargetMoney;
 
     protected BigDecimal revenueRate;
     protected Money revenueBaseCurrency;
@@ -33,10 +35,23 @@ public abstract class BaseCompare {
         this.base = base;
         this.target = target;
         this.hasResult = false;
+        if(base != null) {
+            marketRate = base.rateTo(target);
+            marketRateTargetMoney = base.convertTo(target);
+        }
     }
 
     public boolean calculate(String userInput) {
+        if(base == null || TextUtils.isEmpty(userInput)) {
+            clearResults();
+            return false;
+        }
         userNumber = parseUserInputNumber(userInput);
+        if(userNumber.equals(BigDecimal.ZERO)) {
+            clearResults();
+            return false;
+        }
+        marketRateTargetMoney = base.convertTo(target);
         hasResult = calculate(userNumber);
         return hasResult;
     }
@@ -85,7 +100,11 @@ public abstract class BaseCompare {
     }
 
     public BigDecimal getMarketRate() {
-        return base.rateTo(target);
+        return marketRate;
+    }
+
+    public Money getMarketRateTargetMoney() {
+        return marketRateTargetMoney;
     }
 
     public Money getBase() {

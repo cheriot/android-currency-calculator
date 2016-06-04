@@ -116,7 +116,7 @@ public class RateComparisonActivity extends AppCompatActivity
             exchangeResultText.setVisibility(View.VISIBLE);
             compareButton.setEnabled(false);
         } else {
-            Log.e(LOG_TAG, "Unable to calculateRate a result.");
+            Log.e(LOG_TAG, "Unable to compareTrade.");
             exchangeResultText.setVisibility(View.GONE);
         }
     }
@@ -124,9 +124,17 @@ public class RateComparisonActivity extends AppCompatActivity
     public void compareTrade(View view) {
         Log.v(LOG_TAG, "compareTrade");
         // TODO get the amount from CurrencyAmountEditorView
-        // boolean success = comparisonPresenter.getTradeCompare().calculate("");
-        tradeResultText.setVisibility(View.VISIBLE);
-        tradeResultText.setText("Results go here.");
+        String userInput = tradeForCurrencyEditorView.getSelectedCurrency().getAmount();
+        boolean success = comparisonPresenter.getTradeCompare().calculate(userInput);
+        if(success) {
+            String template = getString(R.string.rate_compare_result);
+            String msg = comparisonPresenter.getTradeCompare().formatResults(template);
+            tradeResultText.setText(msg);
+            tradeResultText.setVisibility(View.VISIBLE);
+        } else {
+            Log.e(LOG_TAG, "Unable to compareTrade.");
+            tradeResultText.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -142,7 +150,7 @@ public class RateComparisonActivity extends AppCompatActivity
         purchaseQuestionNameText.setText(data.getBaseCurrency().getName());
         baseCurrencyCode.setText(data.getBaseCurrency().getCode());
         targetCurrencyCode.setText(data.getTargetCurrency().getCode());
-        rateToCompare.setHint(data.getMarketRate());
+        if(data.getMarketRate() != null ) rateToCompare.setHint(data.getMarketRate());
         compareRate(compareButton);
     }
 
