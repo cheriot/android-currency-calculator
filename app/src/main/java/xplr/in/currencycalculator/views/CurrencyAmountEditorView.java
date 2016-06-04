@@ -39,7 +39,7 @@ public class CurrencyAmountEditorView extends LinearLayout {
 
     public CurrencyAmountEditorView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        LayoutInflater.from(context).inflate(R.layout.view_base_currency, this, true);
+        LayoutInflater.from(context).inflate(R.layout.view_currency_amount_editor, this, true);
         ButterKnife.bind(this);
 
         // properties of <merge /> don't get merged. Set them here.
@@ -77,12 +77,12 @@ public class CurrencyAmountEditorView extends LinearLayout {
     public void setSelectedCurrency(SelectedCurrency selectedCurrency) {
         currencyAmount.getEditText().removeTextChangedListener(textWatcher);
         this.selectedCurrency = selectedCurrency;
-        displayBaseCurrency(this.selectedCurrency);
+        displayCurrency(this.selectedCurrency);
         currencyAmount.getEditText().addTextChangedListener(textWatcher);
     }
 
-    private void displayBaseCurrency(SelectedCurrency currency) {
-        Log.v(LOG_TAG, "displayBaseCurrency " + currency.getCode());
+    private void displayCurrency(SelectedCurrency currency) {
+        Log.v(LOG_TAG, "displayCurrency " + currency.getCode());
 
         currencyName.setText(currency.getName());
         CurrencyMeta meta = metaRepository.findByCode(currency.getCode());

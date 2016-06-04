@@ -146,7 +146,10 @@ public class RateComparisonActivity extends AppCompatActivity
     public void onLoadFinished(Loader<ComparisonPresenter> loader, ComparisonPresenter data) {
         comparisonPresenter = data;
         baseCurrencyEditorView.setSelectedCurrency((SelectedCurrency)data.getBaseCurrency());
-        tradeForCurrencyEditorView.setSelectedCurrency((SelectedCurrency)data.getTargetCurrency());
+        if(tradeForCurrencyEditorView.getSelectedCurrency() == null) {
+            // HACK: the amount on the trade currency is not persisted so don't set it if there's alredy a value
+            tradeForCurrencyEditorView.setSelectedCurrency((SelectedCurrency) data.getTargetCurrency());
+        }
         purchaseQuestionNameText.setText(data.getBaseCurrency().getName());
         baseCurrencyCode.setText(data.getBaseCurrency().getCode());
         targetCurrencyCode.setText(data.getTargetCurrency().getCode());
