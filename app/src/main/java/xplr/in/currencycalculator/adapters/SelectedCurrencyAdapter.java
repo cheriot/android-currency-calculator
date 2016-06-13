@@ -16,7 +16,7 @@ import com.yahoo.squidb.data.SquidCursor;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.R;
-import xplr.in.currencycalculator.activities.OfferComparisonActivity;
+import xplr.in.currencycalculator.activities.TradeComparisonActivity;
 import xplr.in.currencycalculator.activities.RateComparisonActivity;
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.SelectedCurrency;
@@ -188,7 +188,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
     public static class TargetCurrencyViewHolder extends CurrencyViewHolder {
         @Bind(R.id.rate_comparison_button) Button rateComparisonButton;
-        @Bind(R.id.offer_comparison_button) Button offerComparisonButton;
+        @Bind(R.id.trade_comparison_button) Button tradeComparisonButton;
         public TargetCurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
             super(itemView, currencyRepository, metaRepository);
             ButterKnife.bind(this, itemView);
@@ -198,10 +198,10 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
                     v.getContext().startActivity(new Intent(v.getContext(), RateComparisonActivity.class));
                 }
             });
-            offerComparisonButton.setOnClickListener(new View.OnClickListener() {
+            tradeComparisonButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    v.getContext().startActivity(new Intent(v.getContext(), OfferComparisonActivity.class));
+                    v.getContext().startActivity(new Intent(v.getContext(), TradeComparisonActivity.class));
                 }
             });
         }

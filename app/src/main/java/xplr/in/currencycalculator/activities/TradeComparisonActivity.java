@@ -27,9 +27,9 @@ import xplr.in.currencycalculator.views.TradeFormView;
 /**
  * Created by cheriot on 5/24/16.
  */
-public class OfferComparisonActivity extends AppCompatActivity
+public class TradeComparisonActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<ComparisonPresenter>, CurrencyAmountEditorView.CurrencyAmountChangeListener {
-    private static final String LOG_TAG = OfferComparisonActivity.class.getSimpleName();
+    private static final String LOG_TAG = TradeComparisonActivity.class.getSimpleName();
     private static final int TRADE_COMPARISON_LOADER_ID = 5;
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencyMetaRepository metaRepository;

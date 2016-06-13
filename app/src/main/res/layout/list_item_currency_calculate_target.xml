@@ -69,7 +69,7 @@
                 android:text="Exchange Rate"/>
 
             <Button
-                android:id="@+id/offer_comparison_button"
+                android:id="@+id/trade_comparison_button"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

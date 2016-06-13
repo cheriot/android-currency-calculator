@@ -55,7 +55,7 @@
                 android:value=".activities.MainActivity"/>
         </activity>
 
-        <activity android:name=".activities.OfferComparisonActivity"
+        <activity android:name=".activities.TradeComparisonActivity"
                   android:label="@string/title_activity_offer_comparison"
                   android:parentActivityName=".activities.MainActivity"
                   android:theme="@style/AppTheme.NoActionBar">

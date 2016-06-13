@@ -2,7 +2,7 @@ package xplr.in.currencycalculator.modules;
 
 import dagger.Subcomponent;
 import xplr.in.currencycalculator.activities.MainActivity;
-import xplr.in.currencycalculator.activities.OfferComparisonActivity;
+import xplr.in.currencycalculator.activities.TradeComparisonActivity;
 import xplr.in.currencycalculator.activities.RateComparisonActivity;
 import xplr.in.currencycalculator.activities.SelectCurrencyActivity;
 
@@ -19,5 +19,5 @@ public interface ActivityComponent {
 
     void inject(RateComparisonActivity rateComparisonActivity);
 
-    void inject(OfferComparisonActivity offerComparisonActivity);
+    void inject(TradeComparisonActivity tradeComparisonActivity);
 }
