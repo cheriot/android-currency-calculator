@@ -125,6 +125,12 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             }
 
             @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                // Return 0 to prevent swipe.
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
+            @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 Log.v(LOG_TAG, "onSwiped " + swipeDir + " " + viewHolder.getItemId());
                 ((SelectedCurrencyAdapter.CurrencyViewHolder)viewHolder).onSwipe();
