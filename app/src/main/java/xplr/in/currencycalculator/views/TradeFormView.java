@@ -56,6 +56,7 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
             // Hacky: the amount on the trade currency is not persisted so don't set it if there's already a value
             tradeForCurrencyEditorView.setSelectedCurrency((SelectedCurrency) targetCurrency);
         }
+        tradeForCurrencyEditorView.getCurrencyAmount().setHint(tradeCompare.getMarketRateTargetMoney().getAmountFormatted());
     }
 
     @Override
