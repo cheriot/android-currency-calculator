@@ -9,39 +9,6 @@
               tools:context=".activities.MainActivity"
               tools:showIn="@layout/activity_main_calculator">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@android:color/white">
-
-        <xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView
-            android:id="@+id/base_currency"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <Button
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:id="@+id/rate_comparison_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rate"/>
-
-            <Button
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:id="@+id/offer_comparison_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Trade"/>
-        </LinearLayout>
-    </LinearLayout>
-
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeContainer"
         android:layout_width="match_parent"

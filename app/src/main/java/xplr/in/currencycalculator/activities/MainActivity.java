@@ -15,7 +15,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.yahoo.squidb.data.SquidCursor;
 
@@ -37,8 +36,6 @@ import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
 import xplr.in.currencycalculator.sync.SyncCompleteEvent;
-import xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView;
-import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
 
 public class MainActivity extends AppCompatActivity implements CurrencyListActivity, LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -53,10 +50,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     SelectedCurrency baseCurrency;
 
     @Bind(R.id.fab) FloatingActionButton fab;
-    @Bind(R.id.base_currency) BaseCurrencyAmountEditorView currencyAmountEditorView;
     @Bind(R.id.list_currency_calculations) RecyclerView listCurrencyCalculations;
-    @Bind(R.id.rate_comparison_button) Button rateComparisonButton;
-    @Bind(R.id.offer_comparison_button) Button offerComparisonButton;
     @Bind(R.id.swipeContainer) SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -76,18 +70,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                 startActivity(new Intent(MainActivity.this, SelectCurrencyActivity.class));
             }
         });
-        rateComparisonButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, RateComparisonActivity.class));
-            }
-        });
-        offerComparisonButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, OfferComparisonActivity.class));
-            }
-        });
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -104,14 +86,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        currencyAmountEditorView.init(currencyRepository, currencyMetaRepository);
-        currencyAmountEditorView.setCurrencyAmountChangeListener(new CurrencyAmountEditorView.CurrencyAmountChangeListener() {
-            @Override
-            public void onCurrencyAmountChange() {
-                currenciesAdapter.notifyDataSetChanged();
-            }
-        });
-
         listCurrencyCalculations.setAdapter(currenciesAdapter);
         listCurrencyCalculations.setLayoutManager(new LinearLayoutManager(this));
         listCurrencyCalculations.setItemAnimator(new DefaultItemAnimator());
@@ -125,9 +99,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                // Don't swipe away the base currency until that is supported.
+                if(viewHolder.getLayoutPosition() == 0) return 0;
                 // Return 0 to prevent swipe on the target currency. Two currencies must always be
                 // selected (base and target) for the Rate and Trade screens to work.
-                if(recyclerView.getAdapter().getItemCount() < 2) return 0;
+                if(recyclerView.getAdapter().getItemCount() <= 2) return 0;
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
 
@@ -164,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         if (baseCurrency != null && baseCurrency.sameDisplay(currency)) return;
         baseCurrency = currency;
 
-        currencyAmountEditorView.setSelectedCurrency(baseCurrency);
         currenciesAdapter.setBaseCurrency(baseCurrency);
         // Rebind RecyclerView items so converted amounts are updated.
         currenciesAdapter.notifyDataSetChanged();

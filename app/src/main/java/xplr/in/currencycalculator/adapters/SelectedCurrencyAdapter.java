@@ -1,11 +1,13 @@
 package xplr.in.currencycalculator.adapters;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,15 +16,19 @@ import com.yahoo.squidb.data.SquidCursor;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.R;
+import xplr.in.currencycalculator.activities.OfferComparisonActivity;
+import xplr.in.currencycalculator.activities.RateComparisonActivity;
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
+import xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView;
+import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
 
 /**
  * Created by cheriot on 5/9/16.
  */
-public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurrencyAdapter.CurrencyViewHolder> {
+public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurrencyAdapter.AbstractCurrencyViewHolder> {
 
     private static final String LOG_TAG = SelectedCurrencyAdapter.class.getSimpleName();
     private static final int BASE_CURRENCY_TYPE = 1;
@@ -50,32 +56,31 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
     @Override
     public int getItemViewType(int position) {
-        //if(position == 0) return BASE_CURRENCY_TYPE;
-        if(position == 0) return TARGET_CURRENCY_TYPE;
+        if(position == 0) return BASE_CURRENCY_TYPE;
+        if(position == 1) return TARGET_CURRENCY_TYPE;
         return OTHER_CURRENCY_TYPE;
     }
 
     @Override
-    public CurrencyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater
-                .from(parent.getContext());
-//        if(viewType == BASE_CURRENCY_TYPE) {
-//            View itemView = inflater.inflate(R.layout.list_item_currency_calculate_other, parent, false);
-//            return new CurrencyViewHolder(itemView, currencyRepository);
-//        }
+    public AbstractCurrencyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        if(viewType == BASE_CURRENCY_TYPE) {
+            View itemView = inflater.inflate(R.layout.list_item_currency_calculate_base, parent, false);
+            return new BaseCurrencyViewHolder(this, itemView, currencyRepository, metaRepository);
+        }
         if(viewType == TARGET_CURRENCY_TYPE) {
             View itemView = inflater.inflate(R.layout.list_item_currency_calculate_target, parent, false);
-            return new CurrencyViewHolder(itemView, currencyRepository);
+            return new TargetCurrencyViewHolder(itemView, currencyRepository, metaRepository);
         }
         // OTHER_CURRENCY_TYPE
         View itemView = inflater.inflate(R.layout.list_item_currency_calculate_other, parent, false);
-        return new CurrencyViewHolder(itemView, currencyRepository);
+        return new CurrencyViewHolder(itemView, currencyRepository, metaRepository);
     }
 
     @Override
-    public void onBindViewHolder(CurrencyViewHolder holder, int position) {
+    public void onBindViewHolder(AbstractCurrencyViewHolder holder, int position) {
         SelectedCurrency currency = getCurrency(position);
-        holder.bindView(currency, baseCurrency, metaRepository.findByCode(currency.getCode()));
+        holder.bindView(currency, baseCurrency);
     }
 
     @Override
@@ -99,26 +104,63 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         return currency;
     }
 
-    public static class CurrencyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static abstract class AbstractCurrencyViewHolder extends RecyclerView.ViewHolder {
+        protected final CurrencyRepository currencyRepository;
+        protected final CurrencyMetaRepository metaRepository;
+
+        public AbstractCurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
+            super(itemView);
+            this.currencyRepository = currencyRepository;
+            this.metaRepository = metaRepository;
+        }
+
+        abstract void bindView(SelectedCurrency currency, SelectedCurrency baseCurrency);
+    }
+
+    public static class BaseCurrencyViewHolder extends AbstractCurrencyViewHolder {
+        @Bind(R.id.base_currency) BaseCurrencyAmountEditorView baseCurrencyAmountEditorView;
+        public BaseCurrencyViewHolder(final RecyclerView.Adapter adapter,
+                                      View itemView,
+                                      CurrencyRepository currencyRepository,
+                                      CurrencyMetaRepository metaRepository) {
+            super(itemView, currencyRepository, metaRepository);
+            ButterKnife.bind(this, itemView);
+            baseCurrencyAmountEditorView.init(currencyRepository, metaRepository);
+            baseCurrencyAmountEditorView.setCurrencyAmountChangeListener(new CurrencyAmountEditorView.CurrencyAmountChangeListener() {
+                @Override
+                public void onCurrencyAmountChange() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
+
+        @Override
+        public void bindView(SelectedCurrency currency, SelectedCurrency baseCurrency) {
+            // The baseCurrency has #amount set.
+            baseCurrencyAmountEditorView.setSelectedCurrency(baseCurrency != null ? baseCurrency : currency);
+        }
+    }
+
+    public static class CurrencyViewHolder extends AbstractCurrencyViewHolder implements View.OnClickListener {
         @Bind(R.id.currency_container) View container;
         @Bind(R.id.currency_name) TextView nameText;
         @Bind(R.id.currency_rate) TextView rateText;
         @Bind(R.id.currency_flag) ImageView flagImage;
         private SelectedCurrency currency;
-        private CurrencyRepository currencyRepository;
 
-        public CurrencyViewHolder(View itemView, CurrencyRepository currencyRepository) {
-            super(itemView);
+        public CurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
+            super(itemView, currencyRepository, metaRepository);
             ButterKnife.bind(this, itemView);
+            // AppBarLayout doesn't fire click events.
             container.setOnClickListener(this);
-            this.currencyRepository = currencyRepository;
         }
 
-        public void bindView(SelectedCurrency currency, SelectedCurrency baseCurrency, CurrencyMeta meta) {
+        public void bindView(SelectedCurrency currency, SelectedCurrency baseCurrency) {
             Log.v(LOG_TAG, "bindView " + currency.getCode());
             this.currency = currency;
             nameText.setText(currency.getName());
 
+            CurrencyMeta meta = metaRepository.findByCode(currency.getCode());
             int resourceId = meta.getFlagResourceId(CurrencyMeta.FlagSize.SQUARE);
             Drawable drawable = itemView.getResources().getDrawable(resourceId);
             flagImage.setImageDrawable(drawable);
@@ -137,6 +179,27 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         public void onClick(View v) {
             Log.v(LOG_TAG, "CurrencyViewHolder#onClick ");
             currencyRepository.setBaseCurrency(currency);
+        }
+    }
+
+    public static class TargetCurrencyViewHolder extends CurrencyViewHolder {
+        @Bind(R.id.rate_comparison_button) Button rateComparisonButton;
+        @Bind(R.id.offer_comparison_button) Button offerComparisonButton;
+        public TargetCurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
+            super(itemView, currencyRepository, metaRepository);
+            ButterKnife.bind(this, itemView);
+            rateComparisonButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    v.getContext().startActivity(new Intent(v.getContext(), RateComparisonActivity.class));
+                }
+            });
+            offerComparisonButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    v.getContext().startActivity(new Intent(v.getContext(), OfferComparisonActivity.class));
+                }
+            });
         }
     }
 }

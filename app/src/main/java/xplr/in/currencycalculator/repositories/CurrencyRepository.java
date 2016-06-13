@@ -72,7 +72,7 @@ public class CurrencyRepository {
             .freeze();
 
     public Cursor findSelectedCursor() {
-        return database.query(Currency.class, CALCULATED_CURRENCIES);
+        return database.query(Currency.class, SELECTED_CURRENCIES);
     }
 
     private static final Query SEARCH_CURRENCIES = VALID_CURRENCIES.orderBy(Currency.NAME.asc()).freeze();
