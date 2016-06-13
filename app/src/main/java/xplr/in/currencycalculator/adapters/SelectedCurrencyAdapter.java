@@ -25,16 +25,17 @@ import xplr.in.currencycalculator.repositories.CurrencyRepository;
 public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurrencyAdapter.CurrencyViewHolder> {
 
     private static final String LOG_TAG = SelectedCurrencyAdapter.class.getSimpleName();
-    private final int rLayout;
+    private static final int BASE_CURRENCY_TYPE = 1;
+    private static final int TARGET_CURRENCY_TYPE = 2;
+    private static final int OTHER_CURRENCY_TYPE = 3;
     private final CurrencyRepository currencyRepository;
     private final CurrencyMetaRepository metaRepository;
     private SquidCursor cursor;
     private SelectedCurrency baseCurrency;
 
-    public SelectedCurrencyAdapter(int rLayout, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
+    public SelectedCurrencyAdapter(CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
         super();
         setHasStableIds(true);
-        this.rLayout = rLayout;
         this.currencyRepository = currencyRepository;
         this.metaRepository = metaRepository;
     }
@@ -48,10 +49,26 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     }
 
     @Override
+    public int getItemViewType(int position) {
+        //if(position == 0) return BASE_CURRENCY_TYPE;
+        if(position == 0) return TARGET_CURRENCY_TYPE;
+        return OTHER_CURRENCY_TYPE;
+    }
+
+    @Override
     public CurrencyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater
-                .from(parent.getContext())
-                .inflate(rLayout, parent, false);
+        LayoutInflater inflater = LayoutInflater
+                .from(parent.getContext());
+//        if(viewType == BASE_CURRENCY_TYPE) {
+//            View itemView = inflater.inflate(R.layout.list_item_currency_calculate_other, parent, false);
+//            return new CurrencyViewHolder(itemView, currencyRepository);
+//        }
+        if(viewType == TARGET_CURRENCY_TYPE) {
+            View itemView = inflater.inflate(R.layout.list_item_currency_calculate_target, parent, false);
+            return new CurrencyViewHolder(itemView, currencyRepository);
+        }
+        // OTHER_CURRENCY_TYPE
+        View itemView = inflater.inflate(R.layout.list_item_currency_calculate_other, parent, false);
         return new CurrencyViewHolder(itemView, currencyRepository);
     }
 
@@ -83,6 +100,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     }
 
     public static class CurrencyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        @Bind(R.id.currency_container) View container;
         @Bind(R.id.currency_name) TextView nameText;
         @Bind(R.id.currency_rate) TextView rateText;
         @Bind(R.id.currency_flag) ImageView flagImage;
@@ -92,7 +110,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         public CurrencyViewHolder(View itemView, CurrencyRepository currencyRepository) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(this);
+            container.setOnClickListener(this);
             this.currencyRepository = currencyRepository;
         }
 

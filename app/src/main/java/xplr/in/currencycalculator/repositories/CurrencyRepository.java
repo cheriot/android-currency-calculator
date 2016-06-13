@@ -31,8 +31,8 @@ import static android.text.TextUtils.isEmpty;
 public class CurrencyRepository {
 
     private static final String LOG_TAG = CurrencyRepository.class.getSimpleName();
-    private static final int BASE_CURRENCY_POSITION = 1;
-    private static final int TARGET_CURRENCY_POSITION = BASE_CURRENCY_POSITION + 1;
+    public static final int BASE_CURRENCY_POSITION = 1;
+    public static final int TARGET_CURRENCY_POSITION = BASE_CURRENCY_POSITION + 1;
 
     private final SharedPreferences appSharedPrefs;
     private final CurrenciesDatabase database;

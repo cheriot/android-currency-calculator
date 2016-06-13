@@ -126,7 +126,9 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                // Return 0 to prevent swipe.
+                // Return 0 to prevent swipe on the target currency. Two currencies must always be
+                // selected (base and target) for the Rate and Trade screens to work.
+                if(recyclerView.getAdapter().getItemCount() < 2) return 0;
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
 
