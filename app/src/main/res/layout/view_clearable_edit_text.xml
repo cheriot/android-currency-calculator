@@ -21,7 +21,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:ems="6"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionDone|flagNoExtractUi"
             android:inputType="numberDecimal"
             android:paddingEnd="25dp"
             android:paddingLeft="5dp"
