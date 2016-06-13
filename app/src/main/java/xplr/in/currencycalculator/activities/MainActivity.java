@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
                 startActivity(new Intent(MainActivity.this, SelectCurrencyActivity.class));
             }
         });
-        // TODO startActivity for the new buttons
         rateComparisonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

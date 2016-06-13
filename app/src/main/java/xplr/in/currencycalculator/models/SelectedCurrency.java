@@ -14,7 +14,7 @@ import java.text.ParseException;
  */
 public class SelectedCurrency extends Currency {
 
-    // TODO How does this whole Parcelable thing work?
+    // How does this whole Parcelable thing work?
     public static final Creator<SelectedCurrency> CREATOR = new ModelCreator<SelectedCurrency>(SelectedCurrency.class);
     private static final String EMPTY_AMOUNT = "-";
 

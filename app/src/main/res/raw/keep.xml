@@ -3,5 +3,3 @@
            tools:keep="@drawable/flag_*"
            tools:discard="@layout/unused2"
            tools:shrinkMode="strict" />
-
-<!-- TODO remove unused flag images -->
