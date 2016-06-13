@@ -161,7 +161,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             nameText.setText(currency.getName());
 
             CurrencyMeta meta = metaRepository.findByCode(currency.getCode());
-            int resourceId = meta.getFlagResourceId(CurrencyMeta.FlagSize.SQUARE);
+            int resourceId = meta.getFlagResourceId(flagSize());
             Drawable drawable = itemView.getResources().getDrawable(resourceId);
             flagImage.setImageDrawable(drawable);
 
@@ -179,6 +179,10 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         public void onClick(View v) {
             Log.v(LOG_TAG, "CurrencyViewHolder#onClick ");
             currencyRepository.setBaseCurrency(currency);
+        }
+
+        public CurrencyMeta.FlagSize flagSize() {
+            return CurrencyMeta.FlagSize.SQUARE;
         }
     }
 
@@ -200,6 +204,11 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
                     v.getContext().startActivity(new Intent(v.getContext(), OfferComparisonActivity.class));
                 }
             });
+        }
+
+        @Override
+        public CurrencyMeta.FlagSize flagSize() {
+            return CurrencyMeta.FlagSize.SQUARE;
         }
     }
 }
