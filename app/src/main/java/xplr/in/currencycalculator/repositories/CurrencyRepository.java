@@ -176,6 +176,11 @@ public class CurrencyRepository {
         return findByCode(Currency.class, code);
     }
 
+    public Currency findByCodeIncludeInvalid(String code) {
+        Query q = Query.select().from(Currency.TABLE).where(Currency.CODE.eq(code));
+        return database.fetchByQuery(Currency.class, q);
+    }
+
     <T extends Currency> T findByCode(Class<T> modelClass, String code) {
         Query query = VALID_CURRENCIES.where(Currency.CODE.eq(code));
         return database.fetchByQuery(modelClass, query);

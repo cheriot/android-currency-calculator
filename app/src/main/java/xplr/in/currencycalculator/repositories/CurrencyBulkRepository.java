@@ -160,7 +160,8 @@ public class CurrencyBulkRepository {
     }
 
     private Currency findOrInstantiate(String code) {
-        Currency currency = currencyRepository.findByCode(code);
+        // Include invalid currencies in updates.
+        Currency currency = currencyRepository.findByCodeIncludeInvalid(code);
         if(currency == null) {
             currency = new Currency();
             currency.setCode(code);

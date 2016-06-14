@@ -74,8 +74,9 @@ public class CurrencySpec {
     public static String toString(Currency c) {
         return "CurrencySpec{" +
                 "code='" + c.getCode() + '\'' +
+                ", id='" + c.getId() + '\'' +
                 ", rate='" + c.getRate() + '\'' +
-                ", position=" + c.getPosition() +
+                ", position='" + c.getPosition() + '\'' +
                 ", name='" + c.getName() + '\'' +
                 ", minorUnits=" + c.getMinorUnits() +
                 ", issuingCountryCode='" + c.getIssuingCountryCode() + '\'' +

@@ -43,7 +43,7 @@ public class CurrenciesDatabase extends SquidDatabase {
 
     @Override
     protected int getVersion() {
-        return 1;
+        return 2;
     }
 
     @Override
