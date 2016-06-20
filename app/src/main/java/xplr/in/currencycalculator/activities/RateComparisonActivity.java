@@ -40,6 +40,7 @@ public class RateComparisonActivity extends AppCompatActivity
 
     private static final String LOG_TAG = RateComparisonActivity.class.getSimpleName();
     private static final int COMPARISON_LOADER_ID = 1;
+
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencyMetaRepository metaRepository;
 
@@ -55,6 +56,10 @@ public class RateComparisonActivity extends AppCompatActivity
     @Bind(R.id.rate_result_text) TextView rateResultText;
     // Trade form
     @Bind(R.id.trade_form) TradeFormView tradeFormView;
+
+    // If the user is converting A into B, is the rate the number of Bs for 1 A? When false,
+    // it is the number of As for 1 B.
+    private boolean isRateDirectionNormal = true;
 
     private ComparisonPresenter comparisonPresenter;
     private TextView.OnEditorActionListener rateKeyboardDoneListener = new TextView.OnEditorActionListener() {
@@ -120,9 +125,14 @@ public class RateComparisonActivity extends AppCompatActivity
         baseCurrencyEditorView.getCurrencyAmount().setOnEditorActionListener(rateKeyboardDoneListener);
     }
 
+    public void swapRate(View v) {
+        Log.v(LOG_TAG, "swapRate");
+        isRateDirectionNormal = !isRateDirectionNormal;
+    }
+
     public void compareRate(View view) {
         Log.v(LOG_TAG, "compareRate");
-        boolean success = comparisonPresenter.getRateCompare().calculate(rateToCompare.getText());
+        boolean success = comparisonPresenter.getRateCompare().calculate(rateToCompare.getText(), isRateDirectionNormal);
         if(success) {
             String template = getString(R.string.rate_compare_result);
             String msg = comparisonPresenter.getRateCompare().formatResults(template);
@@ -156,7 +166,7 @@ public class RateComparisonActivity extends AppCompatActivity
 
         // Trade form
         tradeFormView.populate(data.getTradeCompare(), data.getTargetCurrency());
-        // Data will be reloaded when the base amount changes.
+        // Data will be reloaded when the baseMoney amount changes.
         tradeFormView.invalidateResults();
     }
 
@@ -166,8 +176,22 @@ public class RateComparisonActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.v(LOG_TAG, "onSave");
+        // TODO persist rate direction
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "onRestore");
+        // TODO restore rate direction
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
     public void onCurrencyAmountChange() {
-        Log.v(LOG_TAG, "onCurrencyAmountChange base");
+        Log.v(LOG_TAG, "onCurrencyAmountChange baseMoney");
         getLoaderManager().restartLoader(COMPARISON_LOADER_ID, null, this);
     }
 

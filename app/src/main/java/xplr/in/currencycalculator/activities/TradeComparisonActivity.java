@@ -68,7 +68,7 @@ public class TradeComparisonActivity extends AppCompatActivity
 
     @Override
     public void onCurrencyAmountChange() {
-        Log.v(LOG_TAG, "onCurrencyAmountChange base");
+        Log.v(LOG_TAG, "onCurrencyAmountChange baseMoney");
         getLoaderManager().restartLoader(TRADE_COMPARISON_LOADER_ID, null, this);
     }
 
@@ -83,7 +83,7 @@ public class TradeComparisonActivity extends AppCompatActivity
 
         // Trade form
         tradeFormView.populate(data.getTradeCompare(), data.getTargetCurrency());
-        // Data will be reloaded when the base amount changes.
+        // Data will be reloaded when the baseMoney amount changes.
         tradeFormView.invalidateResults();
     }
 

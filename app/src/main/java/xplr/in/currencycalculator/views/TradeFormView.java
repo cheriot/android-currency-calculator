@@ -101,7 +101,7 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
     class TradeAmountChangeListener implements CurrencyAmountEditorView.CurrencyAmountChangeListener {
         @Override
         public void onCurrencyAmountChange() {
-            Log.v(LOG_TAG, "onCurrencyAmountChange target");
+            Log.v(LOG_TAG, "onCurrencyAmountChange targetCurrency");
             invalidateResults();
         }
     }

@@ -18,8 +18,8 @@ public abstract class BaseCompare {
 
     private static final String LOG_TAG = BaseCompare.class.getSimpleName();
 
-    protected Money base;
-    protected Currency target;
+    protected Money baseMoney;
+    protected Currency targetCurrency;
 
     private BigDecimal marketRate;
     private Money marketRateTargetMoney;
@@ -31,41 +31,43 @@ public abstract class BaseCompare {
     private boolean hasResult;
     private BigDecimal userNumber;
 
-    public BaseCompare(Money base, Currency target) {
-        this.base = base;
-        this.target = target;
+    public BaseCompare(Money baseMoney, Currency targetCurrency) {
+        this.baseMoney = baseMoney;
+        this.targetCurrency = targetCurrency;
         this.hasResult = false;
-        if(base != null) {
-            marketRate = base.rateTo(target);
-            marketRateTargetMoney = base.convertTo(target);
+        if(baseMoney != null) {
+            marketRate = baseMoney.rateTo(targetCurrency);
+            marketRateTargetMoney = baseMoney.convertTo(targetCurrency);
         }
     }
 
-    public boolean calculate(String userInput) {
-        if(base == null || TextUtils.isEmpty(userInput)) {
+    protected BigDecimal calculableNumber(String userInput) {
+        if(baseMoney == null) {
             clearResults();
-            return false;
+            return null;
         }
-        userNumber = parseUserInputNumber(userInput);
-        if(userNumber.equals(BigDecimal.ZERO)) {
+
+        BigDecimal parsed = parseUserInputNumber(userInput);
+
+        if(parsed.equals(BigDecimal.ZERO)) {
             clearResults();
-            return false;
+            return null;
         }
-        marketRateTargetMoney = base.convertTo(target);
-        hasResult = calculate(userNumber);
-        return hasResult;
+
+        userNumber = parsed;
+        return parsed;
     }
 
-    public abstract boolean calculate(BigDecimal userInput);
-
-    private BigDecimal parseUserInputNumber(String str) {
+    public BigDecimal parseUserInputNumber(String userInput) {
+        BigDecimal parsed = null;
         try {
-            Number n = new DecimalFormat().parse(str);
-            return new BigDecimal(n.toString());
+            Number n = new DecimalFormat().parse(userInput);
+            parsed = new BigDecimal(n.toString());
         } catch (ParseException e) {
-            Log.e(LOG_TAG, "Error parsing the rate to compareRate <" + str + ">.", e);
-            return BigDecimal.ZERO;
+            Log.e(LOG_TAG, "Error parsing the rate to compareRate <" + userInput + ">.", e);
+            parsed = BigDecimal.ZERO;
         }
+        return parsed;
     }
 
     public boolean isSameComparison(String userInput) {
@@ -81,9 +83,9 @@ public abstract class BaseCompare {
                 template,
                 formatPercent(revenueRate),
                 revenueBaseCurrency.getAmountFormatted(),
-                base.getCurrency().getCode(),
+                baseMoney.getCurrency().getCode(),
                 revenueTargetCurrency.getAmountFormatted(),
-                target.getCode());
+                targetCurrency.getCode());
     }
 
     private String formatPercent(BigDecimal d) {
@@ -107,11 +109,11 @@ public abstract class BaseCompare {
         return marketRateTargetMoney;
     }
 
-    public Money getBase() {
-        return base;
+    public Money getBaseMoney() {
+        return baseMoney;
     }
 
-    public Currency getTarget() {
-        return target;
+    public Currency getTargetCurrency() {
+        return targetCurrency;
     }
 }

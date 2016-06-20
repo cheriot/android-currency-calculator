@@ -83,7 +83,7 @@ public class CurrencyBulkRepository {
         Log.i(LOG_TAG, "SIM " + sim);
         Log.i(LOG_TAG, "Network " + network);
 
-        // When initializing a base currency, convert $1 to that currency
+        // When initializing a baseMoney currency, convert $1 to that currency
         // and round to make it pretty.
         SelectedCurrency baseCurrency = currencyRepository.findBaseCurrency();
         SelectedCurrency usd = currencyRepository.findByCode(SelectedCurrency.class, "USD");

@@ -22,7 +22,7 @@ public class ComparisonPresenter {
 
     public ComparisonPresenter(SelectedCurrency baseCurrency, Currency target) {
         this.baseCurrency = baseCurrency;
-        // Set the base amount to one so at least a market rate can be calculated.
+        // Set the baseMoney amount to one so at least a market rate can be calculated.
         Money base = TextUtils.isEmpty(baseCurrency.getAmount()) ?
                 new Money(baseCurrency, BigDecimal.ONE) : new Money(baseCurrency, baseCurrency.getAmountBigDecimal());
         rateCompare = new RateCompare(base, target);
@@ -42,7 +42,7 @@ public class ComparisonPresenter {
     }
 
     public Currency getTargetCurrency() {
-        return rateCompare.getTarget();
+        return rateCompare.getTargetCurrency();
     }
 
     public RateCompare getRateCompare() {

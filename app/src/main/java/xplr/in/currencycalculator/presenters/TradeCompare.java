@@ -18,14 +18,15 @@ public class TradeCompare extends BaseCompare {
         super(base, target);
     }
 
-    @Override
-    public boolean calculate(BigDecimal tradeToCompare) {
+    public boolean calculate(String userInput) {
+        BigDecimal tradeToCompare = calculableNumber(userInput);
+        if(tradeToCompare == null) return false;
         Log.v(LOG_TAG, "calculate " + tradeToCompare + " instead of " + getMarketRateTargetMoney());
-        Money tradeMoney = new Money(getTarget(), tradeToCompare);
+        Money tradeMoney = new Money(getTargetCurrency(), tradeToCompare);
 
         revenueTargetCurrency = getMarketRateTargetMoney().subtract(tradeMoney);
-        revenueBaseCurrency = revenueTargetCurrency.convertTo(getBase().getCurrency());
-        revenueRate = revenueBaseCurrency.divide(getBase());
+        revenueBaseCurrency = revenueTargetCurrency.convertTo(getBaseMoney().getCurrency());
+        revenueRate = revenueBaseCurrency.divide(getBaseMoney());
         return true;
     }
 }

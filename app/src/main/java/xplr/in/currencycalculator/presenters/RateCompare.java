@@ -3,7 +3,6 @@ package xplr.in.currencycalculator.presenters;
 import android.util.Log;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.Money;
@@ -19,14 +18,29 @@ public class RateCompare extends BaseCompare {
         super(base, target);
     }
 
-    @Override
-    public boolean calculate(BigDecimal rateToCompare) {
-        Log.v(LOG_TAG, "calculateRate " + rateToCompare);
+    public boolean calculate(String userInput, boolean isRateDirectionNormal) {
+        BigDecimal userRate = calculableNumber(userInput);
+        if(userRate == null) return false;
+        Log.v(LOG_TAG, "calculateRate " + userRate + " isRateDirectionNormal "  + isRateDirectionNormal);
 
-        revenueRate = getMarketRate().subtract(rateToCompare)
-                .divide(getMarketRate(), MathContext.DECIMAL128);
-        revenueBaseCurrency = base.multiply(revenueRate);
-        revenueTargetCurrency = revenueBaseCurrency.convertTo(target);
+        BigDecimal baseToTargetRateToCompare = resolveRateDirection(userRate, isRateDirectionNormal);
+
+        // Calculate the bank's revenue on the transaction.
+        revenueRate = getMarketRate().subtract(baseToTargetRateToCompare)
+                .divide(getMarketRate(), Money.MATH_CONTEXT);
+        revenueBaseCurrency = baseMoney.multiply(revenueRate);
+        revenueTargetCurrency = revenueBaseCurrency.convertTo(targetCurrency);
+
+        // Success!
         return true;
+    }
+
+    private BigDecimal resolveRateDirection(BigDecimal userRate, boolean isRateDirectionNormal) {
+        // By default, we accept the rate from the base currency to the target currency. If the
+        // user has reversed that, convert.
+        if(isRateDirectionNormal) {
+            return userRate;
+        }
+        return BigDecimal.ONE.divide(userRate, Money.MATH_CONTEXT);
     }
 }

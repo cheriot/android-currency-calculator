@@ -154,7 +154,7 @@ public class CurrencyRepositoryTest {
         assertInPosition("AMD is first in the list.", 1, "AMD");
 
         Currency base = currencyRepository.findBaseCurrency();
-        assertNotNull("Found base currency.", base);
+        assertNotNull("Found baseMoney currency.", base);
         assertEquals("Base currency is AMD.", "AMD", base.getCode());
     }
 
@@ -172,7 +172,7 @@ public class CurrencyRepositoryTest {
         insertAt(1, "BOB");
         insertAt(1, "AED");
         insertAt(1, "AMD");
-        assertInPosition("AMD is the base currency.", 1, "AMD");
+        assertInPosition("AMD is the baseMoney currency.", 1, "AMD");
 
         SelectedCurrency baseCurrency = currencyRepository.findByCode(SelectedCurrency.class, "BOB");
         baseCurrency.setAmount("100");

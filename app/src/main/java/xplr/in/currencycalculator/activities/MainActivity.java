@@ -99,10 +99,10 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                // Don't swipe away the base currency until that is supported.
+                // Don't swipe away the baseMoney currency until that is supported.
                 if(viewHolder.getLayoutPosition() == 0) return 0;
-                // Return 0 to prevent swipe on the target currency. Two currencies must always be
-                // selected (base and target) for the Rate and Trade screens to work.
+                // Return 0 to prevent swipe on the targetCurrency currency. Two currencies must always be
+                // selected (baseMoney and targetCurrency) for the Rate and Trade screens to work.
                 if(recyclerView.getAdapter().getItemCount() <= 2) return 0;
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
     @Subscribe(threadMode=ThreadMode.BACKGROUND)
     public void onCurrencyDataChanged(CurrencyDataChangeEvent e) {
-        Log.v(LOG_TAG, "onCurrencyDataChanged update base currency");
+        Log.v(LOG_TAG, "onCurrencyDataChanged update baseMoney currency");
         new BaseCurrencyQuery().execute();
     }
 

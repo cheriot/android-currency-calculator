@@ -9,7 +9,7 @@ import java.text.DecimalFormat;
  */
 public class Money {
 
-    private static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
+    public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
     private final Currency currency;
     private final BigDecimal amount;
 

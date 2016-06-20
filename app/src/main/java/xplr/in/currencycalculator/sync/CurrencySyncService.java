@@ -44,7 +44,7 @@ public class CurrencySyncService extends Service {
         /*
          * Get the object that allows external processes
          * to call onPerformSync(). The object is created
-         * in the base class code when the SyncAdapter
+         * in the baseMoney class code when the SyncAdapter
          * constructors call super()
          */
         return currencySyncAdapter.getSyncAdapterBinder();
