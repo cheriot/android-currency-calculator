@@ -18,14 +18,13 @@ public class RateCompare extends BaseCompare {
         super(base, target);
     }
 
-    public boolean calculate(String userInput, boolean isRateDirectionNormal) {
+    public boolean calculate(int multiplier, String userInput, boolean isRateDirectionNormal) {
         BigDecimal userRate = calculableNumber(userInput);
         if(userRate == null) return false;
-        BigDecimal marketRate = getMarketRate(isRateDirectionNormal);
+        BigDecimal marketRate = getMarketRate(multiplier, isRateDirectionNormal);
         Log.v(LOG_TAG, "calculateRate " + userRate
                 + " isRateDirectionNormal "  + isRateDirectionNormal
                 + " marketRate " + marketRate);
-
 
         // Calculate the bank's revenue on the transaction.
         revenueRate = marketRate.subtract(userRate).divide(marketRate, Money.MATH_CONTEXT);

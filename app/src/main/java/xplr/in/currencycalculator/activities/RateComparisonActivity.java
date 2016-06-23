@@ -13,9 +13,15 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -24,6 +30,7 @@ import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.loaders.RateComparisonLoader;
+import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.presenters.ComparisonPresenter;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
@@ -36,14 +43,16 @@ import xplr.in.currencycalculator.views.TradeFormView;
 /**
  * Created by cheriot on 5/24/16.
  */
-public class RateComparisonActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<ComparisonPresenter>, CurrencyAmountEditorView.CurrencyAmountChangeListener {
+public class RateComparisonActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<ComparisonPresenter>,
+        CurrencyAmountEditorView.CurrencyAmountChangeListener,
+        AdapterView.OnItemSelectedListener {
 
     private static final String LOG_TAG = RateComparisonActivity.class.getSimpleName();
     private static final int COMPARISON_LOADER_ID = 1;
     private static final String FEES_EXIST_KEY = "FEES_EXIST_KEY";
     private static final String RATE_DIRECTION_KEY = "RATE_DIRECTION_KEY";
-    private static final String AMOUNT_KEY = "AMOUNT_KEY";
+    private static final String LHS_SELECTED_POS = "LHS_SELECTED_POS";
 
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencyMetaRepository metaRepository;
@@ -55,7 +64,7 @@ public class RateComparisonActivity extends AppCompatActivity
     // Rate form
     @Bind(R.id.rate_prompt_question) TextView ratePromptQuestion;
     @Bind(R.id.rate_form) View rateForm;
-    @Bind(R.id.lhs_currency_code) TextView lhsCurrencyCode;
+    @Bind(R.id.lhs_money) Spinner lhsMoney;
     @Bind(R.id.rhs_currency_code) TextView rhsCurrencyCode;
     @Bind(R.id.rate_to_compare) ClearableEditText rateToCompare;
     @Bind(R.id.rate_compare_button) Button rateCompareButton;
@@ -67,6 +76,7 @@ public class RateComparisonActivity extends AppCompatActivity
     // If the user is converting A into B, is the rate the number of Bs for 1 A? When false,
     // it is the number of As for 1 B.
     private boolean isRateDirectionNormal = true;
+    private int lhsSelectedPosition = 0;
     private ComparisonPresenter comparisonPresenter;
 
     private TextView.OnEditorActionListener rateKeyboardDoneListener = new TextView.OnEditorActionListener() {
@@ -106,6 +116,7 @@ public class RateComparisonActivity extends AppCompatActivity
         rateCompareButton.setEnabled(false);
         rateToCompare.getEditText().addTextChangedListener(new RateInputChangeListener());
         rateToCompare.setOnEditorActionListener(rateKeyboardDoneListener);
+        lhsMoney.setOnItemSelectedListener(this);
 
         // Trade form
         tradeFormView.init(currencyRepository, metaRepository, tradeKeyboardDoneListener);
@@ -119,17 +130,26 @@ public class RateComparisonActivity extends AppCompatActivity
     }
 
     private void setLeftAndRight() {
-        String base = comparisonPresenter.getBaseCurrency().getCode();
-        String target = comparisonPresenter.getTargetCurrency().getCode();
-        String rate = comparisonPresenter.getMarketRate(isRateDirectionNormal);
+        Currency base = comparisonPresenter.getBaseCurrency();
+        Currency target = comparisonPresenter.getTargetCurrency();
         if(isRateDirectionNormal) {
-            lhsCurrencyCode.setText(base);
-            rhsCurrencyCode.setText(target);
+            lhsUpdate(lhsMoney, base);
+            rhsCurrencyCode.setText(target.getCode());
         } else {
-            lhsCurrencyCode.setText(target);
-            rhsCurrencyCode.setText(base);
+            lhsUpdate(lhsMoney, target);
+            rhsCurrencyCode.setText(base.getCode());
         }
+        setRateHint();
+    }
+
+    private void  setRateHint() {
+        String rate = comparisonPresenter.getMarketRate(getMultiplier(), isRateDirectionNormal);
         if(rate != null ) rateToCompare.setHint(rate);
+    }
+
+    private int getMultiplier() {
+        int multiplier = (int)Math.pow(10, lhsMoney.getSelectedItemPosition());
+        return multiplier >= 1 ? multiplier : 1;
     }
 
     public void setFeesYes(View view) {
@@ -159,7 +179,9 @@ public class RateComparisonActivity extends AppCompatActivity
 
     public void compareRate(View view) {
         Log.v(LOG_TAG, "compareRate");
-        boolean success = comparisonPresenter.getRateCompare().calculate(rateToCompare.getText(), isRateDirectionNormal);
+        boolean success = comparisonPresenter
+                .getRateCompare()
+                .calculate(getMultiplier(), rateToCompare.getText(), isRateDirectionNormal);
         if(success) {
             String template = getString(R.string.rate_compare_result);
             String msg = comparisonPresenter.getRateCompare().formatResults(template);
@@ -205,6 +227,7 @@ public class RateComparisonActivity extends AppCompatActivity
         Log.v(LOG_TAG, "onSave");
         outState.putBoolean(FEES_EXIST_KEY, feesExist);
         outState.putBoolean(RATE_DIRECTION_KEY, isRateDirectionNormal);
+        outState.putInt(LHS_SELECTED_POS, lhsSelectedPosition);
         super.onSaveInstanceState(outState);
     }
 
@@ -217,6 +240,7 @@ public class RateComparisonActivity extends AppCompatActivity
             setFeesNo(null);
         }
         isRateDirectionNormal = savedInstanceState.getBoolean(RATE_DIRECTION_KEY);
+        lhsSelectedPosition = savedInstanceState.getInt(LHS_SELECTED_POS);
         setLeftAndRight();
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -237,12 +261,38 @@ public class RateComparisonActivity extends AppCompatActivity
     }
 
     private void hideKeyboard() {
-        // TODO kill this copy
         if(getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             Log.v(LOG_TAG, "Keyboard hidden.");
         }
+    }
+
+    private void lhsUpdate(Spinner spinner, Currency lhs) {
+        int[] amounts = new int[] {1, 10, 100, 1000};
+        List<String> optionTexts = new ArrayList<>(amounts.length);
+        for(int a : amounts) {
+            optionTexts.add(a + " " + lhs.getCode());
+        }
+        ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, optionTexts);
+        // Stop listening while we update the spinner.
+        spinner.setOnItemSelectedListener(null);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(lhsSelectedPosition);
+        spinner.setOnItemSelectedListener(this);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        lhsSelectedPosition = position;
+        setRateHint();
+        ArrayAdapter adapter = (ArrayAdapter)lhsMoney.getAdapter();
+        Log.v(LOG_TAG, "selected item " + position + " " + adapter.getItem(position));
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        Log.v(LOG_TAG, "not intended behavior");
     }
 
     class RateInputChangeListener implements TextWatcher {
