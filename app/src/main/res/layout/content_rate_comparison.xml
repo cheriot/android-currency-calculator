@@ -60,8 +60,8 @@
                 android:id="@+id/rate_prompt_question"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="US Dollar"
-                android:textColor="#000"/>
+                android:textColor="#000"
+                tools:text="US Dollar"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -104,8 +104,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                tools:text="TWD"
-                android:textColor="#000"/>
+                android:textColor="#000"
+                tools:text="TWD"/>
         </LinearLayout>
 
         <Button
@@ -120,25 +120,26 @@
             android:id="@+id/rate_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical"
-            android:gravity="center">
-
-            <TextView
-                android:id="@+id/rate_result_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:textColor="#000"
-                android:textSize="18sp"
-                tools:text="The bank keeps blah blah blah blah blah blah blah blah."/>
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/rate_result_amount_text"
+                style="@style/ResultFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="30sp"
-                android:textColor="#000"
                 tools:text="50 USD"/>
+
+            <TextView
+                android:id="@+id/rate_result_text"
+                style="@style/ResultFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="The bank keeps blah blah blah blah blah blah blah blah."/>
+
         </LinearLayout>
     </LinearLayout>
 
