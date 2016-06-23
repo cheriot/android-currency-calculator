@@ -68,7 +68,9 @@ public class RateComparisonActivity extends AppCompatActivity implements
     @Bind(R.id.rhs_currency_code) TextView rhsCurrencyCode;
     @Bind(R.id.rate_to_compare) ClearableEditText rateToCompare;
     @Bind(R.id.rate_compare_button) Button rateCompareButton;
+    @Bind(R.id.rate_result) View rateResultView;
     @Bind(R.id.rate_result_text) TextView rateResultText;
+    @Bind(R.id.rate_result_amount_text) TextView rateResultAmountText;
     // Trade form
     @Bind(R.id.trade_form) TradeFormView tradeFormView;
 
@@ -112,7 +114,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
 
         // Rate form
         rateForm.setVisibility(View.GONE);
-        rateResultText.setVisibility(View.GONE);
+        rateResultView.setVisibility(View.GONE);
         rateCompareButton.setEnabled(false);
         rateToCompare.getEditText().addTextChangedListener(new RateInputChangeListener());
         rateToCompare.setOnEditorActionListener(rateKeyboardDoneListener);
@@ -187,12 +189,13 @@ public class RateComparisonActivity extends AppCompatActivity implements
             String msg = comparisonPresenter.getRateCompare().formatResults(template);
             Log.v(LOG_TAG, msg);
             rateResultText.setText(msg);
-            rateResultText.setVisibility(View.VISIBLE);
+            rateResultAmountText.setText(comparisonPresenter.getRateCompare().getReceiveMoney());
+            rateResultView.setVisibility(View.VISIBLE);
             rateCompareButton.setEnabled(false);
             hideKeyboard();
         } else {
             Log.e(LOG_TAG, "Unable to compareTrade.");
-            rateResultText.setVisibility(View.GONE);
+            rateResultView.setVisibility(View.GONE);
         }
     }
 
@@ -256,7 +259,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
         // is the new value actually different? 7, 7., 7.0???
         if(comparisonPresenter.getRateCompare().isSameComparison(rateToCompare.getText())) return;
         rateCompareButton.setEnabled(!TextUtils.isEmpty(rateToCompare.getText()));
-        rateResultText.setVisibility(View.GONE);
+        rateResultView.setVisibility(View.GONE);
         comparisonPresenter.getRateCompare().clearResults();
     }
 

@@ -14,6 +14,8 @@ public class RateCompare extends BaseCompare {
 
     private static final String LOG_TAG = ComparisonPresenter.class.getSimpleName();
 
+    private Money receiveMoney;
+
     public RateCompare(Money base, Currency target) {
         super(base, target);
     }
@@ -30,8 +32,14 @@ public class RateCompare extends BaseCompare {
         revenueRate = marketRate.subtract(userRate).divide(marketRate, Money.MATH_CONTEXT);
         revenueBaseCurrency = baseMoney.multiply(revenueRate);
         revenueTargetCurrency = revenueBaseCurrency.convertTo(targetCurrency);
+        BigDecimal receiveAmount = baseMoney.getAmount().multiply(userRate);
+        receiveMoney = new Money(targetCurrency, receiveAmount);
 
         // Success!
         return true;
+    }
+
+    public String getReceiveMoney() {
+        return receiveMoney.getAmountFormatted() + " " + targetCurrency.getCode();
     }
 }
