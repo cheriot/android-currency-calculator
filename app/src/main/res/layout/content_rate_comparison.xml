@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Are there fees or taxes?"
+            android:text="@string/fees_or_taxes"
             android:textColor="#000"/>
 
         <RadioButton
@@ -27,14 +27,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="setFeesYes"
-            android:text="yes"/>
+            android:text="@string/yes"/>
 
         <RadioButton
             android:id="@+id/fees_no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="setFeesNo"
-            android:text="no"/>
+            android:text="@string/no"/>
     </RadioGroup>
 
     <LinearLayout
@@ -114,7 +114,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="compareRate"
-            android:text="Compare Rate"/>
+            android:text="@string/compare_rate_button"/>
 
         <LinearLayout
             android:id="@+id/rate_result"
@@ -127,14 +127,16 @@
                 android:id="@+id/rate_result_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:textColor="#000"
-                tools:text="asdfasdfasdf"/>
+                android:textSize="18sp"
+                tools:text="The bank keeps blah blah blah blah blah blah blah blah."/>
 
             <TextView
                 android:id="@+id/rate_result_amount_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="30dp"
+                android:textSize="30sp"
                 android:textColor="#000"
                 tools:text="50 USD"/>
         </LinearLayout>
