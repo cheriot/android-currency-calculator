@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/currency_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -17,7 +18,7 @@
         android:layout_height="50dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:src="@drawable/flag_1x1_eu"/>
+        tools:src="@drawable/flag_1x1_eu"/>
 
     <TextView
         android:id="@+id/currency_name"
@@ -27,7 +28,7 @@
         android:focusable="false"
         android:paddingLeft="16dp"
         android:paddingStart="16dp"
-        android:text="US Dollar"
+        tools:text="US Dollar"
         android:textIsSelectable="false"/>
 
     <TextView
