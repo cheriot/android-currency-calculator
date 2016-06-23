@@ -1,79 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <!-- FrameLayout hides the top shadow of AppBarLayout. -->
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:background="@android:color/white"
+    android:clickable="true"
+    android:focusable="true">
 
-    <android.support.design.widget.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:background="@android:color/white">
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center_vertical">
 
-        <LinearLayout
-            android:id="@+id/currency_container"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/currency_flag"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            tools:src="@drawable/flag_1x1_eu"/>
+
+        <TextView
+            android:id="@+id/currency_name"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:minHeight="?android:attr/listPreferredItemHeight"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:focusable="false"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:textIsSelectable="false"
+            tools:text="US Dollar"/>
 
-            <ImageView
-                android:id="@+id/currency_flag"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:src="@drawable/flag_1x1_eu"/>
-
-            <TextView
-                android:id="@+id/currency_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:focusable="false"
-                android:paddingLeft="16dp"
-                android:paddingStart="16dp"
-                android:text="US Dollar"
-                android:textIsSelectable="false"/>
-
-            <TextView
-                android:id="@+id/currency_rate"
-                style="@style/ResultFont"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:focusable="false"
-                android:paddingEnd="16dp"
-                android:paddingRight="16dp"
-                android:textColor="#000"
-                android:textIsSelectable="false"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/currency_rate"
+            style="@style/ResultFont"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_weight="0"
+            android:focusable="false"
+            android:paddingEnd="16dp"
+            android:paddingRight="16dp"
+            android:textColor="#000"
+            android:textIsSelectable="false"
+            tools:text="66.45"/>
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/rate_comparison_button"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/exchange"/>
-
-            <Button
-                android:id="@+id/trade_comparison_button"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Trade"/>
-        </LinearLayout>
-    </android.support.design.widget.AppBarLayout>
 </FrameLayout>

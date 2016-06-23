@@ -31,9 +31,12 @@ import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
 public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurrencyAdapter.AbstractCurrencyViewHolder> {
 
     private static final String LOG_TAG = SelectedCurrencyAdapter.class.getSimpleName();
-    private static final int BASE_CURRENCY_TYPE = 1;
-    private static final int TARGET_CURRENCY_TYPE = 2;
+
+    public static final int BASE_CURRENCY_TYPE_POSITION = 0;
+    private static final int TARGET_CURRENCY_TYPE_POSITION = 1;
+    public static final int ACTIONS_TYPE_POSITION = 2;
     private static final int OTHER_CURRENCY_TYPE = 3;
+
     private final CurrencyRepository currencyRepository;
     private final CurrencyMetaRepository metaRepository;
     private SquidCursor cursor;
@@ -56,21 +59,26 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
     @Override
     public int getItemViewType(int position) {
-        if(position == 0) return BASE_CURRENCY_TYPE;
-        if(position == 1) return TARGET_CURRENCY_TYPE;
+        if(position == BASE_CURRENCY_TYPE_POSITION) return BASE_CURRENCY_TYPE_POSITION;
+        if(position == TARGET_CURRENCY_TYPE_POSITION) return TARGET_CURRENCY_TYPE_POSITION;
+        if(position == ACTIONS_TYPE_POSITION) return ACTIONS_TYPE_POSITION;
         return OTHER_CURRENCY_TYPE;
     }
 
     @Override
     public AbstractCurrencyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        if(viewType == BASE_CURRENCY_TYPE) {
+        if(viewType == BASE_CURRENCY_TYPE_POSITION) {
             View itemView = inflater.inflate(R.layout.list_item_currency_calculate_base, parent, false);
             return new BaseCurrencyViewHolder(this, itemView, currencyRepository, metaRepository);
         }
-        if(viewType == TARGET_CURRENCY_TYPE) {
+        if(viewType == TARGET_CURRENCY_TYPE_POSITION) {
             View itemView = inflater.inflate(R.layout.list_item_currency_calculate_target, parent, false);
             return new TargetCurrencyViewHolder(itemView, currencyRepository, metaRepository);
+        }
+        if(viewType == ACTIONS_TYPE_POSITION) {
+            View itemView = inflater.inflate(R.layout.list_item_currency_calculate_actions, parent, false);
+            return new ActionsViewHolder(itemView, currencyRepository, metaRepository);
         }
         // OTHER_CURRENCY_TYPE
         View itemView = inflater.inflate(R.layout.list_item_currency_calculate_other, parent, false);
@@ -86,7 +94,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     @Override
     public int getItemCount() {
         if(cursor != null) {
-            return cursor.getCount();
+            return cursor.getCount() + 1; // +1 for the actions row
         } else {
             return 0;
         }
@@ -94,12 +102,15 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
     @Override
     public long getItemId(int position) {
+        if(position == ACTIONS_TYPE_POSITION) return -1; // any number that's not a list position
         return getCurrency(position).getId();
     }
 
-    private SelectedCurrency getCurrency(int position) {
+    private SelectedCurrency getCurrency(int viewPosition) {
+        // offset by 1 to account for the actions row
+        int dataPosition = viewPosition < ACTIONS_TYPE_POSITION ? viewPosition : viewPosition - 1;
         SelectedCurrency currency = new SelectedCurrency();
-        cursor.moveToPosition(position);
+        cursor.moveToPosition(dataPosition);
         currency.readPropertiesFromCursor(cursor);
         return currency;
     }
@@ -142,7 +153,6 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     }
 
     public static class CurrencyViewHolder extends AbstractCurrencyViewHolder implements View.OnClickListener {
-        @Bind(R.id.currency_container) View container;
         @Bind(R.id.currency_name) TextView nameText;
         @Bind(R.id.currency_rate) TextView rateText;
         @Bind(R.id.currency_flag) ImageView flagImage;
@@ -151,8 +161,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         public CurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
             super(itemView, currencyRepository, metaRepository);
             ButterKnife.bind(this, itemView);
-            // AppBarLayout doesn't fire click events.
-            container.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         public void bindView(SelectedCurrency currency, SelectedCurrency baseCurrency) {
@@ -187,9 +196,21 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     }
 
     public static class TargetCurrencyViewHolder extends CurrencyViewHolder {
+        public TargetCurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
+            super(itemView, currencyRepository, metaRepository);
+            ButterKnife.bind(this, itemView);
+        }
+
+        @Override
+        public CurrencyMeta.FlagSize flagSize() {
+            return CurrencyMeta.FlagSize.SQUARE;
+        }
+    }
+
+    public static class ActionsViewHolder extends AbstractCurrencyViewHolder {
         @Bind(R.id.rate_comparison_button) Button rateComparisonButton;
         @Bind(R.id.trade_comparison_button) Button tradeComparisonButton;
-        public TargetCurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
+        public ActionsViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
             super(itemView, currencyRepository, metaRepository);
             ButterKnife.bind(this, itemView);
             rateComparisonButton.setOnClickListener(new View.OnClickListener() {
@@ -207,8 +228,8 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         }
 
         @Override
-        public CurrencyMeta.FlagSize flagSize() {
-            return CurrencyMeta.FlagSize.SQUARE;
+        void bindView(SelectedCurrency currency, SelectedCurrency baseCurrency) {
+            // nothing to bind
         }
     }
 }
