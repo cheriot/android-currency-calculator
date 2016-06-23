@@ -76,10 +76,12 @@
             android:gravity="center"
             android:orientation="horizontal">
 
+            <!-- @null background so it looks like plain text -->
             <Spinner
                 android:id="@+id/lhs_money"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:background="@null"/>
 
             <ImageButton
                 android:layout_width="35dp"
