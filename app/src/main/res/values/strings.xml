@@ -17,4 +17,5 @@
     <string name="compare_rate_button">Compare Rate</string>
     <string name="exchange">Exchange</string>
     <string name="trade_button">Trade</string>
+    <string name="compare_trade_button">Compare Trade</string>
 </resources>
