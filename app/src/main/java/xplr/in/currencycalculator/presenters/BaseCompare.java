@@ -101,8 +101,14 @@ public abstract class BaseCompare {
         hasResult = false;
     }
 
-    public BigDecimal getMarketRate() {
-        return marketRate;
+    public BigDecimal getMarketRate(boolean isRateDirectionNormal) {
+        // By default, we accept the rate from the base currency to the target currency. If the
+        // user has reversed that, convert.
+        if(isRateDirectionNormal) {
+            return marketRate;
+        } else {
+            return BigDecimal.ONE.divide(marketRate, Money.MATH_CONTEXT);
+        }
     }
 
     public Money getMarketRateTargetMoney() {

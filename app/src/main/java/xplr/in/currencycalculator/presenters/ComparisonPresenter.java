@@ -29,9 +29,10 @@ public class ComparisonPresenter {
         tradeCompare = new TradeCompare(base, target);
     }
 
-    public String getMarketRate() {
-        if(rateCompare.getMarketRate() != null) {
-            return new DecimalFormat().format(rateCompare.getMarketRate());
+    public String getMarketRate(boolean isRateDirectionNormal) {
+        BigDecimal rate = rateCompare.getMarketRate(isRateDirectionNormal);
+        if(rate != null) {
+            return new DecimalFormat().format(rate);
         } else {
             return null;
         }

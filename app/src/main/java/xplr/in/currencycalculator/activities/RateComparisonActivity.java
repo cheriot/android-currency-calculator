@@ -14,6 +14,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -28,8 +29,8 @@ import xplr.in.currencycalculator.presenters.ComparisonPresenter;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView;
-import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
 import xplr.in.currencycalculator.views.ClearableEditText;
+import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
 import xplr.in.currencycalculator.views.TradeFormView;
 
 /**
@@ -40,28 +41,33 @@ public class RateComparisonActivity extends AppCompatActivity
 
     private static final String LOG_TAG = RateComparisonActivity.class.getSimpleName();
     private static final int COMPARISON_LOADER_ID = 1;
+    private static final String FEES_EXIST_KEY = "FEES_EXIST_KEY";
+    private static final String RATE_DIRECTION_KEY = "RATE_DIRECTION_KEY";
 
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencyMetaRepository metaRepository;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.base_currency) BaseCurrencyAmountEditorView baseCurrencyEditorView;
+    @Bind(R.id.fees_yes) RadioButton feesYesRadio;
+    @Bind(R.id.fees_no) RadioButton feesNoRadio;
     // Rate form
     @Bind(R.id.rate_prompt_question) TextView ratePromptQuestion;
     @Bind(R.id.rate_form) View rateForm;
-    @Bind(R.id.base_currency_code) TextView baseCurrencyCode;
-    @Bind(R.id.target_currency_code) TextView targetCurrencyCode;
+    @Bind(R.id.lhs_currency_code) TextView lhsCurrencyCode;
+    @Bind(R.id.rhs_currency_code) TextView rhsCurrencyCode;
     @Bind(R.id.rate_to_compare) ClearableEditText rateToCompare;
     @Bind(R.id.rate_compare_button) Button rateCompareButton;
     @Bind(R.id.rate_result_text) TextView rateResultText;
     // Trade form
     @Bind(R.id.trade_form) TradeFormView tradeFormView;
 
+    private boolean feesExist;
     // If the user is converting A into B, is the rate the number of Bs for 1 A? When false,
     // it is the number of As for 1 B.
     private boolean isRateDirectionNormal = true;
-
     private ComparisonPresenter comparisonPresenter;
+
     private TextView.OnEditorActionListener rateKeyboardDoneListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -111,8 +117,24 @@ public class RateComparisonActivity extends AppCompatActivity
         // calculateRate on keyboard's enter
     }
 
+    private void setLeftAndRight() {
+        String base = comparisonPresenter.getBaseCurrency().getCode();
+        String target = comparisonPresenter.getTargetCurrency().getCode();
+        String rate = comparisonPresenter.getMarketRate(isRateDirectionNormal);
+        if(isRateDirectionNormal) {
+            lhsCurrencyCode.setText(base);
+            rhsCurrencyCode.setText(target);
+        } else {
+            lhsCurrencyCode.setText(target);
+            rhsCurrencyCode.setText(base);
+        }
+        if(rate != null ) rateToCompare.setHint(rate);
+    }
+
     public void setFeesYes(View view) {
         Log.v(LOG_TAG, "setFeesYes");
+        feesExist = true;
+        feesYesRadio.setChecked(true); // needed when called from restore state
         rateForm.setVisibility(View.GONE);
         tradeFormView.setVisibility(View.VISIBLE);
         baseCurrencyEditorView.getCurrencyAmount().setOnEditorActionListener(tradeKeyboardDoneListener);
@@ -120,6 +142,8 @@ public class RateComparisonActivity extends AppCompatActivity
 
     public void setFeesNo(View view) {
         Log.v(LOG_TAG, "setFeesNo");
+        feesExist = false;
+        feesNoRadio.setChecked(true); // needed when called from restore state
         rateForm.setVisibility(View.VISIBLE);
         tradeFormView.setVisibility(View.GONE);
         baseCurrencyEditorView.getCurrencyAmount().setOnEditorActionListener(rateKeyboardDoneListener);
@@ -128,6 +152,8 @@ public class RateComparisonActivity extends AppCompatActivity
     public void swapRate(View v) {
         Log.v(LOG_TAG, "swapRate");
         isRateDirectionNormal = !isRateDirectionNormal;
+        setLeftAndRight();
+        invalidateNoFeeResults();
     }
 
     public void compareRate(View view) {
@@ -159,9 +185,7 @@ public class RateComparisonActivity extends AppCompatActivity
 
         // Rate form
         ratePromptQuestion.setText(data.getBaseCurrency().getName());
-        baseCurrencyCode.setText(data.getBaseCurrency().getCode());
-        targetCurrencyCode.setText(data.getTargetCurrency().getCode());
-        if(data.getMarketRate() != null ) rateToCompare.setHint(data.getMarketRate());
+        setLeftAndRight();
         invalidateNoFeeResults();
 
         // Trade form
@@ -178,14 +202,21 @@ public class RateComparisonActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Log.v(LOG_TAG, "onSave");
-        // TODO persist rate direction
+        outState.putBoolean(FEES_EXIST_KEY, feesExist);
+        outState.putBoolean(RATE_DIRECTION_KEY, isRateDirectionNormal);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         Log.v(LOG_TAG, "onRestore");
-        // TODO restore rate direction
+        if(savedInstanceState.getBoolean(FEES_EXIST_KEY)) {
+            setFeesYes(null);
+        } else {
+            setFeesNo(null);
+        }
+        isRateDirectionNormal = savedInstanceState.getBoolean(RATE_DIRECTION_KEY);
+        setLeftAndRight();
         super.onRestoreInstanceState(savedInstanceState);
     }
 

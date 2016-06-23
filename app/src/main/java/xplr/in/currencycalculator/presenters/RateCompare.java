@@ -21,26 +21,18 @@ public class RateCompare extends BaseCompare {
     public boolean calculate(String userInput, boolean isRateDirectionNormal) {
         BigDecimal userRate = calculableNumber(userInput);
         if(userRate == null) return false;
-        Log.v(LOG_TAG, "calculateRate " + userRate + " isRateDirectionNormal "  + isRateDirectionNormal);
+        BigDecimal marketRate = getMarketRate(isRateDirectionNormal);
+        Log.v(LOG_TAG, "calculateRate " + userRate
+                + " isRateDirectionNormal "  + isRateDirectionNormal
+                + " marketRate " + marketRate);
 
-        BigDecimal baseToTargetRateToCompare = resolveRateDirection(userRate, isRateDirectionNormal);
 
         // Calculate the bank's revenue on the transaction.
-        revenueRate = getMarketRate().subtract(baseToTargetRateToCompare)
-                .divide(getMarketRate(), Money.MATH_CONTEXT);
+        revenueRate = marketRate.subtract(userRate).divide(marketRate, Money.MATH_CONTEXT);
         revenueBaseCurrency = baseMoney.multiply(revenueRate);
         revenueTargetCurrency = revenueBaseCurrency.convertTo(targetCurrency);
 
         // Success!
         return true;
-    }
-
-    private BigDecimal resolveRateDirection(BigDecimal userRate, boolean isRateDirectionNormal) {
-        // By default, we accept the rate from the base currency to the target currency. If the
-        // user has reversed that, convert.
-        if(isRateDirectionNormal) {
-            return userRate;
-        }
-        return BigDecimal.ONE.divide(userRate, Money.MATH_CONTEXT);
     }
 }

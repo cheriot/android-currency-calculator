@@ -22,12 +22,14 @@
             android:textColor="#000"/>
 
         <RadioButton
+            android:id="@+id/fees_yes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="setFeesYes"
             android:text="yes"/>
 
         <RadioButton
+            android:id="@+id/fees_no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="setFeesNo"
@@ -82,7 +84,7 @@
                 android:textColor="#000"/>
 
             <TextView
-                android:id="@+id/base_currency_code"
+                android:id="@+id/lhs_currency_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -105,7 +107,7 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
-                android:id="@+id/target_currency_code"
+                android:id="@+id/rhs_currency_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
