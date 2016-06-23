@@ -1,11 +1,14 @@
 package xplr.in.currencycalculator.views;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,18 +85,44 @@ public class ClearableEditText extends FrameLayout {
         });
     }
 
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        return new SavedState(
+                super.onSaveInstanceState(),
+                getText(),
+                editText.getHint()
+        );
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Log.v(LOG_TAG, "onRestoreInstanceState " + getId() + "  " + state);
+        SavedState savedState = (SavedState)state;
+        super.onRestoreInstanceState(savedState.getSuperState());
+        setText(savedState.getText());
+        String hint = savedState.getHint();
+        if (hint != null) setHint(hint);
+    }
+
+    @Override
+    protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
+        // As we save our own instance state, ensure our children don't save and restore their state as well.
+        // (it can overwrite the state restored here)
+        super.dispatchFreezeSelfOnly(container);
+    }
+
+    @Override
+    protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
+        /** See comment in {@link #dispatchSaveInstanceState(android.util.SparseArray)} */
+        super.dispatchThawSelfOnly(container);
+    }
+
     public void setText(String text) {
         editText.setText(text);
     }
 
     public String getText() {
         return editText.getText().toString();
-    }
-
-    public void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-//        imm.hideSoftInputFromInputMethod();
-        Log.v(LOG_TAG, "Cleared, now show keyboard.");
     }
 
     public EditText getEditText() {
@@ -117,5 +146,55 @@ public class ClearableEditText extends FrameLayout {
 
     public void moveCursorToEnd() {
         editText.setSelection(editText.length());
+    }
+
+    public static class SavedState extends View.BaseSavedState {
+        private final String text;
+        private final String hint;
+
+        public SavedState(Parcelable superState, String text, CharSequence hint) {
+            super(superState);
+            this.text = text;
+            this.hint = hint != null ? hint.toString() : null;
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            text = in.readString();
+            hint = in.readString();
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeString(text);
+            out.writeString(hint);
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public String getHint() {
+            return hint;
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR = new Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+
+        @Override
+        public String toString() {
+            return "SavedState{" +
+                    "text='" + text + '\'' +
+                    ", hint='" + hint + '\'' +
+                    '}';
+        }
     }
 }

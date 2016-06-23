@@ -2,12 +2,16 @@ package xplr.in.currencycalculator.views;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -65,6 +69,32 @@ public class CurrencyAmountEditorView extends LinearLayout {
         };
     }
 
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        return new SavedState(super.onSaveInstanceState(), currencyAmount.onSaveInstanceState());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Log.v(LOG_TAG, "CAEV#onRestoreInstanceState " + getId() + "  " + state);
+        SavedState savedState = (SavedState)state;
+        super.onRestoreInstanceState(savedState.getSuperState());
+        currencyAmount.onRestoreInstanceState(savedState.getChild());
+    }
+
+    @Override
+    protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
+        // As we save our own instance state, ensure our children don't save and restore their state as well.
+        // (it can overwrite the state restored here)
+        super.dispatchFreezeSelfOnly(container);
+    }
+
+    @Override
+    protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
+        /** See comment in {@link #dispatchSaveInstanceState(android.util.SparseArray)} */
+        super.dispatchThawSelfOnly(container);
+    }
+
     public void init(CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
         this.currencyRepository = currencyRepository;
         this.metaRepository = metaRepository;
@@ -113,5 +143,40 @@ public class CurrencyAmountEditorView extends LinearLayout {
 
     public ClearableEditText getCurrencyAmount() {
         return currencyAmount;
+    }
+
+    public static class SavedState extends View.BaseSavedState {
+
+        private final Parcelable child;
+
+        public SavedState(Parcelable superState, Parcelable child) {
+            super(superState);
+            this.child = child;
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            this.child = in.readParcelable(getClass().getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeParcelable(child, flags);
+        }
+
+        public Parcelable getChild() {
+            return child;
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR = new Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
     }
 }

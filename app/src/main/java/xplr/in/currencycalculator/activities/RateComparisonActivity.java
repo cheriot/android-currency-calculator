@@ -43,6 +43,7 @@ public class RateComparisonActivity extends AppCompatActivity
     private static final int COMPARISON_LOADER_ID = 1;
     private static final String FEES_EXIST_KEY = "FEES_EXIST_KEY";
     private static final String RATE_DIRECTION_KEY = "RATE_DIRECTION_KEY";
+    private static final String AMOUNT_KEY = "AMOUNT_KEY";
 
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencyMetaRepository metaRepository;
