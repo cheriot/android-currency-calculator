@@ -6,7 +6,7 @@
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/text_intput_layout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="-12dp">
         <!--
@@ -16,11 +16,10 @@
         <android.support.design.widget.TextInputEditText
             style="@style/ResultFont"
             android:id="@+id/edit_text"
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            android:ems="6"
             android:imeOptions="actionDone|flagNoExtractUi"
             android:inputType="numberDecimal"
             android:paddingEnd="25dp"

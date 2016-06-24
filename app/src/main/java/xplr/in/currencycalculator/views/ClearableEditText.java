@@ -5,10 +5,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +35,30 @@ public class ClearableEditText extends FrameLayout {
     @Bind(R.id.edit_text) EditText editText;
     @Bind(R.id.clear_button) ImageButton clearButton;
 
+    // set* followed by get* does not always return the desired value.
+    private String nextText;
+    private String nextHint;
+
     private TextView.OnEditorActionListener onEditorActionListener;
+    private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            nextText = s.toString();
+            if(s.length() == 0) {
+                clearButton.setVisibility(View.INVISIBLE);
+                resizeWidth();
+            } else {
+                clearButton.setVisibility(View.VISIBLE);
+                resizeWidth();
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {}
+    };
 
     public ClearableEditText(Context context, AttributeSet attributeSet) {
         // Accept an attributeSet to work with Android Studio.
@@ -44,22 +69,9 @@ public class ClearableEditText extends FrameLayout {
         ButterKnife.bind(this);
 
         // Hide the X when there's no text to clear.
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() == 0) {
-                    clearButton.setVisibility(View.INVISIBLE);
-                } else {
-                    clearButton.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
+        editText.addTextChangedListener(textWatcher);
+        // Initialize editText even if there are no calls to setText.
+        textWatcher.onTextChanged("", 0, 0, 0);
 
         // Hide the keyboard when the <done> button is pressed.
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -83,6 +95,33 @@ public class ClearableEditText extends FrameLayout {
                 Log.v(LOG_TAG, "Cleared, now show keyboard.");
             }
         });
+    }
+
+    private static final int EMPTY_WIDTH_DP = 50;
+    private static final int EXTRA_WIDTH_DP = 10; // leave extra space after the numbers and before the clear button
+    private void resizeWidth() {
+        CharSequence text = nextText;
+        CharSequence hint = nextHint;
+        Log.v(LOG_TAG, "*** resizeWidth " + text + " - " + hint);
+        if(!TextUtils.isEmpty(text) || !TextUtils.isEmpty(hint)) {
+            // Wide enough to show the longer of the text and the hint.
+            calculateWidth(text, hint);
+        } else {
+            Log.v(LOG_TAG, "resizeWidth empty");
+            // Wide enough to make the editText clear and an easy hit target.
+            editText.setWidth((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EMPTY_WIDTH_DP, getResources().getDisplayMetrics()));
+        }
+    }
+
+    private void calculateWidth(CharSequence text, CharSequence hint) {
+        float clearWidthPx = editText.getPaddingLeft() + editText.getPaddingRight();
+        float extraSpacePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EXTRA_WIDTH_DP, getResources().getDisplayMetrics());
+        float textWidthPx = text == null ? 0 : editText.getPaint().measureText(text, 0, text.length());
+        float hintWidthPx = hint == null ? 0 : editText.getPaint().measureText(hint, 0, hint.length());
+        // Max of the text and the hint so the size doesn't change when the user starts typing.
+        float widthPx = extraSpacePx + Math.max(textWidthPx, hintWidthPx) + clearWidthPx;
+        editText.setWidth((int) Math.ceil(widthPx));
+        Log.v(LOG_TAG, "calculateWidth text " + text + " " + clearWidthPx + " " + textWidthPx + " " + widthPx + " " + editText.getWidth());
     }
 
     @Override
@@ -130,6 +169,8 @@ public class ClearableEditText extends FrameLayout {
     }
 
     public void setHint(String hint) {
+        Log.v(LOG_TAG, "setHint " + hint);
+        nextHint = hint;
         textInputLayout.setHint(hint);
         // Undo the negative margin that will hide the hint.
         MarginLayoutParams textInputLayoutParams = (MarginLayoutParams)textInputLayout.getLayoutParams();
@@ -138,6 +179,7 @@ public class ClearableEditText extends FrameLayout {
         MarginLayoutParams clearButtonParams = (MarginLayoutParams)clearButton.getLayoutParams();
         float density = getContext().getResources().getDisplayMetrics().density;
         clearButtonParams.setMargins(0, (int)(6*density), 0, 0);
+        resizeWidth();
     }
 
     public void setOnEditorActionListener(TextView.OnEditorActionListener onEditorActionListener) {
