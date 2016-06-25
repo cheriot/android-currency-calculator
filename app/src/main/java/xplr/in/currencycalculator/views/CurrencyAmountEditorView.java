@@ -97,10 +97,14 @@ public class CurrencyAmountEditorView extends LinearLayout {
     }
 
     public void setSelectedCurrency(SelectedCurrency selectedCurrency) {
-        currencyAmount.removeTextChangedListener(textChangeListener);
-        this.selectedCurrency = selectedCurrency;
-        displayCurrency(this.selectedCurrency);
-        currencyAmount.addTextChangedListener(textChangeListener);
+        if(!selectedCurrency.equals(this.selectedCurrency)) {
+            currencyAmount.removeTextChangedListener(textChangeListener);
+            this.selectedCurrency = selectedCurrency;
+            displayCurrency(this.selectedCurrency);
+            currencyAmount.addTextChangedListener(textChangeListener);
+        } else {
+            Log.v(LOG_TAG, "Duplicate call to setSelectedCurrency. Ignoring");
+        }
     }
 
     private void displayCurrency(SelectedCurrency currency) {
