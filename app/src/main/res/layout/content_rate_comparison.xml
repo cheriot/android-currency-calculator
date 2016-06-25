@@ -53,7 +53,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="At what rate will the bank buy a "
+                android:text="At what rate will the bank buy "
                 android:textColor="#000"/>
 
             <TextView
