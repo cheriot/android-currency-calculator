@@ -17,6 +17,10 @@ public class Money {
         this(currency, new BigDecimal(amountStr));
     }
 
+    public Money(Currency currency, int amount) {
+        this(currency, BigDecimal.valueOf(amount));
+    }
+
     public Money(Currency currency, BigDecimal amount) {
         this.currency = currency;
         this.amount = amount;

@@ -8,12 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,8 +28,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
+import xplr.in.currencycalculator.adapters.MoneyArraySpinnerAdapter;
 import xplr.in.currencycalculator.loaders.RateComparisonLoader;
 import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.models.Money;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.presenters.ComparisonPresenter;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
@@ -271,11 +274,11 @@ public class RateComparisonActivity extends AppCompatActivity implements
 
     private void lhsUpdate(Spinner spinner, Currency lhs) {
         int[] amounts = new int[] {1, 10, 100, 1000};
-        List<String> optionTexts = new ArrayList<>(amounts.length);
+        List<Money> moneyOptions = new ArrayList<>(amounts.length);
         for(int a : amounts) {
-            optionTexts.add(a + " " + lhs.getCode());
+            moneyOptions.add(new Money(lhs, a));
         }
-        ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, optionTexts);
+        MoneyArraySpinnerAdapter adapter = new MoneyArraySpinnerAdapter(moneyOptions);
         // Stop listening while we update the spinner.
         spinner.setOnItemSelectedListener(null);
         spinner.setAdapter(adapter);
@@ -283,12 +286,23 @@ public class RateComparisonActivity extends AppCompatActivity implements
         spinner.setOnItemSelectedListener(this);
     }
 
+    private static final int SPINNER_PADDING_DP = 30;
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         lhsSelectedPosition = position;
         setRateHint();
-        ArrayAdapter adapter = (ArrayAdapter)lhsMoney.getAdapter();
-        Log.v(LOG_TAG, "onItemSelected " + adapter.getItem(position));
+        View child = lhsMoney.getChildAt(0); // The view of the selected item is always at 0.
+        if(child != null) {
+            // Change the width of the spinner to match the width of the selected item.
+            MoneyArraySpinnerAdapter adapter = (MoneyArraySpinnerAdapter) lhsMoney.getAdapter();
+            Money item = (Money) adapter.getItem(position);
+            float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, SPINNER_PADDING_DP, getResources().getDisplayMetrics());
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                    (int) Math.ceil(padding) + (int) Math.ceil(child.getWidth()),
+                    lhsMoney.getLayoutParams().height);
+            lhsMoney.setLayoutParams(layoutParams);
+            Log.v(LOG_TAG, "onItemSelected " + item);
+        }
     }
 
     @Override
