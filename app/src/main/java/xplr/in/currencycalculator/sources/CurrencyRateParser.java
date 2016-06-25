@@ -3,6 +3,7 @@ package xplr.in.currencycalculator.sources;
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class CurrencyRateParser {
                     .getRates();
 
         } catch (IOException ioe) {
+            FirebaseCrash.report(ioe);
             throw new RuntimeException("Error parsing CurrencyMeta", ioe);
         }
 

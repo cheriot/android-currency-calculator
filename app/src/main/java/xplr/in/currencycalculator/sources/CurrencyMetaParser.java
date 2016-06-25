@@ -1,6 +1,7 @@
 package xplr.in.currencycalculator.sources;
 
 import com.bluelinelabs.logansquare.LoganSquare;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +29,7 @@ public class CurrencyMetaParser {
                 inputStream.close();
             }
         } catch(IOException ioe) {
+            FirebaseCrash.report(ioe);
             throw new RuntimeException("Error parsing CurrencyMeta", ioe);
         }
     }

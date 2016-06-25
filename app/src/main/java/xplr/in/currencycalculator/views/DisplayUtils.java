@@ -30,7 +30,7 @@ public class DisplayUtils {
     /**
      * For parsing strings that were formatted and then modified by the user. ex 1,00.00
      * @param strAmount number string that my contain incorrect formatting symbols
-     * @return the parsed number
+     * @return a String that can be parsed by BigDecimal
      */
     public static String stripFormatting(String strAmount) {
         // Remove all formatting symbols except the decimal place.
