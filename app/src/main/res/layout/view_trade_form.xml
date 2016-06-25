@@ -5,6 +5,8 @@
         android:id="@+id/trade_form_instructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
         android:text="@string/trade_input_prompt"
         android:textColor="#000"/>
 
