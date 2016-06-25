@@ -6,9 +6,7 @@ import android.content.Loader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -116,7 +114,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
         rateForm.setVisibility(View.GONE);
         rateResultView.setVisibility(View.GONE);
         rateCompareButton.setEnabled(false);
-        rateToCompare.getEditText().addTextChangedListener(new RateInputChangeListener());
+        rateToCompare.addTextChangedListener(new RateInputChangeListener());
         rateToCompare.setOnEditorActionListener(rateKeyboardDoneListener);
         lhsMoney.setOnItemSelectedListener(this);
 
@@ -290,24 +288,18 @@ public class RateComparisonActivity extends AppCompatActivity implements
         lhsSelectedPosition = position;
         setRateHint();
         ArrayAdapter adapter = (ArrayAdapter)lhsMoney.getAdapter();
-        Log.v(LOG_TAG, "selected item " + position + " " + adapter.getItem(position));
+        Log.v(LOG_TAG, "onItemSelected " + adapter.getItem(position));
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        Log.v(LOG_TAG, "not intended behavior");
+        Log.v(LOG_TAG, "It's not intended behavior to have an unselected state.");
     }
 
-    class RateInputChangeListener implements TextWatcher {
+    class RateInputChangeListener implements ClearableEditText.TextChangeListener {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        public void onTextChanged(String text) {
             invalidateNoFeeResults();
         }
-
-        @Override
-        public void afterTextChanged(Editable s) {}
     }
 }

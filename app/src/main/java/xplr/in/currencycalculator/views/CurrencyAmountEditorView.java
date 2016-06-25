@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
@@ -34,7 +32,7 @@ public class CurrencyAmountEditorView extends LinearLayout {
     @Bind(R.id.currency_name) TextView currencyName;
     @Bind(R.id.currency_amount) ClearableEditText currencyAmount;
 
-    private TextWatcher textWatcher;
+    private ClearableEditText.TextChangeListener textChangeListener;
 
     private CurrencyRepository currencyRepository;
     private CurrencyMetaRepository metaRepository;
@@ -52,21 +50,15 @@ public class CurrencyAmountEditorView extends LinearLayout {
         setFocusableInTouchMode(true);
         setGravity(Gravity.CENTER_VERTICAL);
 
-        textWatcher = new TextWatcher() {
+        textChangeListener = new ClearableEditText.TextChangeListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String text = s.toString();
+            public void onTextChanged(String text) {
                 Log.v(LOG_TAG, "TEXT " + text);
                 setAmount(selectedCurrency, text);
                 if(changeListener != null) changeListener.onCurrencyAmountChange();
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
         };
+        currencyAmount.addTextChangedListener(textChangeListener);
     }
 
     @Override
@@ -105,10 +97,10 @@ public class CurrencyAmountEditorView extends LinearLayout {
     }
 
     public void setSelectedCurrency(SelectedCurrency selectedCurrency) {
-        currencyAmount.getEditText().removeTextChangedListener(textWatcher);
+        currencyAmount.removeTextChangedListener(textChangeListener);
         this.selectedCurrency = selectedCurrency;
         displayCurrency(this.selectedCurrency);
-        currencyAmount.getEditText().addTextChangedListener(textWatcher);
+        currencyAmount.addTextChangedListener(textChangeListener);
     }
 
     private void displayCurrency(SelectedCurrency currency) {

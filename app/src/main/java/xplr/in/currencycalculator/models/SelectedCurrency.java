@@ -5,7 +5,8 @@ import android.text.TextUtils;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.text.DecimalFormat;
-import java.text.ParseException;
+
+import xplr.in.currencycalculator.views.DisplayUtils;
 
 /**
  * Base and calculated currencies have a transient field to hold the amount displayed on screen.
@@ -47,7 +48,7 @@ public class SelectedCurrency extends Currency {
     }
 
     public BigDecimal getAmountBigDecimal() {
-        return new BigDecimal(amount);
+        return new BigDecimal(getAmount());
     }
 
     public String getDisplayedAmount() {
@@ -61,12 +62,7 @@ public class SelectedCurrency extends Currency {
 
     public String parse(String formattedAmount) {
         if(!formattedAmount.equals(EMPTY_AMOUNT)) {
-            try {
-                amount = getFormatter().parse(formattedAmount).toString();
-            }catch (ParseException pe) {
-                String msg = "Error parsing " + getCode() + " " + formattedAmount + ".";
-                throw new RuntimeException(msg, pe);
-            }
+            amount = DisplayUtils.parse(formattedAmount).toString();
         }
         return amount;
     }
