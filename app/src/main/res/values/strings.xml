@@ -8,7 +8,7 @@
     <string name="clear_content_desc">Clear Amount</string>
     <string name="title_activity_rate_comparison">Rate Comparison</string>
     <string name="title_activity_offer_comparison">Offer Comparison</string>
-    <string name="rate_compare_result">The bank keeps %1$s, %2$s %3$s, or %4$s %5$s in revenue.</string>
+    <string name="rate_compare_result">You loose %1$s, %2$s %3$s, or %4$s %5$s on the exchange.</string>
     <string name="trade_input_prompt_fees">With all the taxes and fees, how much are you being offered?</string>
     <string name="trade_input_prompt">How much are you being offered?</string>
     <string name="fees_or_taxes">Are there fees or taxes?</string>
