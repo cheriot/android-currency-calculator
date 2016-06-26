@@ -40,6 +40,10 @@ public class Money {
         return amount.divide(divisor.getAmount(), MATH_CONTEXT);
     }
 
+    public BigDecimal divide(int divisor) {
+        return amount.divide(BigDecimal.valueOf(divisor), MATH_CONTEXT);
+    }
+
     public Money subtract(Money rhs) {
         checkUnits(rhs);
         return new Money(currency, amount.subtract(rhs.getAmount()));

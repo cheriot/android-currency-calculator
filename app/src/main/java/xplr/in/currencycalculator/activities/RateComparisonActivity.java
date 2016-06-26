@@ -282,7 +282,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
     public void invalidateNoFeeResults() {
         Log.v(LOG_TAG, "invalidateNoFeeResults");
         // is the new value actually different? 7, 7., 7.0???
-        if(comparisonPresenter.getRateCompare().isSameComparison(rateToCompare.getText())) return;
+        if(comparisonPresenter.getRateCompare().isSameComparison(getMultiplier(), rateToCompare.getText(), isRateDirectionNormal)) return;
         if(rateResultView.getVisibility() == View.VISIBLE) {
             analytics.getRateCompareActivityAnalytics().recordInvalidateResult(comparisonPresenter);
         }
@@ -318,6 +318,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         lhsSelectedPosition = position;
         setRateHint();
+        invalidateNoFeeResults();
         View child = lhsMoney.getChildAt(0); // The view of the selected item is always at 0.
         if(child != null) {
             // Change the width of the spinner to match the width of the selected item.
