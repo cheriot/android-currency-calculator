@@ -8,6 +8,7 @@ import dagger.Provides;
 import xplr.in.currencycalculator.adapters.CurrencySelectionChangeListener;
 import xplr.in.currencycalculator.adapters.SelectCurrencyCombinedAdapter;
 import xplr.in.currencycalculator.adapters.SelectedCurrencyAdapter;
+import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
@@ -31,8 +32,11 @@ public class ActivityModule {
     @Provides public Context provideContext() { return this.activity; }
 
     @Provides @ActivityScope
-    public SelectedCurrencyAdapter provideCalculateCurrencyCursorAdapter(CurrencyRepository currencyRepository, CurrencyMetaRepository currencyMetaRepository) {
-        return new SelectedCurrencyAdapter(currencyRepository, currencyMetaRepository);
+    public SelectedCurrencyAdapter provideCalculateCurrencyCursorAdapter(
+            CurrencyRepository currencyRepository,
+            CurrencyMetaRepository currencyMetaRepository,
+            Analytics analytics) {
+        return new SelectedCurrencyAdapter(currencyRepository, currencyMetaRepository, analytics);
     }
 
     @Provides @ActivityScope

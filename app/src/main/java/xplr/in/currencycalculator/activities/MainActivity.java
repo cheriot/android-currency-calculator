@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.SelectedCurrencyAdapter;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Inject CurrencySyncTriggers currencySyncTriggers;
     @Inject CurrencyMetaRepository currencyMetaRepository;
     @Inject SelectedCurrencyAdapter currenciesAdapter;
+    @Inject Analytics analytics;
     SelectedCurrency baseCurrency;
 
     @Bind(R.id.fab) FloatingActionButton fab;
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                analytics.getMainActivityAnalytics().recordFabClick();
                 startActivity(new Intent(MainActivity.this, SelectCurrencyActivity.class));
             }
         });
@@ -74,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                analytics.getMainActivityAnalytics().recordRefreshRequested();
                 // Make sure to call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
                 // See the eventBus subscriber on this class.
@@ -129,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         // Setup a scheduled sync if that hasn't happened already. This will trigger an initial
         // sync if one has not occurred.
         currencySyncTriggers.initSyncAccount(this);
+
+        analytics.recordUserDefaultLocale();
     }
 
     @Override

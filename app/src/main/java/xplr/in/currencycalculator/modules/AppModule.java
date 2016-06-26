@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.repositories.CurrencyBulkRepository;
 import xplr.in.currencycalculator.sources.HttpRateSource;
@@ -70,5 +71,10 @@ public class AppModule {
     @Provides
     TelephonyManager providesTelephonyManager() {
         return (TelephonyManager)app.getSystemService(Context.TELEPHONY_SERVICE);
+    }
+
+    @Provides
+    Analytics providesAnalytics() {
+        return new Analytics(app);
     }
 }

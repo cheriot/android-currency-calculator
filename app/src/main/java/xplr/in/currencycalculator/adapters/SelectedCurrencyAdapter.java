@@ -16,13 +16,15 @@ import com.yahoo.squidb.data.SquidCursor;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.R;
-import xplr.in.currencycalculator.activities.TradeComparisonActivity;
 import xplr.in.currencycalculator.activities.RateComparisonActivity;
+import xplr.in.currencycalculator.activities.TradeComparisonActivity;
+import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView;
+import xplr.in.currencycalculator.views.ClearableEditText;
 import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
 
 /**
@@ -39,14 +41,16 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
     private final CurrencyRepository currencyRepository;
     private final CurrencyMetaRepository metaRepository;
+    private final Analytics analytics;
     private SquidCursor cursor;
     private SelectedCurrency baseCurrency;
 
-    public SelectedCurrencyAdapter(CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
+    public SelectedCurrencyAdapter(CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository, Analytics analytics) {
         super();
         setHasStableIds(true);
         this.currencyRepository = currencyRepository;
         this.metaRepository = metaRepository;
+        this.analytics = analytics;
     }
 
     public void swapCursor(SquidCursor newCursor) {
@@ -70,19 +74,19 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if(viewType == BASE_CURRENCY_TYPE_POSITION) {
             View itemView = inflater.inflate(R.layout.list_item_currency_calculate_base, parent, false);
-            return new BaseCurrencyViewHolder(this, itemView, currencyRepository, metaRepository);
+            return new BaseCurrencyViewHolder(this, itemView, currencyRepository, metaRepository, analytics);
         }
         if(viewType == TARGET_CURRENCY_TYPE_POSITION) {
             View itemView = inflater.inflate(R.layout.list_item_currency_calculate_target, parent, false);
-            return new TargetCurrencyViewHolder(itemView, currencyRepository, metaRepository);
+            return new TargetCurrencyViewHolder(itemView, currencyRepository, metaRepository, analytics);
         }
         if(viewType == ACTIONS_TYPE_POSITION) {
             View itemView = inflater.inflate(R.layout.list_item_currency_calculate_actions, parent, false);
-            return new ActionsViewHolder(itemView, currencyRepository, metaRepository);
+            return new ActionsViewHolder(itemView, currencyRepository, metaRepository, analytics);
         }
         // OTHER_CURRENCY_TYPE
         View itemView = inflater.inflate(R.layout.list_item_currency_calculate_other, parent, false);
-        return new CurrencyViewHolder(itemView, currencyRepository, metaRepository);
+        return new CurrencyViewHolder(itemView, currencyRepository, metaRepository, analytics);
     }
 
     @Override
@@ -118,11 +122,13 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     public static abstract class AbstractCurrencyViewHolder extends RecyclerView.ViewHolder {
         protected final CurrencyRepository currencyRepository;
         protected final CurrencyMetaRepository metaRepository;
+        protected final Analytics analytics;
 
-        public AbstractCurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
+        public AbstractCurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository, Analytics analytics) {
             super(itemView);
             this.currencyRepository = currencyRepository;
             this.metaRepository = metaRepository;
+            this.analytics = analytics;
         }
 
         abstract void bindView(SelectedCurrency currency, SelectedCurrency baseCurrency);
@@ -133,14 +139,21 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         public BaseCurrencyViewHolder(final RecyclerView.Adapter adapter,
                                       View itemView,
                                       CurrencyRepository currencyRepository,
-                                      CurrencyMetaRepository metaRepository) {
-            super(itemView, currencyRepository, metaRepository);
+                                      CurrencyMetaRepository metaRepository,
+                                      final Analytics analytics) {
+            super(itemView, currencyRepository, metaRepository, analytics);
             ButterKnife.bind(this, itemView);
             baseCurrencyAmountEditorView.init(currencyRepository, metaRepository);
             baseCurrencyAmountEditorView.setCurrencyAmountChangeListener(new CurrencyAmountEditorView.CurrencyAmountChangeListener() {
                 @Override
                 public void onCurrencyAmountChange() {
                     adapter.notifyDataSetChanged();
+                }
+            });
+            baseCurrencyAmountEditorView.getCurrencyAmount().setTextClearListener(new ClearableEditText.TextClearListener() {
+                @Override
+                public void onTextCleared() {
+                    analytics.getMainActivityAnalytics().recordClearBaseAmount();
                 }
             });
         }
@@ -158,8 +171,8 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         @Bind(R.id.currency_flag) ImageView flagImage;
         private SelectedCurrency currency;
 
-        public CurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
-            super(itemView, currencyRepository, metaRepository);
+        public CurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository, Analytics analytics) {
+            super(itemView, currencyRepository, metaRepository, analytics);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
         }
@@ -181,12 +194,13 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         }
 
         public void onSwipe() {
+            analytics.getMainActivityAnalytics().recordSwipeRemovedCurrency(currency);
             currencyRepository.updateSelection(currency.getId(), false);
         }
 
         @Override
         public void onClick(View v) {
-            Log.v(LOG_TAG, "CurrencyViewHolder#onClick ");
+            analytics.getMainActivityAnalytics().recordSelectCurrency(currency);
             currencyRepository.setBaseCurrency(currency);
         }
 
@@ -196,8 +210,8 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     }
 
     public static class TargetCurrencyViewHolder extends CurrencyViewHolder {
-        public TargetCurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
-            super(itemView, currencyRepository, metaRepository);
+        public TargetCurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository, Analytics analytics) {
+            super(itemView, currencyRepository, metaRepository, analytics);
             ButterKnife.bind(this, itemView);
         }
 
@@ -210,18 +224,20 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     public static class ActionsViewHolder extends AbstractCurrencyViewHolder {
         @Bind(R.id.rate_comparison_button) Button rateComparisonButton;
         @Bind(R.id.trade_comparison_button) Button tradeComparisonButton;
-        public ActionsViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository) {
-            super(itemView, currencyRepository, metaRepository);
+        public ActionsViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository, final Analytics analytics) {
+            super(itemView, currencyRepository, metaRepository, analytics);
             ButterKnife.bind(this, itemView);
             rateComparisonButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    analytics.getMainActivityAnalytics().recordExchangeButtonPress();
                     v.getContext().startActivity(new Intent(v.getContext(), RateComparisonActivity.class));
                 }
             });
             tradeComparisonButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    analytics.getMainActivityAnalytics().recordTradeButtonPress();
                     v.getContext().startActivity(new Intent(v.getContext(), TradeComparisonActivity.class));
                 }
             });

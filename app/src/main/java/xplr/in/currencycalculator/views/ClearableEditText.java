@@ -44,6 +44,7 @@ public class ClearableEditText extends FrameLayout {
 
     private ArrayList<TextChangeListener> textChangeListeners;
     private TextView.OnEditorActionListener onEditorActionListener;
+    private TextClearListener textClearListener;
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -128,7 +129,8 @@ public class ClearableEditText extends FrameLayout {
                 editText.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
-                Log.v(LOG_TAG, "Cleared, now show keyboard.");
+                Log.v(LOG_TAG, "Text cleared, now show keyboard.");
+                if(textClearListener != null) textClearListener.onTextCleared();
             }
         });
     }
@@ -227,6 +229,10 @@ public class ClearableEditText extends FrameLayout {
         textChangeListeners.remove(textChangeListener);
     }
 
+    public void setTextClearListener(TextClearListener textClearListener) {
+        this.textClearListener = textClearListener;
+    }
+
     public static class SavedState extends View.BaseSavedState {
         private final String text;
         private final String hint;
@@ -279,5 +285,9 @@ public class ClearableEditText extends FrameLayout {
 
     public interface TextChangeListener {
         void onTextChanged(String text);
+    }
+
+    public interface TextClearListener {
+        void onTextCleared();
     }
 }
