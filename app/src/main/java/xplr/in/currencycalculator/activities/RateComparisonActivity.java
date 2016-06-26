@@ -29,6 +29,7 @@ import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.MoneyArraySpinnerAdapter;
+import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.loaders.RateComparisonLoader;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.Money;
@@ -57,6 +58,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
 
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencyMetaRepository metaRepository;
+    @Inject Analytics analytics;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.base_currency) BaseCurrencyAmountEditorView baseCurrencyEditorView;
@@ -112,6 +114,12 @@ public class RateComparisonActivity extends AppCompatActivity implements
 
         baseCurrencyEditorView.init(currencyRepository, metaRepository);
         baseCurrencyEditorView.setCurrencyAmountChangeListener(this);
+        baseCurrencyEditorView.getCurrencyAmount().setTextClearListener(new ClearableEditText.TextClearListener() {
+            @Override
+            public void onTextCleared() {
+                analytics.getRateCompareActivityAnalytics().recordClearBaseAmount(comparisonPresenter);
+            }
+        });
 
         // Rate form
         rateForm.setVisibility(View.GONE);
@@ -119,6 +127,12 @@ public class RateComparisonActivity extends AppCompatActivity implements
         rateCompareButton.setEnabled(false);
         rateToCompare.addTextChangedListener(new RateInputChangeListener());
         rateToCompare.setOnEditorActionListener(rateKeyboardDoneListener);
+        rateToCompare.setTextClearListener(new ClearableEditText.TextClearListener() {
+            @Override
+            public void onTextCleared() {
+                analytics.getRateCompareActivityAnalytics().recordClearRate(comparisonPresenter);
+            }
+        });
         lhsMoney.setOnItemSelectedListener(this);
 
         // Trade form
@@ -127,9 +141,6 @@ public class RateComparisonActivity extends AppCompatActivity implements
         tradeFormView.showInstructions(R.string.trade_input_prompt_fees);
 
         getLoaderManager().initLoader(COMPARISON_LOADER_ID, null, this);
-
-        // improve display of result text
-        // calculateRate on keyboard's enter
     }
 
     private void setLeftAndRight() {
@@ -162,6 +173,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
         rateForm.setVisibility(View.GONE);
         tradeFormView.setVisibility(View.VISIBLE);
         baseCurrencyEditorView.getCurrencyAmount().setOnEditorActionListener(tradeKeyboardDoneListener);
+        analytics.getRateCompareActivityAnalytics().recordFeesYes(comparisonPresenter);
     }
 
     public void setFeesNo(View view) {
@@ -171,6 +183,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
         rateForm.setVisibility(View.VISIBLE);
         tradeFormView.setVisibility(View.GONE);
         baseCurrencyEditorView.getCurrencyAmount().setOnEditorActionListener(rateKeyboardDoneListener);
+        analytics.getRateCompareActivityAnalytics().recordFeesNo(comparisonPresenter);
     }
 
     public void swapRate(View v) {
@@ -178,6 +191,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
         isRateDirectionNormal = !isRateDirectionNormal;
         setLeftAndRight();
         invalidateNoFeeResults();
+        analytics.getRateCompareActivityAnalytics().recordSwapRate(comparisonPresenter);
     }
 
     public void compareRate(View view) {
@@ -194,9 +208,11 @@ public class RateComparisonActivity extends AppCompatActivity implements
             rateResultView.setVisibility(View.VISIBLE);
             rateCompareButton.setEnabled(false);
             hideKeyboard();
+            analytics.getRateCompareActivityAnalytics().recordRateCompareSuccess(comparisonPresenter);
         } else {
             Log.e(LOG_TAG, "Unable to compareTrade.");
             rateResultView.setVisibility(View.GONE);
+            analytics.getRateCompareActivityAnalytics().recordRateCompareFailure(comparisonPresenter);
         }
     }
 
@@ -219,6 +235,10 @@ public class RateComparisonActivity extends AppCompatActivity implements
         tradeFormView.populate(data.getTradeCompare(), data.getTargetCurrency());
         // Data will be reloaded when the baseMoney amount changes.
         tradeFormView.invalidateResults();
+
+        analytics.getRateCompareActivityAnalytics().recordStartRateCompare(
+                data.getBaseCurrency(),
+                data.getTargetCurrency());
     }
 
     @Override
@@ -259,6 +279,9 @@ public class RateComparisonActivity extends AppCompatActivity implements
         Log.v(LOG_TAG, "invalidateNoFeeResults");
         // is the new value actually different? 7, 7., 7.0???
         if(comparisonPresenter.getRateCompare().isSameComparison(rateToCompare.getText())) return;
+        if(rateResultView.getVisibility() == View.VISIBLE) {
+            analytics.getRateCompareActivityAnalytics().recordInvalidateResult(comparisonPresenter);
+        }
         rateCompareButton.setEnabled(!TextUtils.isEmpty(rateToCompare.getText()));
         rateResultView.setVisibility(View.GONE);
         comparisonPresenter.getRateCompare().clearResults();
@@ -302,6 +325,10 @@ public class RateComparisonActivity extends AppCompatActivity implements
                     lhsMoney.getLayoutParams().height);
             lhsMoney.setLayoutParams(layoutParams);
             Log.v(LOG_TAG, "onItemSelected " + item);
+            analytics.getRateCompareActivityAnalytics().recordLhsAmountSelected(
+                    comparisonPresenter,
+                    item.getCurrency(),
+                    item.getAmount().intValue());
         }
     }
 
