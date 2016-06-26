@@ -136,7 +136,11 @@ public class RateComparisonActivity extends AppCompatActivity implements
         lhsMoney.setOnItemSelectedListener(this);
 
         // Trade form
-        tradeFormView.init(currencyRepository, metaRepository, tradeKeyboardDoneListener);
+        tradeFormView.init(
+                currencyRepository,
+                metaRepository,
+                tradeKeyboardDoneListener,
+                analytics.getRateCompareActivityAnalytics().getTradeCompareAnalytics());
         tradeFormView.setVisibility(View.GONE);
         tradeFormView.showInstructions(R.string.trade_input_prompt_fees);
 

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.R;
+import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.presenters.TradeCompare;
@@ -31,6 +32,7 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
     @Bind(R.id.trade_result_text) TextView tradeResultText;
 
     private TradeCompare tradeCompare;
+    private Analytics.TradeCompareAnalytics analytics;
 
     public TradeFormView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -44,19 +46,28 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
     }
 
     @Override
-    public void init(CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository, TextView.OnEditorActionListener listener) {
+    public void init(CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository, TextView.OnEditorActionListener listener, final Analytics.TradeCompareAnalytics analytics) {
         tradeForCurrencyEditorView.init(currencyRepository, metaRepository);
         tradeForCurrencyEditorView.getCurrencyAmount().setOnEditorActionListener(listener);
+        this.analytics = analytics;
     }
 
     @Override
-    public void populate(TradeCompare tradeCompare, Currency targetCurrency) {
+    public void populate(final TradeCompare tradeCompare, Currency targetCurrency) {
         this.tradeCompare = tradeCompare;
         if(tradeForCurrencyEditorView.getSelectedCurrency() == null) {
             // Hacky: the amount on the trade currency is not persisted so don't set it if there's already a value
             tradeForCurrencyEditorView.setSelectedCurrency((SelectedCurrency) targetCurrency);
         }
         tradeForCurrencyEditorView.getCurrencyAmount().setHint(tradeCompare.getMarketRateTargetMoney().getAmountFormatted());
+        tradeForCurrencyEditorView.getCurrencyAmount().setTextClearListener(new ClearableEditText.TextClearListener() {
+            @Override
+            public void onTextCleared() {
+                analytics.recordClearTradeFor(
+                        tradeCompare.getBaseMoney(),
+                        tradeCompare.getTargetCurrency());
+            }
+        });
     }
 
     @Override
@@ -71,9 +82,15 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
             tradeResultText.setVisibility(View.VISIBLE);
             tradeCompareButton.setEnabled(false);
             hideKeyboard();
+            analytics.recordRateCompareSuccess(
+                    tradeCompare.getBaseMoney(),
+                    tradeCompare.getTargetCurrency());
         } else {
             Log.e(LOG_TAG, "Unable to compareTrade.");
             tradeResultText.setVisibility(View.GONE);
+            analytics.recordRateCompareFailure(
+                    tradeCompare.getBaseMoney(),
+                    tradeCompare.getTargetCurrency());
         }
     }
 
@@ -84,6 +101,9 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
         if(tradeCompare.isSameComparison(userInput)) return;
         Log.v(LOG_TAG, "New userInput " + userInput);
         tradeCompareButton.setEnabled(!TextUtils.isEmpty(userInput));
+        if(tradeResultText.getVisibility() == View.VISIBLE) {
+            analytics.recordInvalidateResult(tradeCompare.getBaseMoney().getCurrency(), tradeCompare.getTargetCurrency());
+        }
         tradeResultText.setVisibility(View.GONE);
         tradeCompare.clearResults();
     }

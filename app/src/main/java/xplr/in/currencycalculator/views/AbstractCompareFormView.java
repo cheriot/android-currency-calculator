@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.presenters.BaseCompare;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
@@ -25,7 +26,7 @@ public abstract class AbstractCompareFormView<T extends BaseCompare> extends Lin
         super(context, attrs);
     }
 
-    public abstract void init(CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository, TextView.OnEditorActionListener listener);
+    public abstract void init(CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository, TextView.OnEditorActionListener listener, Analytics.TradeCompareAnalytics analytics);
 
     public abstract void populate(T compare, Currency target);
 

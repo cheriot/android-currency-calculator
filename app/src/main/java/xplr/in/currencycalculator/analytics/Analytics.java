@@ -8,6 +8,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.Locale;
 
 import xplr.in.currencycalculator.models.Currency;
+import xplr.in.currencycalculator.models.Money;
 import xplr.in.currencycalculator.presenters.ComparisonPresenter;
 
 /**
@@ -20,6 +21,9 @@ public class Analytics {
     private static final String PARAM_CLEAR_TEXT_TYPE = "clear_text_type";
     private static final String PARAM_VALUE_BASE_AMOUNT = "base_amount";
     private static final String PARAM_ACTIVITY = "activity";
+    private static final String PARAM_BASE_CURRENCY_CODE = "base_currency_code";
+    private static final String PARAM_TARGET_CURRENCY_CODE = "target_currency_code";
+    private static final String PARAM_BASE_CURRENCY_AMOUNT = "base_amount";
 
     private FirebaseAnalytics firebaseAnalytics;
 
@@ -39,16 +43,70 @@ public class Analytics {
         return new RateCompareActivityAnalytics();
     }
 
+    public TradeCompareAnalytics getTradeCompareAnalytics() {
+        return new TradeCompareAnalytics();
+    }
+
     private void recordClearText(Bundle bundle, String type) {
         bundle.putString(PARAM_CLEAR_TEXT_TYPE, type);
         firebaseAnalytics.logEvent(EVENT_CLEAR_TEXT, bundle);
     }
 
+    public class TradeCompareAnalytics {
+        private static final String PARAM_VALUE_ACTIVITY = "trade_compare";
+        private static final String EVENT_TRADE_COMPARE_SUCCESS = "trade_compare_success";
+        private static final String EVENT_TRADE_COMPARE_FAILURE = "trade_compare_failure";
+        private static final String EVENT_INVALIDATE_RESULT = "invalidate_trade_result";
+        private static final String PARAM_VALUE_TRADE_TO_COMPARE = "trade_to_compare";
+        private final String paramValueActivity;
+
+        public TradeCompareAnalytics() {
+            this.paramValueActivity = PARAM_VALUE_ACTIVITY;
+        }
+
+        public TradeCompareAnalytics(String paramValueActivity) {
+            this.paramValueActivity = paramValueActivity;
+        }
+
+        public void recordRateCompareSuccess(Money base, Currency target) {
+            firebaseAnalytics.logEvent(EVENT_TRADE_COMPARE_SUCCESS, bundle(base.getCurrency(), target));
+        }
+
+        public void recordRateCompareFailure(Money base, Currency target) {
+            firebaseAnalytics.logEvent(EVENT_TRADE_COMPARE_FAILURE, bundle(base, target));
+        }
+
+        public void recordClearTradeFor(Money base, Currency target) {
+            recordClearText(bundle(base, target), PARAM_VALUE_TRADE_TO_COMPARE);
+        }
+
+        public void recordInvalidateResult(Currency base, Currency target) {
+            firebaseAnalytics.logEvent(EVENT_INVALIDATE_RESULT, bundle(base, target));
+        }
+
+        private Bundle bundle(Money base, Currency target) {
+            Bundle bundle = bundle(base.getCurrency(), target);
+            bundle.putFloat(PARAM_BASE_CURRENCY_AMOUNT, base.getAmount().floatValue());
+            return bundle;
+        }
+
+        private Bundle bundle(Currency base, Currency target) {
+            Bundle bundle = bundle();
+            if(base != null) bundle.putString(PARAM_BASE_CURRENCY_CODE, base.getCode());
+            if(target != null) bundle.putString(PARAM_TARGET_CURRENCY_CODE, target.getCode());
+            return bundle;
+        }
+
+        private Bundle bundle() {
+            Bundle bundle = new Bundle();
+            bundle.putString(PARAM_ACTIVITY, paramValueActivity);
+            return bundle;
+        }
+    }
+
     public class RateCompareActivityAnalytics {
         private static final String PARAM_VALUE_ACTIVITY = "rate_compare";
         private static final String PARAM_VALUE_RATE_TO_COMPARE = "rate_to_compare";
-        private static final String PARAM_BASE_CURRENCY_CODE = "base_currency_code";
-        private static final String PARAM_TARGET_CURRENCY_CODE = "target_currency_code";
         private static final String PARAM_LHS_AMOUNT = "lhs_amount";
         private static final String PARAM_LHS_CURRENCY_CODE = "lhs_currency_code";
         private static final String EVENT_FEES_YES = "fees_yes";
@@ -59,6 +117,10 @@ public class Analytics {
         private static final String EVENT_RATE_LHS_SELECTED = "rate_lhs_selected";
         private static final String EVENT_SWAP_RATE = "swap_rate";
         private static final String EVENT_INVALIDATE_RESULT = "invalidate_rate_result";
+
+        public TradeCompareAnalytics getTradeCompareAnalytics() {
+            return new TradeCompareAnalytics(PARAM_VALUE_ACTIVITY);
+        }
 
         public void recordStartRateCompare(Currency base, Currency target) {
             firebaseAnalytics.logEvent(EVENT_START_RATE_COMPARE, bundle(base, target));

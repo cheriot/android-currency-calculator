@@ -15,6 +15,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
+import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.loaders.RateComparisonLoader;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.presenters.ComparisonPresenter;
@@ -33,6 +34,7 @@ public class TradeComparisonActivity extends AppCompatActivity
     private static final int TRADE_COMPARISON_LOADER_ID = 5;
     @Inject CurrencyRepository currencyRepository;
     @Inject CurrencyMetaRepository metaRepository;
+    @Inject Analytics analytics;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.base_currency) BaseCurrencyAmountEditorView baseCurrencyEditorView;
@@ -62,7 +64,7 @@ public class TradeComparisonActivity extends AppCompatActivity
         baseCurrencyEditorView.setCurrencyAmountChangeListener(this);
         tradeFormView.showInstructions(R.string.trade_input_prompt);
 
-        tradeFormView.init(currencyRepository, metaRepository, tradeKeyboardDoneListener);
+        tradeFormView.init(currencyRepository, metaRepository, tradeKeyboardDoneListener, analytics.getTradeCompareAnalytics());
         getLoaderManager().initLoader(TRADE_COMPARISON_LOADER_ID, null, this);
     }
 
