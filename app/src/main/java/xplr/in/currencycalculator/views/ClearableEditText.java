@@ -170,7 +170,6 @@ public class ClearableEditText extends FrameLayout {
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        Log.v(LOG_TAG, "onRestoreInstanceState " + getId() + "  " + state);
         SavedState savedState = (SavedState)state;
         super.onRestoreInstanceState(savedState.getSuperState());
         setText(savedState.getText());
@@ -200,7 +199,6 @@ public class ClearableEditText extends FrameLayout {
     }
 
     public void setHint(String hint) {
-        Log.v(LOG_TAG, "setHint " + hint);
         nextHint = hint;
         textInputLayout.setHint(hint);
         // Undo the negative margin that will hide the hint.

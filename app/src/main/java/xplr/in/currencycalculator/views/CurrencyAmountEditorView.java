@@ -97,14 +97,17 @@ public class CurrencyAmountEditorView extends LinearLayout {
     }
 
     public void setSelectedCurrency(SelectedCurrency selectedCurrency) {
+        currencyAmount.removeTextChangedListener(textChangeListener);
+        this.selectedCurrency = selectedCurrency;
+        displayCurrency(this.selectedCurrency);
         if(!selectedCurrency.equals(this.selectedCurrency)) {
-            currencyAmount.removeTextChangedListener(textChangeListener);
-            this.selectedCurrency = selectedCurrency;
-            displayCurrency(this.selectedCurrency);
-            currencyAmount.addTextChangedListener(textChangeListener);
+            // Move the cursor to the end as if the amount had just been typed.
+            currencyAmount.moveCursorToEnd();
         } else {
+            // The user may be typing in the middle of the word so leave the cursor alone.
             Log.v(LOG_TAG, "Duplicate call to setSelectedCurrency. Ignoring");
         }
+        currencyAmount.addTextChangedListener(textChangeListener);
     }
 
     private void displayCurrency(SelectedCurrency currency) {
@@ -117,8 +120,6 @@ public class CurrencyAmountEditorView extends LinearLayout {
             currencyFlag.setImageDrawable(drawable);
         }
         currencyAmount.setText(currency.getAmount());
-        // Move the cursor to the end as if the amount had just been typed.
-        currencyAmount.moveCursorToEnd();
     }
 
     protected void setAmount(SelectedCurrency currency, String amount) {
