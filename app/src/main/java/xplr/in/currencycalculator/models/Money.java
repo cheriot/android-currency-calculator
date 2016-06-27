@@ -35,6 +35,10 @@ public class Money {
         return new Money(currency, amount.multiply(rhs));
     }
 
+    public Money multiply(int rhs) {
+        return multiply(BigDecimal.valueOf(rhs));
+    }
+
     public BigDecimal divide(Money divisor) {
         checkUnits(divisor);
         return amount.divide(divisor.getAmount(), MATH_CONTEXT);
@@ -54,6 +58,10 @@ public class Money {
         BigDecimal targetUSDRate = new BigDecimal(targetCurrency.getRate());
         BigDecimal targetAmount = dollarsAmount.multiply(targetUSDRate);
         return new Money(targetCurrency, targetAmount);
+    }
+
+    public Money convertTo(BigDecimal rate, Currency targetCurrency) {
+        return new Money(targetCurrency, amount.multiply(rate));
     }
 
     public BigDecimal rateTo(Currency targetCurrency) {

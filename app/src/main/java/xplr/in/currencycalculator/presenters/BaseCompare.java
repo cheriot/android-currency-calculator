@@ -101,13 +101,21 @@ public abstract class BaseCompare {
         hasResult = false;
     }
 
-    public BigDecimal getMarketRate(int multiplier, boolean isRateDirectionNormal) {
+    public BigDecimal getMarketRate(boolean isRateDirectionNormal) {
+        return adjustRate(marketRate, isRateDirectionNormal);
+    }
+
+    public BigDecimal adjustRate(BigDecimal rawRate, boolean isRateDirectionNormal) {
         // By default, we accept the rate from the base currency to the target currency. If the
         // user has reversed that, convert.
-        BigDecimal rate = isRateDirectionNormal ?
-                marketRate : BigDecimal.ONE.divide(marketRate, Money.MATH_CONTEXT);
-        Log.v(LOG_TAG, "getMarketRate " + multiplier + " " + isRateDirectionNormal + " " + marketRate);
-        return rate.multiply(new BigDecimal(multiplier));
+        BigDecimal adjustedRate;
+        if(isRateDirectionNormal) {
+            adjustedRate = rawRate;
+        } else {
+            adjustedRate = BigDecimal.ONE.divide(rawRate, Money.MATH_CONTEXT);
+        }
+        Log.v(LOG_TAG, "adjustRate " + isRateDirectionNormal + " " + rawRate + " => " + adjustedRate);
+        return adjustedRate;
     }
 
     public Money getMarketRateTargetMoney() {

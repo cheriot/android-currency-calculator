@@ -30,7 +30,7 @@ public class ComparisonPresenter {
     }
 
     public String getMarketRate(int multiplier, boolean isRateDirectionNormal) {
-        BigDecimal rate = rateCompare.getMarketRate(multiplier, isRateDirectionNormal);
+        BigDecimal rate = rateCompare.getMarketRate(isRateDirectionNormal).multiply(BigDecimal.valueOf(multiplier));
         if(rate != null) {
             return new DecimalFormat().format(rate);
         } else {

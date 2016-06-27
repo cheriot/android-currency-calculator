@@ -27,17 +27,19 @@ public class RateCompare extends BaseCompare {
         this.isRateDirectionNormal = isRateDirectionNormal;
         BigDecimal userRate = calculableNumber(userInput);
         if(userRate == null) return false;
-        BigDecimal marketRate = getMarketRate(multiplier, isRateDirectionNormal);
+        // Get both rates pointing the "normal" direction. If the userRate is per 10, 100, etc then normalize.
+        BigDecimal marketRate = getMarketRate(true);
+        BigDecimal normalizeUserRate = adjustRate(userRate.divide(BigDecimal.valueOf(multiplier)), isRateDirectionNormal);
         Log.v(LOG_TAG, "calculateRate " + userRate
                 + " isRateDirectionNormal "  + isRateDirectionNormal
-                + " marketRate " + marketRate);
+                + " marketRate " + marketRate
+                + " userRate " + normalizeUserRate);
 
         // Calculate the bank's revenue on the transaction.
-        revenueRate = marketRate.subtract(userRate).divide(marketRate, Money.MATH_CONTEXT);
+        revenueRate = marketRate.subtract(normalizeUserRate).divide(marketRate, Money.MATH_CONTEXT);
         revenueBaseCurrency = baseMoney.multiply(revenueRate);
         revenueTargetCurrency = revenueBaseCurrency.convertTo(targetCurrency);
-        BigDecimal receiveAmount = baseMoney.divide(multiplier).multiply(userRate);
-        receiveMoney = new Money(targetCurrency, receiveAmount);
+        receiveMoney = baseMoney.convertTo(normalizeUserRate, targetCurrency);
 
         // Success!
         return true;
