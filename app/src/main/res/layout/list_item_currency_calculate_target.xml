@@ -32,6 +32,7 @@
             android:paddingLeft="16dp"
             android:paddingStart="16dp"
             android:textIsSelectable="false"
+            android:textColor="#000"
             tools:text="US Dollar"/>
 
         <TextView

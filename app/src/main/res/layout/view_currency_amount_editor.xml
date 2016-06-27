@@ -20,6 +20,7 @@
         android:layout_weight="1"
         android:paddingLeft="16dp"
         android:paddingStart="16dp"
+        android:textColor="#000"
         tools:text="US Dollar"/>
 
     <xplr.in.currencycalculator.views.ClearableEditText
