@@ -65,7 +65,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
     @Bind(R.id.fees_yes) RadioButton feesYesRadio;
     @Bind(R.id.fees_no) RadioButton feesNoRadio;
     // Rate form
-    @Bind(R.id.rate_prompt_question) TextView ratePromptQuestion;
+    @Bind(R.id.rate_form_instruction) TextView rateFormInstructionText;
     @Bind(R.id.rate_form) View rateForm;
     @Bind(R.id.lhs_money) Spinner lhsMoney;
     @Bind(R.id.rhs_currency_code) TextView rhsCurrencyCode;
@@ -134,6 +134,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
             }
         });
         lhsMoney.setOnItemSelectedListener(this);
+        rateFormInstructionText.setVisibility(View.INVISIBLE);
 
         // Trade form
         tradeFormView.init(
@@ -231,9 +232,14 @@ public class RateComparisonActivity extends AppCompatActivity implements
         baseCurrencyEditorView.setSelectedCurrency((SelectedCurrency)data.getBaseCurrency());
 
         // Rate form
-        ratePromptQuestion.setText(data.getBaseCurrency().getName());
         setLeftAndRight();
         invalidateNoFeeResults();
+        String instruction = String.format(
+                getString(R.string.rate_form_instruction),
+                data.getBaseCurrency().getName(),
+                data.getTargetCurrency().getName());
+        rateFormInstructionText.setText(instruction);
+        rateFormInstructionText.setVisibility(View.VISIBLE);
 
         // Trade form
         tradeFormView.populate(data.getTradeCompare(), data.getTargetCurrency());

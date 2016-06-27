@@ -10,65 +10,65 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
+        android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingStart="16dp">
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center_vertical"
             android:text="@string/fees_or_taxes"
             android:textColor="#000"/>
 
-        <RadioButton
-            android:id="@+id/fees_yes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="setFeesYes"
-            android:text="@string/yes"/>
 
-        <RadioButton
-            android:id="@+id/fees_no"
+        <RadioGroup
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="setFeesNo"
-            android:text="@string/no"/>
-    </RadioGroup>
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/fees_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="setFeesYes"
+                android:text="@string/yes"/>
+
+            <RadioButton
+                android:id="@+id/fees_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="setFeesNo"
+                android:text="@string/no"/>
+        </RadioGroup>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/rate_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingStart="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/rate_form_instruction"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="At what rate will the bank buy "
-                android:textColor="#000"/>
-
-            <TextView
-                android:id="@+id/rate_prompt_question"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#000"
-                tools:text="US Dollar"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="\?"
-                android:textColor="#000"/>
-        </LinearLayout>
+            android:text="@string/rate_form_instruction"
+            android:textColor="#000"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -114,27 +114,33 @@
                 tools:text="TWD"/>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/rate_compare_button"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="compareRate"
-            android:text="@string/compare_rate_button"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/rate_compare_button"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:onClick="compareRate"
+                android:text="@string/compare_rate_button"/>
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/rate_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:orientation="vertical"
             android:padding="10dp">
 
             <TextView
                 android:id="@+id/rate_result_amount_text"
                 style="@style/ResultFont"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textSize="30sp"
                 tools:text="50 USD"/>
 
@@ -143,7 +149,6 @@
                 style="@style/ResultFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 tools:text="The bank keeps blah blah blah blah blah blah blah blah."/>
 
         </LinearLayout>

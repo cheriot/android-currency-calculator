@@ -18,4 +18,5 @@
     <string name="exchange">Exchange</string>
     <string name="trade_button">Trade</string>
     <string name="compare_trade_button">Compare Trade</string>
+    <string name="rate_form_instruction">Look for the rate that the bank will buy %1$s or sell %2$s.</string>
 </resources>

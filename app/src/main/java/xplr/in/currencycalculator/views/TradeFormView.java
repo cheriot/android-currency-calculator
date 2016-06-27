@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -116,6 +117,7 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
     public void showInstructions(int stringId) {
         String str = getResources().getString(stringId);
         tradeFormInstructionsView.setText(str);
+        tradeFormInstructionsView.setGravity(Gravity.NO_GRAVITY);
     }
 
     class TradeAmountChangeListener implements CurrencyAmountEditorView.CurrencyAmountChangeListener {
