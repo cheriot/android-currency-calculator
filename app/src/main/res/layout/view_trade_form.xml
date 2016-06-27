@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
        xmlns:tools="http://schemas.android.com/tools">
+
     <TextView
         android:id="@+id/trade_form_instructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
+        android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingStart="16dp"
         android:text="@string/trade_input_prompt"
         android:textColor="#000"/>
 
@@ -23,8 +28,8 @@
         android:text="@string/compare_trade_button"/>
 
     <TextView
-        style="@style/ResultFont"
         android:id="@+id/trade_result_text"
+        style="@style/ResultFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
