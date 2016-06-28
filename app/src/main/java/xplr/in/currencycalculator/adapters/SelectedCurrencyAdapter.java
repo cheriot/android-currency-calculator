@@ -205,7 +205,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         }
 
         public CurrencyMeta.FlagSize flagSize() {
-            return CurrencyMeta.FlagSize.SQUARE;
+            return CurrencyMeta.FlagSize.NORMAL;
         }
     }
 
