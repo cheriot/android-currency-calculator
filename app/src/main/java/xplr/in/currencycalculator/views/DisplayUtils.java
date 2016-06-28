@@ -42,12 +42,42 @@ public class DisplayUtils {
         return new DecimalFormat().format(amount, new StringBuffer(), new FieldPosition(0));
     }
 
+    public static final Pattern HEADLESS_NUMBER = Pattern.compile("^[^\\d]*0");
     public static final Pattern UNUSED_DECIMAL = Pattern.compile("(\\.0*$)");
     public static String formatWhileTyping(CharSequence chars) {
-        Number number = parse(stripFormatting(chars.toString()));
+        String toFormat = chars.toString();
+
+        // Removing first non-zero number screws up formatting. Pretend the first zero is 1 and
+        // then put the zero back at the end.
+        // 10,000 -> user edit -> 0,000
+        boolean isHeadlessNumber = false;
+        Matcher hnMatcher = HEADLESS_NUMBER.matcher(chars);
+        if(hnMatcher.find()) {
+            isHeadlessNumber = true;
+            // The first char may be the 0 or a grouping character so start immediately after the
+            // match to replace it.
+            toFormat = "1" + chars.subSequence(hnMatcher.end(), chars.length());
+            // Change the first 0 to a one
+            // Record that the switch has been made
+        } else {
+            toFormat = chars.toString();
+        }
+
+        Number number = parse(stripFormatting(toFormat));
         StringBuffer formatted = format(number);
-        Matcher matcher = UNUSED_DECIMAL.matcher(chars);
-        if(matcher.find()) formatted.append(matcher.group());
+
+        // Was a switch made?
+        // Change the 1 back to a zero
+        if(isHeadlessNumber) {
+            // Formatted number should always start with the first numeric character.
+            // This assumption will break for some money or percent  formats.
+            formatted.replace(0,1,"0");
+        }
+
+        // Keep unused decimal and zeros.
+        // 123 -> user edit -> 123. -> user edit 123.0
+        Matcher udMatcher = UNUSED_DECIMAL.matcher(chars);
+        if(udMatcher.find()) formatted.append(udMatcher.group());
         return formatted.toString();
     }
 }

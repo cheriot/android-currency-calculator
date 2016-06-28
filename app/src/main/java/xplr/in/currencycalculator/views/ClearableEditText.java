@@ -46,15 +46,22 @@ public class ClearableEditText extends FrameLayout {
     private TextView.OnEditorActionListener onEditorActionListener;
     private TextClearListener textClearListener;
     private TextWatcher textWatcher = new TextWatcher() {
+        private boolean isSeparatorDeleted;
+
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isSeparatorDeleted = count == 1
+                    && after == 0
+                    && !TextUtils.isDigitsOnly(s.subSequence(start,start+count));
+        }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
         /**
          * Synchronized because google's PhoneNumberFormattingTextWatcher#afterTextChanged is, which
-         * makes me thing this can be called again before its finished.
+         * makes me thing this can be called again before its finished. The call to setText may
+         * cause that.
          */
         @Override
         public synchronized void afterTextChanged(Editable s) {
@@ -69,17 +76,36 @@ public class ClearableEditText extends FrameLayout {
                 clearButton.setVisibility(View.INVISIBLE);
             } else {
                 String original = s.toString();
-                int cursorIdx = editText.getSelectionStart();
-                int cursorFromEnd = original.length() - cursorIdx;
+                int originalCursorIdx = editText.getSelectionStart();
                 nextText = DisplayUtils.formatWhileTyping(original);
                 if(!original.equals(nextText)) {
                     editText.removeTextChangedListener(this);
                     editText.setText(nextText);
                     editText.addTextChangedListener(this);
-                    Log.v(LOG_TAG, "replace " + s + " with " + nextText);
                     // Setting the new text messes up the cursor's position.
                     // Set the cursor to be the same number of chars from the end as it was before.
-                    editText.setSelection(nextText.length() - cursorFromEnd);
+                    // That value may be out of range if formatting reduced the length by more than
+                    // one character so 0 if that's the case.
+                    int cursorFromEnd = original.length() - originalCursorIdx;
+                    if(isSeparatorDeleted) {
+                        // 1,|000 -> press delete -> 1|,000
+                        // Since the user can only delete with a left movement, move the cursor
+                        // one to the left. This will compensate for the formatter putting the
+                        // separator back.
+                        // Math.max for when the amount is originally set and the cursor is at 0.
+                        editText.setSelection(Math.max(originalCursorIdx,0));
+                    } else if(original.length() == originalCursorIdx) {
+                        // The cursor was right of the remaining characters. Maintain that.
+                        editText.setSelection(nextText.length());
+                    } else if (cursorFromEnd > nextText.length()) {
+                        // 1|,000 -> press delete -> 000
+                        // The cursor is now at the begining of the string.
+                        editText.setSelection(0);
+                    } else {
+                        // Cursor is to the right of the number or in the middle. Maintain the
+                        // distance from the end.
+                        editText.setSelection(nextText.length() - cursorFromEnd);
+                    }
                 }
                 clearButton.setVisibility(View.VISIBLE);
             }

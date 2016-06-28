@@ -102,6 +102,7 @@ public class CurrencyAmountEditorView extends LinearLayout {
         displayCurrency(this.selectedCurrency);
         if(!selectedCurrency.equals(this.selectedCurrency)) {
             // Move the cursor to the end as if the amount had just been typed.
+            Log.v(LOG_TAG, "call moveCursorToEnd");
             currencyAmount.moveCursorToEnd();
         } else {
             // The user may be typing in the middle of the word so leave the cursor alone.
@@ -119,7 +120,9 @@ public class CurrencyAmountEditorView extends LinearLayout {
             Drawable drawable = getResources().getDrawable(meta.getFlagResourceId(CurrencyMeta.FlagSize.SQUARE));
             currencyFlag.setImageDrawable(drawable);
         }
-        currencyAmount.setText(currency.getAmount());
+        if (!currencyAmount.getText().equals(currency.getAmount())) {
+            currencyAmount.setText(currency.getAmount());
+        }
     }
 
     protected void setAmount(SelectedCurrency currency, String amount) {
