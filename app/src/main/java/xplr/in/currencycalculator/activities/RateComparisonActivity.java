@@ -204,7 +204,9 @@ public class RateComparisonActivity extends AppCompatActivity implements
                 .getRateCompare()
                 .calculate(getMultiplier(), rateToCompare.getText(), isRateDirectionNormal);
         if(success) {
-            String template = getString(R.string.rate_compare_result);
+            int strId = comparisonPresenter.getRateCompare().isResultAGain() ?
+                    R.string.rate_compare_result_gain : R.string.rate_compare_result_lose;
+            String template = getString(strId);
             String msg = comparisonPresenter.getRateCompare().formatResults(template);
             Log.v(LOG_TAG, msg);
             rateResultText.setText(msg);

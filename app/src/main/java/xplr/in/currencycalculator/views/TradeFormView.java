@@ -73,7 +73,9 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
         String userInput = tradeForCurrencyEditorView.getOptionalMoney().getAmount();
         boolean success = tradeCompare.calculate(userInput);
         if(success) {
-            String template = getContext().getString(R.string.rate_compare_result);
+            int strId = tradeCompare.isResultAGain() ?
+                    R.string.rate_compare_result_gain : R.string.rate_compare_result_lose;
+            String template = getContext().getString(strId);
             String msg = tradeCompare.formatResults(template);
             tradeResultText.setText(msg);
             tradeResultText.setVisibility(View.VISIBLE);

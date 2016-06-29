@@ -78,6 +78,11 @@ public abstract class BaseCompare {
         return userNumber.equals(newRate);
     }
 
+    public boolean isResultAGain() {
+        // If the bank's revenue rate is negative then the user makes money on the trade.
+        return revenueRate.compareTo(BigDecimal.ZERO) == -1;
+    }
+
     public String formatResults(String template) {
         return String.format(
                 template,
