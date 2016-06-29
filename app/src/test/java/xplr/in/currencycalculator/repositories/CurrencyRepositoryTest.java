@@ -23,7 +23,7 @@ import dagger.Lazy;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.BuildConfig;
 import xplr.in.currencycalculator.models.Currency;
-import xplr.in.currencycalculator.models.SelectedCurrency;
+import xplr.in.currencycalculator.models.Money;
 import xplr.in.currencycalculator.sources.CurrencyMetaParser;
 import xplr.in.currencycalculator.sources.CurrencyMetaSource;
 import xplr.in.currencycalculator.sources.ResRawRateSource;
@@ -174,9 +174,8 @@ public class CurrencyRepositoryTest {
         insertAt(1, "AMD");
         assertInPosition("AMD is the baseMoney currency.", 1, "AMD");
 
-        SelectedCurrency baseCurrency = currencyRepository.findByCode(SelectedCurrency.class, "BOB");
-        baseCurrency.setAmount("100");
-        currencyRepository.setBaseCurrency(baseCurrency);
+        Currency baseCurrency = currencyRepository.findByCode(Currency.class, "BOB");
+        currencyRepository.setBaseMoney(new Money(baseCurrency, "100"));
         assertInPosition("BOB is now selected.", 1, "BOB");
 
         verify(mockEditor).putString("base_currency_amount", "100");

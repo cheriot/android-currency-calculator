@@ -20,7 +20,6 @@ import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.CurrencyRate;
 import xplr.in.currencycalculator.models.Money;
 import xplr.in.currencycalculator.models.OptionalMoney;
-import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.sources.CurrencyRateParser;
 import xplr.in.currencycalculator.views.DisplayUtils;
 
@@ -191,13 +190,6 @@ public class CurrencyRepository {
         // synchronized so setting positions and amount will be atomic
         setBaseAmount(optionalMoney.getCurrency(), optionalMoney.getAmount());
         insertAtPosition(1, optionalMoney.getCurrency());
-    }
-
-    public synchronized void setBaseCurrency(SelectedCurrency currency) {
-        // TODO: kill this method
-        // synchronized so setting positions and amount will be atomic
-        setBaseAmount(currency, currency.getDisplayedAmount());
-        insertAtPosition(1, currency);
     }
 
     public void setBaseAmount(Currency baseCurrency, String amount) {
