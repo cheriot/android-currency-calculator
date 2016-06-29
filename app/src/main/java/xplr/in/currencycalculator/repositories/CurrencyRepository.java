@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.yahoo.squidb.data.SquidCursor;
 import com.yahoo.squidb.sql.Criterion;
 import com.yahoo.squidb.sql.Function;
 import com.yahoo.squidb.sql.Query;
@@ -17,8 +18,11 @@ import javax.inject.Singleton;
 
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.CurrencyRate;
+import xplr.in.currencycalculator.models.Money;
+import xplr.in.currencycalculator.models.OptionalMoney;
 import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.sources.CurrencyRateParser;
+import xplr.in.currencycalculator.views.DisplayUtils;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -149,26 +153,57 @@ public class CurrencyRepository {
         publishDataChange("insertAtPosition");
     }
 
+    public OptionalMoney findBaseMoney() {
+        return constructBaseMoney(findBaseCurrency());
+    }
+
+    public Currency findBaseCurrency() {
+        return database.fetchByQuery(Currency.class, BASE_CURRENCY);
+    }
+
+    public OptionalMoney instantiateBaseMoney(SquidCursor cursor) {
+        Currency baseCurrency = new Currency(cursor);
+        if(baseCurrency.getPosition() != BASE_CURRENCY_POSITION) {
+            String msg = "Cannot construct baseMoney out of the currency " + baseCurrency;
+            throw new IllegalStateException(msg);
+        }
+        return constructBaseMoney(baseCurrency);
+    }
+
     private static final String BASE_CURRENCY_AMOUNT_KEY = "base_currency_amount";
-    public SelectedCurrency findBaseCurrency() {
-        SelectedCurrency baseCurrency = database.fetchByQuery(SelectedCurrency.class, BASE_CURRENCY);
-        baseCurrency.setAmount(appSharedPrefs.getString(BASE_CURRENCY_AMOUNT_KEY, null));
-        return baseCurrency;
+    public OptionalMoney constructBaseMoney(Currency baseCurrency) {
+
+        String amount = appSharedPrefs.getString(BASE_CURRENCY_AMOUNT_KEY, null);
+        return new OptionalMoney(baseCurrency, amount);
     }
 
-    public SelectedCurrency findTargetCurrency() {
-        return database.fetchByQuery(SelectedCurrency.class, TARGET_CURRENCY);
+    public Currency findTargetCurrency() {
+        return database.fetchByQuery(Currency.class, TARGET_CURRENCY);
     }
 
-    public void setBaseCurrency(SelectedCurrency currency) {
+    public synchronized void setBaseMoney(Money money) {
+        // synchronized so setting positions and amount will be atomic
+        setBaseAmount(money.getCurrency(), money.getAmount().toString());
+        insertAtPosition(1, money.getCurrency());
+    }
+
+    public synchronized void setBaseMoney(OptionalMoney optionalMoney) {
+        // synchronized so setting positions and amount will be atomic
+        setBaseAmount(optionalMoney.getCurrency(), optionalMoney.getAmount());
+        insertAtPosition(1, optionalMoney.getCurrency());
+    }
+
+    public synchronized void setBaseCurrency(SelectedCurrency currency) {
+        // TODO: kill this method
+        // synchronized so setting positions and amount will be atomic
         setBaseAmount(currency, currency.getDisplayedAmount());
         insertAtPosition(1, currency);
     }
 
-    public void setBaseAmount(SelectedCurrency baseCurrency, String amount) {
-        baseCurrency.setAmount(amount);
+    public void setBaseAmount(Currency baseCurrency, String amount) {
+        Log.v(LOG_TAG, "setBaseAmount " + baseCurrency.getCode() + " " + amount);
         SharedPreferences.Editor editor = appSharedPrefs.edit();
-        editor.putString(BASE_CURRENCY_AMOUNT_KEY, amount);
+        editor.putString(BASE_CURRENCY_AMOUNT_KEY, DisplayUtils.stripFormatting(amount));
         editor.apply();
     }
 

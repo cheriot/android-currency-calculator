@@ -17,8 +17,9 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.R;
+import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.CurrencyMeta;
-import xplr.in.currencycalculator.models.SelectedCurrency;
+import xplr.in.currencycalculator.models.OptionalMoney;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 
@@ -37,7 +38,7 @@ public class CurrencyAmountEditorView extends LinearLayout {
     private CurrencyRepository currencyRepository;
     private CurrencyMetaRepository metaRepository;
     private CurrencyAmountChangeListener changeListener;
-    private SelectedCurrency selectedCurrency;
+    private OptionalMoney optionalMoney;
 
     public CurrencyAmountEditorView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -54,7 +55,7 @@ public class CurrencyAmountEditorView extends LinearLayout {
             @Override
             public void onTextChanged(String text) {
                 Log.v(LOG_TAG, "TEXT " + text);
-                setAmount(selectedCurrency, text);
+                if(optionalMoney != null) setAmount(optionalMoney, text);
                 if(changeListener != null) changeListener.onCurrencyAmountChange();
             }
         };
@@ -96,23 +97,30 @@ public class CurrencyAmountEditorView extends LinearLayout {
         this.changeListener = changeListener;
     }
 
-    public void setSelectedCurrency(SelectedCurrency selectedCurrency) {
+    public void setMoney(Currency currency) {
+        if(optionalMoney == null || !optionalMoney.getCurrency().equals(currency)) {
+            setMoney(new OptionalMoney(currency, ""));
+        }
+    }
+
+    public void setMoney(OptionalMoney optionalMoney) {
         currencyAmount.removeTextChangedListener(textChangeListener);
-        this.selectedCurrency = selectedCurrency;
-        displayCurrency(this.selectedCurrency);
-        if(!selectedCurrency.equals(this.selectedCurrency)) {
+        this.optionalMoney = optionalMoney;
+        displayMoney(this.optionalMoney);
+        if(!optionalMoney.getCurrency().equals(this.optionalMoney.getCurrency())) {
             // Move the cursor to the end as if the amount had just been typed.
             Log.v(LOG_TAG, "call moveCursorToEnd");
             currencyAmount.moveCursorToEnd();
         } else {
             // The user may be typing in the middle of the word so leave the cursor alone.
-            Log.v(LOG_TAG, "Duplicate call to setSelectedCurrency. Ignoring");
+            Log.v(LOG_TAG, "Duplicate call to setMoney. Ignoring");
         }
         currencyAmount.addTextChangedListener(textChangeListener);
     }
 
-    private void displayCurrency(SelectedCurrency currency) {
-        Log.v(LOG_TAG, "displayCurrency " + currency.getCode());
+    private void displayMoney(OptionalMoney optionalMoney) {
+        Currency currency = optionalMoney.getCurrency();
+        Log.v(LOG_TAG, "displayMoney " + currency.getCode());
 
         currencyName.setText(currency.getName());
         CurrencyMeta meta = metaRepository.findByCode(currency.getCode());
@@ -120,21 +128,24 @@ public class CurrencyAmountEditorView extends LinearLayout {
             Drawable drawable = getResources().getDrawable(meta.getFlagResourceId(CurrencyMeta.FlagSize.SQUARE));
             currencyFlag.setImageDrawable(drawable);
         }
-        if (!currencyAmount.getText().equals(currency.getAmount())) {
-            currencyAmount.setText(currency.getAmount());
+        if (!currencyAmount.getText().equals(optionalMoney.getAmount())) {
+            // This will reset the cursor so only do it when we've got a new value.
+            // 1. The initial call
+            // 2. New currency
+            currencyAmount.setText(optionalMoney.getAmount());
         }
     }
 
-    protected void setAmount(SelectedCurrency currency, String amount) {
-        currency.setAmount(amount);
+    protected void setAmount(OptionalMoney optionalMoney, String amount) {
+        optionalMoney.setAmount(amount);
+    }
+
+    public OptionalMoney getOptionalMoney() {
+        return optionalMoney;
     }
 
     public CurrencyRepository getCurrencyRepository() {
         return currencyRepository;
-    }
-
-    public SelectedCurrency getSelectedCurrency() {
-        return selectedCurrency;
     }
 
     public interface CurrencyAmountChangeListener {

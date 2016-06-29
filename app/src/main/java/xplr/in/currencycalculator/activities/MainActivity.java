@@ -4,8 +4,8 @@ import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -26,13 +26,12 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.SelectedCurrencyAdapter;
+import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.loaders.SelectedCurrenciesLoader;
-import xplr.in.currencycalculator.models.SelectedCurrency;
-import xplr.in.currencycalculator.repositories.CurrencyDataChangeEvent;
+import xplr.in.currencycalculator.models.OptionalMoney;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Inject CurrencyMetaRepository currencyMetaRepository;
     @Inject SelectedCurrencyAdapter currenciesAdapter;
     @Inject Analytics analytics;
-    SelectedCurrency baseCurrency;
+    OptionalMoney baseMoney;
 
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.list_currency_calculations) RecyclerView listCurrencyCalculations;
@@ -64,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         ButterKnife.bind(this);
 
         eventBus.register(this);
-        new BaseCurrencyQuery().execute();
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,12 +101,12 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                // Don't swipe away the baseMoney currency until that is supported.
+                // Don't swipe away the instantiateBaseMoney currency until that is supported.
                 if(viewHolder.getLayoutPosition() == SelectedCurrencyAdapter.BASE_CURRENCY_TYPE_POSITION) return 0;
                 // Don't swipe away the action buttons.
                 if(viewHolder.getLayoutPosition() == SelectedCurrencyAdapter.ACTIONS_TYPE_POSITION) return 0;
                 // Return 0 to prevent swipe on the targetCurrency currency. Two currencies must always be
-                // selected (baseMoney and targetCurrency) for the Rate and Trade screens to work.
+                // selected (instantiateBaseMoney and targetCurrency) for the Rate and Trade screens to work.
                 if(recyclerView.getAdapter().getItemCount() <= 2) return 0;
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
@@ -143,24 +141,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         super.onDestroy();
     }
 
-    private void displayBaseCurrency(SelectedCurrency currency) {
-        Log.v(LOG_TAG, "displayBaseCurrency " + currency);
-        if (baseCurrency != null && baseCurrency.sameDisplay(currency)) return;
-        baseCurrency = currency;
-
-        currenciesAdapter.setBaseCurrency(baseCurrency);
-        // Rebind RecyclerView items so converted amounts are updated.
-        currenciesAdapter.notifyDataSetChanged();
-
-        listCurrencyCalculations.scrollToPosition(0);
-    }
-
-    @Subscribe(threadMode=ThreadMode.BACKGROUND)
-    public void onCurrencyDataChanged(CurrencyDataChangeEvent e) {
-        Log.v(LOG_TAG, "onCurrencyDataChanged update baseMoney currency");
-        new BaseCurrencyQuery().execute();
-    }
-
+    @Keep
     @Subscribe(threadMode=ThreadMode.MAIN)
     public void onSyncComplete(SyncCompleteEvent e) {
         if(swipeRefreshLayout.isRefreshing()) {
@@ -186,28 +167,21 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.v(LOG_TAG, "onLoadFinished " + data);
-        currenciesAdapter.swapCursor((SquidCursor)data);
-        currenciesAdapter.notifyDataSetChanged();
+        SquidCursor cursor = (SquidCursor)data;
+        currenciesAdapter.swapCursor(cursor);
+        cursor.moveToFirst(); // The base currency is first in the result set.
+        baseMoney = currencyRepository.instantiateBaseMoney(cursor);
+        currenciesAdapter.setBaseMoney(baseMoney);
+        Log.v(LOG_TAG, "notifyItemRangeChanged load finished");
+        // Everything visible needs to be rebound for calculations to update. For some reason
+        // #notifyDatasetChanged does animate all the time like #notifyItemRangeChanged.
+        currenciesAdapter.notifyItemRangeChanged(0,data.getCount());
+        listCurrencyCalculations.scrollToPosition(0);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.v(LOG_TAG, "onLoaderReset");
         currenciesAdapter.swapCursor(null);
-    }
-
-    public class BaseCurrencyQuery extends AsyncTask<Void, Void, SelectedCurrency> {
-        @Override
-        protected SelectedCurrency doInBackground(Void... params) {
-            return currencyRepository.findBaseCurrency();
-        }
-
-        @Override
-        protected void onPostExecute(SelectedCurrency currency) {
-            Log.v(LOG_TAG, "Base currency is " + currency);
-            if (currency != null) {
-                displayBaseCurrency(currency);
-            }
-        }
     }
 }

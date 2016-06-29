@@ -25,7 +25,7 @@ public class RateComparisonLoader extends WorkingAsyncTaskLoader<ComparisonPrese
     @Override
     public ComparisonPresenter loadInBackground() {
         return new ComparisonPresenter(
-                currencyRepository.findBaseCurrency(),
+                currencyRepository.findBaseMoney(),
                 currencyRepository.findTargetCurrency());
     }
 }

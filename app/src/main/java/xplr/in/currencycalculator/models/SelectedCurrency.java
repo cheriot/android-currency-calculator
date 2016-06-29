@@ -1,5 +1,6 @@
 package xplr.in.currencycalculator.models;
 
+import android.content.ContentValues;
 import android.text.TextUtils;
 
 import java.math.BigDecimal;
@@ -14,6 +15,10 @@ import xplr.in.currencycalculator.views.DisplayUtils;
  * Created by cheriot on 4/10/16.
  */
 public class SelectedCurrency extends Currency {
+    public SelectedCurrency(ContentValues contentValues, String amount) {
+        super(contentValues);
+        this.amount = amount;
+    }
 
     // How does this whole Parcelable thing work?
     public static final Creator<SelectedCurrency> CREATOR = new ModelCreator<SelectedCurrency>(SelectedCurrency.class);

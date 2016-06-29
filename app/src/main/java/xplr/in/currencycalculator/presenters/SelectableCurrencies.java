@@ -7,7 +7,6 @@ import com.yahoo.squidb.data.SquidCursor;
 import java.util.List;
 
 import xplr.in.currencycalculator.models.Currency;
-import xplr.in.currencycalculator.models.SelectedCurrency;
 
 /**
  * Created by cheriot on 5/30/16.
@@ -75,7 +74,7 @@ public class SelectableCurrencies {
     }
 
     private Currency getCurrencyFromAll(int queryPosition) {
-        SelectedCurrency currency = new SelectedCurrency();
+        Currency currency = new Currency();
         SquidCursor cursor = (SquidCursor)all;
         cursor.moveToPosition(queryPosition);
         currency.readPropertiesFromCursor(cursor);

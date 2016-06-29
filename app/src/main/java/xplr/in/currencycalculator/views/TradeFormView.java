@@ -15,7 +15,6 @@ import butterknife.ButterKnife;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.models.Currency;
-import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.presenters.TradeCompare;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
@@ -56,10 +55,7 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
     @Override
     public void populate(final TradeCompare tradeCompare, Currency targetCurrency) {
         this.tradeCompare = tradeCompare;
-        if(tradeForCurrencyEditorView.getSelectedCurrency() == null) {
-            // Hacky: the amount on the trade currency is not persisted so don't set it if there's already a value
-            tradeForCurrencyEditorView.setSelectedCurrency((SelectedCurrency) targetCurrency);
-        }
+        tradeForCurrencyEditorView.setMoney(targetCurrency);
         tradeForCurrencyEditorView.getCurrencyAmount().setHint(tradeCompare.getMarketRateTargetMoney().getAmountFormatted());
         tradeForCurrencyEditorView.getCurrencyAmount().setTextClearListener(new ClearableEditText.TextClearListener() {
             @Override
@@ -74,7 +70,7 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
     @Override
     public void compare() {
         Log.v(LOG_TAG, "compareTrade");
-        String userInput = tradeForCurrencyEditorView.getSelectedCurrency().getAmount();
+        String userInput = tradeForCurrencyEditorView.getOptionalMoney().getAmount();
         boolean success = tradeCompare.calculate(userInput);
         if(success) {
             String template = getContext().getString(R.string.rate_compare_result);
@@ -98,7 +94,7 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
     @Override
     public void invalidateResults() {
         Log.v(LOG_TAG, "invalidateYesFeeResults");
-        String userInput = tradeForCurrencyEditorView.getSelectedCurrency().getAmount();
+        String userInput = tradeForCurrencyEditorView.getOptionalMoney().getAmount();
         if(tradeCompare.isSameComparison(userInput)) return;
         Log.v(LOG_TAG, "New userInput " + userInput);
         tradeCompareButton.setEnabled(!TextUtils.isEmpty(userInput));

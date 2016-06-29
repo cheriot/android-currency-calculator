@@ -17,7 +17,6 @@ import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.loaders.RateComparisonLoader;
-import xplr.in.currencycalculator.models.SelectedCurrency;
 import xplr.in.currencycalculator.presenters.ComparisonPresenter;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
@@ -70,7 +69,7 @@ public class TradeComparisonActivity extends AppCompatActivity
 
     @Override
     public void onCurrencyAmountChange() {
-        Log.v(LOG_TAG, "onCurrencyAmountChange baseMoney");
+        Log.v(LOG_TAG, "onCurrencyAmountChange instantiateBaseMoney");
         getLoaderManager().restartLoader(TRADE_COMPARISON_LOADER_ID, null, this);
     }
 
@@ -81,11 +80,11 @@ public class TradeComparisonActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<ComparisonPresenter> loader, ComparisonPresenter data) {
-        baseCurrencyEditorView.setSelectedCurrency((SelectedCurrency)data.getBaseCurrency());
+        baseCurrencyEditorView.setMoney(data.getOptionalMoney());
 
         // Trade form
         tradeFormView.populate(data.getTradeCompare(), data.getTargetCurrency());
-        // Data will be reloaded when the baseMoney amount changes.
+        // Data will be reloaded when the instantiateBaseMoney amount changes.
         tradeFormView.invalidateResults();
     }
 

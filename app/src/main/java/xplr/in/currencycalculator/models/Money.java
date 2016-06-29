@@ -74,6 +74,17 @@ public class Money {
         return amount.divide(baseUSDRate, MATH_CONTEXT);
     }
 
+    public Money roundNumberCloseTo() {
+        if(amount.compareTo(BigDecimal.ONE) == -1 || amount.compareTo(BigDecimal.ONE) == 0) {
+            // USD, Euro, Bitcoin, etc
+            return new Money(currency, BigDecimal.ONE);
+        } else {
+            // Any kind of Shilling
+            double digitCount = Math.floor(Math.log10(amount.doubleValue())) + 1;
+            return new Money(currency, BigDecimal.valueOf(Math.pow(10, digitCount - 1)));
+        }
+    }
+
     public BigDecimal getAmount() {
         return amount;
     }

@@ -3,7 +3,7 @@ package xplr.in.currencycalculator.views;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import xplr.in.currencycalculator.models.SelectedCurrency;
+import xplr.in.currencycalculator.models.OptionalMoney;
 
 /**
  * Created by cheriot on 6/3/16.
@@ -14,7 +14,8 @@ public class BaseCurrencyAmountEditorView extends CurrencyAmountEditorView {
     }
 
     @Override
-    protected void setAmount(SelectedCurrency currency, String amount) {
-        getCurrencyRepository().setBaseAmount(currency, amount);
+    protected void setAmount(OptionalMoney optionalMoney, String amount) {
+        super.setAmount(optionalMoney, amount);
+        getCurrencyRepository().setBaseAmount(optionalMoney.getCurrency(), amount);
     }
 }

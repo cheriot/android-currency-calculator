@@ -20,7 +20,8 @@ import javax.inject.Singleton;
 import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.CurrencyRate;
-import xplr.in.currencycalculator.models.SelectedCurrency;
+import xplr.in.currencycalculator.models.Money;
+import xplr.in.currencycalculator.models.OptionalMoney;
 import xplr.in.currencycalculator.sources.CurrencyRateParser;
 import xplr.in.currencycalculator.sources.RateSource;
 import xplr.in.currencycalculator.sync.SyncCompleteEvent;
@@ -83,13 +84,14 @@ public class CurrencyBulkRepository {
         Log.i(LOG_TAG, "SIM " + sim);
         Log.i(LOG_TAG, "Network " + network);
 
-        // When initializing a baseMoney currency, convert $1 to that currency
+        // When initializing a base currency, convert $1 to that currency
         // and round to make it pretty.
-        SelectedCurrency baseCurrency = currencyRepository.findBaseCurrency();
-        SelectedCurrency usd = currencyRepository.findByCode(SelectedCurrency.class, "USD");
-        usd.setAmount("10");
-        String amount = baseCurrency.roundNumberCloseTo(usd);
-        currencyRepository.setBaseAmount(baseCurrency, amount);
+        OptionalMoney optionalMoney = currencyRepository.findBaseMoney();
+        Currency usd = currencyRepository.findByCode(Currency.class, "USD");
+        Money usdMoney = new Money(usd, "10");
+        Money baseMoney = usdMoney.roundNumberCloseTo();
+
+        currencyRepository.setBaseMoney(baseMoney);
     }
 
     public void updateFromRemote() {
