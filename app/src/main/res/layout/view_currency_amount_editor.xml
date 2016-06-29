@@ -11,7 +11,7 @@
         android:layout_height="50dp"
         android:paddingLeft="16dp"
         android:paddingStart="16dp"
-        android:src="@drawable/flag_4x3_eu"/>
+        tools:src="@drawable/flag_4x3_eu"/>
 
     <TextView
         android:id="@+id/currency_name"
