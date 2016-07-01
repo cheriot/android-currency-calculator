@@ -25,5 +25,8 @@ public class DisplayUtilsTest {
         assertEquals("Unused decimal zero.", "1,000.0", DisplayUtils.formatWhileTyping("1,000.0"));
         assertEquals("Headless number should not become a single zero.", "000.0", DisplayUtils.formatWhileTyping("000.0"));
         assertEquals("Headless number should not become a single zero.", "0,000.0", DisplayUtils.formatWhileTyping("0,000.0"));
+        assertEquals("Naked decimal with zeros.", ".0", DisplayUtils.formatWhileTyping(".0"));
+        assertEquals("Start with decimal.", ".", DisplayUtils.formatWhileTyping("."));
+        assertEquals("Naked decimal with numbers.", ".01", DisplayUtils.formatWhileTyping(".01"));
     }
 }

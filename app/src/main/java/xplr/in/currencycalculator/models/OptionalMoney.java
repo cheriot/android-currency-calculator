@@ -9,6 +9,7 @@ import android.text.TextUtils;
  */
 public class OptionalMoney {
 
+    private static final String LOG_TAG = OptionalMoney.class.getSimpleName();
     private static final String EMPTY_AMOUNT = "-";
 
     private Currency currency;
@@ -20,7 +21,9 @@ public class OptionalMoney {
     }
 
     public boolean isEmpty() {
-        return TextUtils.isEmpty(amount);
+        if(TextUtils.isEmpty(amount)) return true;
+        if(".".equals(amount)) return true;
+        return false;
     }
 
     public boolean isNotEmpty() {
@@ -41,7 +44,9 @@ public class OptionalMoney {
     }
 
     public String getAmountFormatted() {
-        if(isEmpty()) {
+        // with BigDecimal 0 is not equal to 0.0 so use floatValue
+        if(isEmpty() || getMoney().getAmount().floatValue() == 0) {
+            // Don't change from - to 0 just because the user started typing. It's distracting.
             return EMPTY_AMOUNT;
         } else {
             return getMoney().getAmountFormatted();

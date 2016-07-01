@@ -42,10 +42,17 @@ public class DisplayUtils {
         return new DecimalFormat().format(amount, new StringBuffer(), new FieldPosition(0));
     }
 
-    public static final Pattern HEADLESS_NUMBER = Pattern.compile("^[^\\d]*0");
+    public static final Pattern HEADLESS_NUMBER = Pattern.compile("^[^\\d^\\.]*0");
     public static final Pattern UNUSED_DECIMAL = Pattern.compile("(\\.0*$)");
     public static String formatWhileTyping(CharSequence chars) {
         String toFormat = chars.toString();
+
+        boolean isNakedZero = false;
+        if(chars.charAt(0) == '.') {
+            isNakedZero = true;
+            // Don't format a lone decimal.
+            if(chars.length() == 1) return ".";
+        }
 
         // Removing first non-zero number screws up formatting. Pretend the first zero is 1 and
         // then put the zero back at the end.
@@ -66,12 +73,15 @@ public class DisplayUtils {
         Number number = parse(stripFormatting(toFormat));
         StringBuffer formatted = format(number);
 
-        // Was a switch made?
-        // Change the 1 back to a zero
         if(isHeadlessNumber) {
             // Formatted number should always start with the first numeric character.
             // This assumption will break for some money or percent  formats.
             formatted.replace(0,1,"0");
+        }
+
+        if(isNakedZero) {
+            // Remove the 0 before the decimal place.
+            formatted.deleteCharAt(0);
         }
 
         // Keep unused decimal and zeros.
