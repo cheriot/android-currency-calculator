@@ -31,7 +31,6 @@ import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.SelectedCurrencyAdapter;
 import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.loaders.SelectedCurrenciesLoader;
-import xplr.in.currencycalculator.models.OptionalMoney;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Inject CurrencyMetaRepository currencyMetaRepository;
     @Inject SelectedCurrencyAdapter currenciesAdapter;
     @Inject Analytics analytics;
-    OptionalMoney baseMoney;
+    Integer notifyItemRemovedPosition;
 
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.list_currency_calculations) RecyclerView listCurrencyCalculations;
@@ -92,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         listCurrencyCalculations.setLayoutManager(new LinearLayoutManager(this));
         listCurrencyCalculations.setItemAnimator(new DefaultItemAnimator());
 
-        // http://nemanjakovacevic.net/blog/english/2016/01/12/recyclerview-swipe-to-delete-no-3rd-party-lib-necessary/
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -101,12 +99,12 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                // Don't swipe away the instantiateBaseMoney currency until that is supported.
+                // Don't swipe away the base currency until that is supported.
                 if(viewHolder.getLayoutPosition() == SelectedCurrencyAdapter.BASE_CURRENCY_TYPE_POSITION) return 0;
                 // Don't swipe away the action buttons.
                 if(viewHolder.getLayoutPosition() == SelectedCurrencyAdapter.ACTIONS_TYPE_POSITION) return 0;
                 // Return 0 to prevent swipe on the targetCurrency currency. Two currencies must always be
-                // selected (instantiateBaseMoney and targetCurrency) for the Rate and Trade screens to work.
+                // selected (base and targetCurrency) for the Rate and Trade screens to work.
                 if(recyclerView.getAdapter().getItemCount() <= 2) return 0;
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
@@ -115,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 Log.v(LOG_TAG, "onSwiped " + swipeDir + " " + viewHolder.getItemId());
                 ((SelectedCurrencyAdapter.CurrencyViewHolder)viewHolder).onSwipe();
+                notifyItemRemovedPosition = viewHolder.getAdapterPosition();
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
@@ -169,14 +168,16 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         Log.v(LOG_TAG, "onLoadFinished " + data);
         SquidCursor cursor = (SquidCursor)data;
         currenciesAdapter.swapCursor(cursor);
-        cursor.moveToFirst(); // The base currency is first in the result set.
-        baseMoney = currencyRepository.instantiateBaseMoney(cursor);
-        currenciesAdapter.setBaseMoney(baseMoney);
-        Log.v(LOG_TAG, "notifyItemRangeChanged load finished");
-        // Everything visible needs to be rebound for calculations to update. For some reason
-        // #notifyDatasetChanged does animate all the time like #notifyItemRangeChanged.
-        currenciesAdapter.notifyItemRangeChanged(0,data.getCount());
-        listCurrencyCalculations.scrollToPosition(0);
+        if(notifyItemRemovedPosition != null) {
+            currenciesAdapter.notifyItemRemoved(notifyItemRemovedPosition);
+            notifyItemRemovedPosition = null;
+        } else {
+            // New base currency selected.
+            // Everything visible needs to be rebound for calculations to update. For some reason
+            // #notifyDatasetChanged does animate all the time like #notifyItemRangeChanged.
+            currenciesAdapter.notifyItemRangeChanged(0, currenciesAdapter.getItemCount());
+            listCurrencyCalculations.scrollToPosition(0);
+        }
     }
 
     @Override

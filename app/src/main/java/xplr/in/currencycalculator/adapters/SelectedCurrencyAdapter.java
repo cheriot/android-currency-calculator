@@ -56,6 +56,10 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
     public void swapCursor(SquidCursor newCursor) {
         this.cursor = newCursor;
+        if(this.cursor != null) {
+            cursor.moveToFirst(); // The base currency is first in the result set.
+            baseMoney = currencyRepository.instantiateBaseMoney(cursor);
+        }
     }
 
     public void setBaseMoney(OptionalMoney baseMoney) {

@@ -101,26 +101,30 @@ public class CurrencyRepository {
 
     public Currency updateSelection(long id, boolean isSelected) {
         Currency currency = database.fetch(Currency.class, id, Currency.PROPERTIES);
+        Log.v(LOG_TAG, "updateSelection " + isSelected + " " + currency.toString());
         if (isSelected) {
             insertAtPosition(2, currency);
         } else {
             deselectCurrency(currency);
             publishDataChange("remove selected");
         }
-        Log.v(LOG_TAG, "updateSelection " + isSelected + " " + currency.toString());
         return currency;
     }
 
     void deselectCurrency(Currency currency) {
         if(currency.getPosition() == null) return;
         // Move to the end of the list so currencies below the starting position will move up.
-        insertAtPosition(Integer.MAX_VALUE, currency);
+        insertAtPosition(Integer.MAX_VALUE, currency, false);
         currency.setPosition(null);
         database.persist(currency);
     }
 
     private static final String SHIFT_LIST_SQL = "update currencies set position = position";
     public void insertAtPosition(int newPosition, Currency currency) {
+        insertAtPosition(newPosition, currency, true);
+    }
+
+    public void insertAtPosition(int newPosition, Currency currency, boolean notify) {
         Integer startPos = currency.getPosition();
 
         if (startPos != null) {
@@ -149,7 +153,7 @@ public class CurrencyRepository {
         database.persist(currency);
 
         Log.v(LOG_TAG, "insertAtPosition  " + newPosition + " " + currency.toString());
-        publishDataChange("insertAtPosition");
+        if(notify) publishDataChange("insertAtPosition");
     }
 
     public OptionalMoney findBaseMoney() {
