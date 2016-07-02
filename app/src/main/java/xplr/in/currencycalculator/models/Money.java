@@ -108,7 +108,10 @@ public class Money {
 
     public Money roundToCurrency() {
         BigDecimal rounded = amount.setScale(currency.getMinorUnits(), RoundingMode.HALF_UP).stripTrailingZeros();
-        return new Money(currency, rounded);
+        // .stripTrailingZeros will not just drop decimal zeros, it will also turn 10 into 1E+1
+        // .toPlainString will get us back to 10. This isn't for correctness, just readability in logs.
+        BigDecimal simple = new BigDecimal(rounded.toPlainString());
+        return new Money(currency, simple);
     }
 
     @Override

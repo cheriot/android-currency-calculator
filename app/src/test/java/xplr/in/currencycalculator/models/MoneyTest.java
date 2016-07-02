@@ -56,14 +56,19 @@ public class MoneyTest {
         Money r = m.roundToCurrency();
         assertEquals("Rounding does not change the currency.", r.getCurrency(), m.getCurrency());
 
-        assertEquals("Round half up.", "1.01", round("1.005"));
-        assertEquals("Round doesn't add zeros.", "1", round("1"));
+        assertEquals("Round half up.", bd("1.01"), round("1.005"));
+        assertEquals("Round doesn't add zeros.", bd("1"), round("1"));
+        assertEquals("Round doesn't add zeros.", bd("10"), round("10")); // will be represented as 1E+1
     }
 
-    private String round(String initialAmount) {
+    private BigDecimal round(String initialAmount) {
         Money m = new Money(usd(), new BigDecimal(initialAmount));
         Money r = m.roundToCurrency();
-        return r.getAmount().toString();
+        return r.getAmount();
+    }
+
+    private BigDecimal bd(String value) {
+        return new BigDecimal(value);
     }
 
     private Currency usd() {

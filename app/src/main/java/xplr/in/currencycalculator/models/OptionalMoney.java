@@ -39,7 +39,7 @@ public class OptionalMoney {
         if(isEmpty()) {
             return new OptionalMoney(currency, "");
         } else {
-            return new OptionalMoney(currency, getMoney().convertTo(currency).getAmount().toString());
+            return new OptionalMoney(currency, getMoney().convertTo(currency).getAmount().toPlainString());
         }
     }
 
@@ -64,7 +64,7 @@ public class OptionalMoney {
 
     public void roundToCurrency() {
         if(isNotEmpty()) {
-            this.amount = getMoney().roundToCurrency().getAmount().toString();
+            this.amount = getMoney().roundToCurrency().getAmount().toPlainString();
         }
     }
 
