@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class TestMoney {
+public class MoneyTest {
 
     @Test
     public void testConvertTo() {
@@ -48,6 +48,22 @@ public class TestMoney {
                 "Euro to Kenyan Shillings",
                 new Money(kenyanShilling(), "11540.68241469816272965879265091863179380"),
                 euro100.convertTo(kenyanShilling()));
+    }
+
+    @Test
+    public void testRoundToCurrency() {
+        Money m = new Money(usd(), new BigDecimal("1.005"));
+        Money r = m.roundToCurrency();
+        assertEquals("Rounding does not change the currency.", r.getCurrency(), m.getCurrency());
+
+        assertEquals("Round half up.", "1.01", round("1.005"));
+        assertEquals("Round doesn't add zeros.", "1", round("1"));
+    }
+
+    private String round(String initialAmount) {
+        Money m = new Money(usd(), new BigDecimal(initialAmount));
+        Money r = m.roundToCurrency();
+        return r.getAmount().toString();
     }
 
     private Currency usd() {

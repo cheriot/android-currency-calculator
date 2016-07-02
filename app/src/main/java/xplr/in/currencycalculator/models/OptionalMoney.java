@@ -62,6 +62,12 @@ public class OptionalMoney {
         this.amount = EMPTY_AMOUNT.equals(amount) ? "" : amount.trim();
     }
 
+    public void roundToCurrency() {
+        if(isNotEmpty()) {
+            this.amount = getMoney().roundToCurrency().getAmount().toString();
+        }
+    }
+
     public String getAmount() {
         return amount;
     }

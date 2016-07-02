@@ -154,6 +154,8 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             baseCurrencyAmountEditorView.setCurrencyAmountChangeListener(new CurrencyAmountEditorView.CurrencyAmountChangeListener() {
                 @Override
                 public void onCurrencyAmountChange() {
+                    // BaseCurrencyAmountEditorView will have persisted the new base amount. Trigger
+                    // a rebind so target and other rows will convert the new amount.
                     adapter.notifyDataSetChanged();
                 }
             });
@@ -205,6 +207,9 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         public void onClick(View v) {
             analytics.getMainActivityAnalytics().recordSelectCurrency(convertedMoney.getCurrency());
             Log.v(LOG_TAG, "Select a new base " + convertedMoney);
+            // The calculated amount likely has more decimal places than we display. Set the base
+            // amount to be what the user sees.
+            convertedMoney.roundToCurrency();
             currencyRepository.setBaseMoney(convertedMoney);
         }
 

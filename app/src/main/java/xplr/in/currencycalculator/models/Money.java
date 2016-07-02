@@ -2,6 +2,7 @@ package xplr.in.currencycalculator.models;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 /**
@@ -103,6 +104,11 @@ public class Money {
         if(!currency.equals(other.getCurrency())) {
             throw new IllegalStateException("Money math must have matching currencies. <" + currency + "> <" + other.getCurrency() + ">.");
         }
+    }
+
+    public Money roundToCurrency() {
+        BigDecimal rounded = amount.setScale(currency.getMinorUnits(), RoundingMode.HALF_UP).stripTrailingZeros();
+        return new Money(currency, rounded);
     }
 
     @Override

@@ -21,7 +21,6 @@ import xplr.in.currencycalculator.models.CurrencyRate;
 import xplr.in.currencycalculator.models.Money;
 import xplr.in.currencycalculator.models.OptionalMoney;
 import xplr.in.currencycalculator.sources.CurrencyRateParser;
-import xplr.in.currencycalculator.views.DisplayUtils;
 
 import static android.text.TextUtils.isEmpty;
 
@@ -184,22 +183,23 @@ public class CurrencyRepository {
         return database.fetchByQuery(Currency.class, TARGET_CURRENCY);
     }
 
-    public synchronized void setBaseMoney(Money money) {
-        // synchronized so setting positions and amount will be atomic
-        setBaseAmount(money.getCurrency(), money.getAmount().toString());
-        insertAtPosition(1, money.getCurrency());
+    public void setBaseMoney(Money money) {
+        setBaseMoney(new OptionalMoney(money.getCurrency(), money.getAmount().toString()));
     }
 
     public synchronized void setBaseMoney(OptionalMoney optionalMoney) {
         // synchronized so setting positions and amount will be atomic
+        Log.v(LOG_TAG, "setBaseMoney " + optionalMoney.getAmount() + " " + optionalMoney.getCurrency().getName());
         setBaseAmount(optionalMoney.getCurrency(), optionalMoney.getAmount());
-        insertAtPosition(1, optionalMoney.getCurrency());
+        if(optionalMoney.getCurrency().getPosition() != BASE_CURRENCY_POSITION) {
+            insertAtPosition(BASE_CURRENCY_POSITION, optionalMoney.getCurrency());
+        }
     }
 
-    public void setBaseAmount(Currency baseCurrency, String amount) {
+    private void setBaseAmount(Currency baseCurrency, String amount) {
         Log.v(LOG_TAG, "setBaseAmount " + baseCurrency.getCode() + " " + amount);
         SharedPreferences.Editor editor = appSharedPrefs.edit();
-        editor.putString(BASE_CURRENCY_AMOUNT_KEY, DisplayUtils.stripFormatting(amount));
+        editor.putString(BASE_CURRENCY_AMOUNT_KEY, amount);
         editor.apply();
     }
 

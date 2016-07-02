@@ -16,6 +16,6 @@ public class BaseCurrencyAmountEditorView extends CurrencyAmountEditorView {
     @Override
     protected void setAmount(OptionalMoney optionalMoney, String amount) {
         super.setAmount(optionalMoney, amount);
-        getCurrencyRepository().setBaseAmount(optionalMoney.getCurrency(), amount);
+        getCurrencyRepository().setBaseMoney(optionalMoney);
     }
 }
