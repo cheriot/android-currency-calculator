@@ -21,13 +21,18 @@ public class OptionalMoney {
     }
 
     public boolean isEmpty() {
-        if(TextUtils.isEmpty(amount)) return true;
-        if(".".equals(amount)) return true;
-        return false;
+        return isEmpty(amount);
     }
 
     public boolean isNotEmpty() {
         return !isEmpty();
+    }
+
+    private boolean isEmpty(String str) {
+        if(TextUtils.isEmpty(str)) return true;
+        if(".".equals(str)) return true;
+        if(EMPTY_AMOUNT.equals(str)) return true;
+        return false;
     }
 
     public Money getMoney() {
@@ -59,7 +64,7 @@ public class OptionalMoney {
 
     public void setAmount(String amount) {
         // this.amount must be EMPTY_AMOUNT or a number parsable by BigDecimal
-        this.amount = EMPTY_AMOUNT.equals(amount) ? "" : amount.trim();
+        this.amount = isEmpty(amount) ? "" : amount.trim();
     }
 
     public void roundToCurrency() {
