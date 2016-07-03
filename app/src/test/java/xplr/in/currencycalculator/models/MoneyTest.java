@@ -61,6 +61,14 @@ public class MoneyTest {
         assertEquals("Round doesn't add zeros.", bd("10"), round("10")); // will be represented as 1E+1
     }
 
+    @Test
+    public void testRoundFriendly() {
+        assertEquals("Friendly usd amount.", "1", new Money(usd(), "1").roundToFriendly().getAmount().toString());
+        assertEquals("Friendly euro amount.", "1", new Money(euro(), "0.88").roundToFriendly().getAmount().toString());
+        assertEquals("Friendly renmenbi amount.", BigDecimal.valueOf(10), new Money(renminbi(), "6.46").roundToFriendly().getAmount());
+        assertEquals("Friendly kenyan shilling amount.", BigDecimal.valueOf(1000), new Money(renminbi(), "101.13").roundToFriendly().getAmount());
+    }
+
     private BigDecimal round(String initialAmount) {
         Money m = new Money(usd(), new BigDecimal(initialAmount));
         Money r = m.roundToCurrency();
@@ -89,6 +97,16 @@ public class MoneyTest {
         euro.setPosition(null);
         euro.setMinorUnits(2);
         return euro;
+    }
+
+    private Currency renminbi() {
+        Currency kes = new Currency();
+        kes.setName("Yuan Renminbi");
+        kes.setRate("6.4590");
+        kes.setCode("CNY");
+        kes.setPosition(null);
+        kes.setMinorUnits(2);
+        return kes;
     }
 
     private Currency kenyanShilling() {

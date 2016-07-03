@@ -184,7 +184,7 @@ public class CurrencyRepository {
     }
 
     public void setBaseMoney(Money money) {
-        setBaseMoney(new OptionalMoney(money.getCurrency(), money.getAmount().toString()));
+        setBaseMoney(new OptionalMoney(money.getCurrency(), money.getAmount().toPlainString()));
     }
 
     public synchronized void setBaseMoney(OptionalMoney optionalMoney) {

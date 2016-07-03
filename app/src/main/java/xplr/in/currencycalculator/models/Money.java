@@ -75,14 +75,25 @@ public class Money {
         return amount.divide(baseUSDRate, MATH_CONTEXT);
     }
 
-    public Money roundNumberCloseTo() {
+    /**
+     * Round amount to a friendly number for the amount a new install will default to.
+     * @return Money of the came currency with a friendly amount.
+     */
+    public Money roundToFriendly() {
+        int compare = amount.compareTo(BigDecimal.ONE);
         if(amount.compareTo(BigDecimal.ONE) == -1 || amount.compareTo(BigDecimal.ONE) == 0) {
             // USD, Euro, Bitcoin, etc
             return new Money(currency, BigDecimal.ONE);
         } else {
             // Any kind of Shilling
             double digitCount = Math.floor(Math.log10(amount.doubleValue())) + 1;
-            return new Money(currency, BigDecimal.valueOf(Math.pow(10, digitCount - 1)));
+            // The power of 10 ABOVE the amount.
+            BigDecimal friendly = BigDecimal.valueOf((long)Math.pow(10, digitCount));
+            // Don't show unneeded decimals.
+            friendly.setScale(0, BigDecimal.ROUND_DOWN);
+            return new Money(currency, friendly);
+            // Alternative way, round to a single significant digit, add a zero, change the first
+            // digit to a one.
         }
     }
 

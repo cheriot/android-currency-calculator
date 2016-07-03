@@ -88,8 +88,10 @@ public class CurrencyBulkRepository {
         // and round to make it pretty.
         OptionalMoney optionalMoney = currencyRepository.findBaseMoney();
         Currency usd = currencyRepository.findByCode(Currency.class, "USD");
-        Money usdMoney = new Money(usd, "10");
-        Money baseMoney = usdMoney.roundNumberCloseTo();
+        Money usdMoney = new Money(usd, "1");
+        Currency baseCurrency = optionalMoney.getCurrency();
+        Money baseMoney = usdMoney.convertTo(baseCurrency).roundToFriendly();
+        Log.v(LOG_TAG, "baseMoney rounded to " + baseMoney + " based on a rate of " + baseMoney.getCurrency().getRate());
 
         currencyRepository.setBaseMoney(baseMoney);
     }
