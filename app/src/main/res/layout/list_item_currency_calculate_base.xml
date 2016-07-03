@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:orientation="vertical"
-    android:paddingBottom="5dp"
-    android:paddingTop="25dp">
+    android:paddingBottom="5dp">
 
 
     <xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView
