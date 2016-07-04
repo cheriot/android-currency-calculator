@@ -86,7 +86,7 @@ public abstract class BaseCompare {
     public String formatResults(String template) {
         return String.format(
                 template,
-                formatPercent(revenueRate),
+                formatPercent(revenueRate.abs()),
                 revenueBaseCurrency.getAmountFormatted(),
                 baseMoney.getCurrency().getCode(),
                 revenueTargetCurrency.getAmountFormatted(),

@@ -6,6 +6,7 @@ import android.content.Loader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -210,7 +211,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
             String template = getString(strId);
             String msg = comparisonPresenter.getRateCompare().formatResults(template);
             Log.v(LOG_TAG, msg);
-            rateResultText.setText(msg);
+            rateResultText.setText(Html.fromHtml(msg));
             rateResultAmountText.setText(comparisonPresenter.getRateCompare().getReceiveMoney());
             rateResultView.setVisibility(View.VISIBLE);
             rateCompareButton.setEnabled(false);

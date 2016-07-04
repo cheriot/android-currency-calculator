@@ -1,6 +1,7 @@
 package xplr.in.currencycalculator.views;
 
 import android.content.Context;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -77,7 +78,7 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
                     R.string.rate_compare_result_gain : R.string.rate_compare_result_lose;
             String template = getContext().getString(strId);
             String msg = tradeCompare.formatResults(template);
-            tradeResultText.setText(msg);
+            tradeResultText.setText(Html.fromHtml(msg));
             tradeResultText.setVisibility(View.VISIBLE);
             tradeCompareButton.setEnabled(false);
             hideKeyboard();
