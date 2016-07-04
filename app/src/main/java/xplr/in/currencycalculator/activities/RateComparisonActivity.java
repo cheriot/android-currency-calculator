@@ -240,8 +240,10 @@ public class RateComparisonActivity extends AppCompatActivity implements
         String instruction = String.format(
                 getString(R.string.rate_form_instruction),
                 data.getBaseCurrency().getName(),
-                data.getTargetCurrency().getName());
-        rateFormInstructionText.setText(instruction);
+                data.getTargetCurrency().getName(),
+                data.getBaseCurrency().getCode(),
+                data.getTargetCurrency().getCode());
+        rateFormInstructionText.setText(Html.fromHtml(instruction));
         rateFormInstructionText.setVisibility(View.VISIBLE);
 
         // Trade form

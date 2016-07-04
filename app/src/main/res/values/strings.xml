@@ -27,5 +27,9 @@
     <string name="exchange">Exchange</string>
     <string name="trade_button">Trade</string>
     <string name="compare_trade_button">Compare Trade</string>
-    <string name="rate_form_instruction">Look for the rate that the bank will buy %1$s or sell %2$s.</string>
+    <string name="rate_form_instruction">
+        <![CDATA[
+        So you have %1$s and want %2$s. Look for the bank\'s rate to <b>buy %3$s</b> or <b>sell %4$s</b>.
+        ]]>
+    </string>
 </resources>
