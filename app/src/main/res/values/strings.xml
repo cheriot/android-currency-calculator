@@ -10,12 +10,12 @@
     <string name="title_activity_offer_comparison">Offer Comparison</string>
     <string name="rate_compare_result_lose">
         <![CDATA[
-        Loss of <b>%1$s</b>, <b>%2$s %3$s</b>, or <b>%4$s %5$s</b>.
+        Loss of <b>%1$s</b>, <b>%2$s&nbsp;%3$s</b>, or <b>%4$s&nbsp;%5$s</b>.
         ]]>
     </string>
     <string name="rate_compare_result_gain">
         <![CDATA[
-        Gain of <b>%1$s</b>, <b>%2$s %3$s</b>, or <b>%4$s %5$s</b>.
+        Gain of <b>%1$s</b>, <b>%2$s&nbsp;%3$s</b>, or <b>%4$s&nbsp;%5$s</b>.
         ]]>
     </string>
     <string name="trade_input_prompt_fees">After all fees and taxes, how much are you being offered?</string>
