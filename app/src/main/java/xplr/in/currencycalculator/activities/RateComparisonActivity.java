@@ -148,6 +148,7 @@ public class RateComparisonActivity extends AppCompatActivity implements
     }
 
     private void setLeftAndRight() {
+        if(comparisonPresenter == null) return;
         Currency base = comparisonPresenter.getBaseCurrency();
         Currency target = comparisonPresenter.getTargetCurrency();
         if(isRateDirectionNormal) {
