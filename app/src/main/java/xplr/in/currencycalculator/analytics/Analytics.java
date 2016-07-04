@@ -47,9 +47,23 @@ public class Analytics {
         return new TradeCompareAnalytics();
     }
 
+    public SyncAnalytics getSyncAnalytics() {
+        return new SyncAnalytics();
+    }
+
     private void recordClearText(Bundle bundle, String type) {
         bundle.putString(PARAM_CLEAR_TEXT_TYPE, type);
         firebaseAnalytics.logEvent(EVENT_CLEAR_TEXT, bundle);
+    }
+
+    public class SyncAnalytics {
+        private static final String EVENT_SYNC = "sync";
+        private static final String PARAM_SYNC_MANUAL = "sync_manual";
+        public void recordSync(boolean isManual) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(PARAM_SYNC_MANUAL, isManual);
+            firebaseAnalytics.logEvent(EVENT_SYNC, bundle);
+        }
     }
 
     public class TradeCompareAnalytics {

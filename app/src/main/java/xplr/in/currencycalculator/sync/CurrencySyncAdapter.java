@@ -3,13 +3,12 @@ package xplr.in.currencycalculator.sync;
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.SyncResult;
 import android.os.Bundle;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import xplr.in.currencycalculator.App;
+import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.repositories.CurrencyBulkRepository;
 
 /**
@@ -17,23 +16,27 @@ import xplr.in.currencycalculator.repositories.CurrencyBulkRepository;
  *
  * Created by cheriot on 4/7/16.
  */
-@Singleton
 public class CurrencySyncAdapter extends AbstractThreadedSyncAdapter {
 
-    @Inject
-    CurrencyBulkRepository currencyBulkRepository;
+    private final CurrencyBulkRepository currencyBulkRepository;
+    private final Analytics analytics;
 
     public CurrencySyncAdapter(
             App context,
             boolean autoInitialize,
             boolean parallelSyncs,
-            CurrencyBulkRepository currencyBulkRepository) {
+            CurrencyBulkRepository currencyBulkRepository,
+            Analytics analytics) {
         super(context, autoInitialize, parallelSyncs);
         this.currencyBulkRepository = currencyBulkRepository;
+        this.analytics = analytics;
     }
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+        // If there's a way to distinguish scheduled syncs from manually triggered syncs, do that.
+        boolean isManual = extras.getBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, false);
+        analytics.getSyncAnalytics().recordSync(isManual);
         currencyBulkRepository.updateFromRemote();
     }
 

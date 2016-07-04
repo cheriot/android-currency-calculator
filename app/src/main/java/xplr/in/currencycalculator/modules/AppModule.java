@@ -63,9 +63,9 @@ public class AppModule {
         return new ResRawRateSource(app);
     }
 
-    @Provides
-    CurrencySyncAdapter providesCurrencySyncAdapter(CurrencyBulkRepository currencyBulkRepository) {
-        return new CurrencySyncAdapter(app, true, false, currencyBulkRepository);
+    @Provides @Singleton
+    CurrencySyncAdapter providesCurrencySyncAdapter(CurrencyBulkRepository currencyBulkRepository, Analytics analytics) {
+        return new CurrencySyncAdapter(app, true, false, currencyBulkRepository, analytics);
     }
 
     @Provides

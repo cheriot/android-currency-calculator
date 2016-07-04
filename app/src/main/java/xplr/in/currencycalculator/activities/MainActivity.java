@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.v(LOG_TAG, "onLoadFinished " + data);
+        Log.v(LOG_TAG, "onLoadFinished");
         SquidCursor cursor = (SquidCursor)data;
         currenciesAdapter.swapCursor(cursor);
         if(notifyItemRemovedPosition != null) {

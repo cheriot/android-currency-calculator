@@ -98,7 +98,6 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     @Override
     public void onBindViewHolder(AbstractCurrencyViewHolder holder, int position) {
         Currency currency = getCurrency(position);
-        Log.v(LOG_TAG, "onBindViewHolder " + position + " " + getItemId(position) + " " + currency.getCode());
         holder.bindView(currency, baseMoney);
     }
 

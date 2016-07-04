@@ -1,5 +1,7 @@
 package xplr.in.currencycalculator.models;
 
+import android.util.Log;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -10,6 +12,7 @@ import java.text.DecimalFormat;
  */
 public class Money {
 
+    private static final String LOG_TAG = Money.class.getSimpleName();
     public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
     private final Currency currency;
     private final BigDecimal amount;
@@ -58,6 +61,12 @@ public class Money {
         BigDecimal dollarsAmount = convertToUSD();
         BigDecimal targetUSDRate = new BigDecimal(targetCurrency.getRate());
         BigDecimal targetAmount = dollarsAmount.multiply(targetUSDRate);
+        Log.v(LOG_TAG, "Convert "
+          + "1. start with {"+currency.getCode() + ", " + currency.getRate() + "} * " + amount + ", "
+          + "2. dollarsAmount is " + dollarsAmount + ", "
+          + "3. target is {" + targetCurrency.getCode() + ", " + targetCurrency.getRate() + "}, "
+          + "4. targetUSDRate is " + targetUSDRate + ", "
+          + "5. targetAmount is " + targetAmount);
         return new Money(targetCurrency, targetAmount);
     }
 
