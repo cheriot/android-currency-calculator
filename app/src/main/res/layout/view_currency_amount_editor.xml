@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/currency_flag"
         android:layout_width="67dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:paddingLeft="16dp"
         android:paddingStart="16dp"
         tools:src="@drawable/flag_4x3_eu"/>

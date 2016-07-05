@@ -4,6 +4,7 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:minHeight="40dp"
               android:orientation="horizontal"
               app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -11,24 +12,29 @@
         android:id="@+id/currency_selected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:focusable="false"
         android:textIsSelectable="false"/>
 
     <TextView
         android:id="@+id/currency_name"
+        style="@style/ResultFont"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:focusable="false"
-        tools:text="United People's Rupee"
-        android:textIsSelectable="false"/>
+        android:gravity="center_vertical"
+        android:textIsSelectable="false"
+        tools:text="United People's Rupee"/>
 
     <TextView
         android:id="@+id/currency_code"
         android:layout_width="34dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:focusable="false"
-        tools:text="ABW"
-        android:textIsSelectable="false"/>
+        android:textIsSelectable="false"
+        tools:text="ABW"/>
 
 </LinearLayout>

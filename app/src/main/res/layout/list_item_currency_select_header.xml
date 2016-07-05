@@ -10,6 +10,9 @@
         android:id="@+id/list_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:paddingTop="15dp"
+        android:paddingLeft="32dp"
+        android:paddingStart="32dp"
+        android:gravity="left"
         tools:text="ALL CURRENCIES"/>
 </LinearLayout>
