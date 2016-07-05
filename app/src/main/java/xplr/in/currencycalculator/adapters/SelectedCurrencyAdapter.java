@@ -116,6 +116,16 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         return getCurrency(position).getId();
     }
 
+    public void notifyCurrencyInserted(int currencyPosition) {
+        Log.v(LOG_TAG, "notifyCurrencyInserted " + currencyPosition + " translated to " + viewPosition(currencyPosition));
+        notifyItemInserted(viewPosition(currencyPosition));
+    }
+
+    public void notifyCurrencyRemoved(int currencyPosition) {
+        Log.v(LOG_TAG, "notifyCurrencyRemoved " + currencyPosition + " translated to " + viewPosition(currencyPosition));
+        notifyItemRemoved(viewPosition(currencyPosition));
+    }
+
     private Currency getCurrency(int viewPosition) {
         // offset by 1 to account for the actions row
         int dataPosition = viewPosition < ACTIONS_TYPE_POSITION ? viewPosition : viewPosition - 1;
@@ -123,6 +133,11 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         cursor.moveToPosition(dataPosition);
         currency.readPropertiesFromCursor(cursor);
         return currency;
+    }
+
+    private int viewPosition(int dataPosition) {
+        int offsetPosition = dataPosition - 1; // data starts at 1, view starts at 0
+        return offsetPosition < ACTIONS_TYPE_POSITION ? offsetPosition : offsetPosition + 1;
     }
 
     public static abstract class AbstractCurrencyViewHolder extends RecyclerView.ViewHolder {

@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
 
     private static String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int LOADER_ID = 1;
+    private static final int SELECT_CURRENCY_REQUEST_CODE = 1;
 
     @Inject EventBus eventBus;
     @Inject CurrencyRepository currencyRepository;
@@ -67,7 +68,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             @Override
             public void onClick(View view) {
                 analytics.getMainActivityAnalytics().recordFabClick();
-                startActivity(new Intent(MainActivity.this, SelectCurrencyActivity.class));
+                // TODO startActivityForResult() to know when a currency was selected and
+                // inform the list adapter.
+                startActivityForResult(
+                        new Intent(MainActivity.this, SelectCurrencyActivity.class),
+                        SELECT_CURRENCY_REQUEST_CODE);
             }
         });
 
@@ -159,6 +164,22 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.v(LOG_TAG, "onActivityResult " + requestCode + " " + resultCode + " " + data);
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == SELECT_CURRENCY_REQUEST_CODE) {
+            int position = data.getIntExtra(SelectCurrencyActivity.PARAM_POSITION, -1);
+            Log.v(LOG_TAG, "onActivityResult position " + position);
+            if(resultCode == SelectCurrencyActivity.INSERT_RESULT_CODE) {
+                currenciesAdapter.notifyCurrencyInserted(position);
+            }
+            if(resultCode == SelectCurrencyActivity.REMOVE_RESULT_CODE) {
+                currenciesAdapter.notifyCurrencyRemoved(position);
+            }
+        }
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new SelectedCurrenciesLoader(this);
     }
@@ -172,9 +193,13 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
             currenciesAdapter.notifyItemRemoved(notifyItemRemovedPosition);
             notifyItemRemovedPosition = null;
         } else {
-            // New base currency selected.
-            // Everything visible needs to be rebound for calculations to update. For some reason
-            // #notifyDatasetChanged does animate all the time like #notifyItemRangeChanged.
+            // TODO make this block specific to a currency selected and notify(0, oldViewPosition)
+            // Cases
+            // 1. Initialize activity.                     (don't really need to execute this)
+            // 2. New base currency selected.
+            // 3. Currency added by SelectCurrencyActivity (don't really need to execute this)
+            // Updating calculations requires rebinding everything. For some reason
+            // #notifyDatasetChanged doesn't animate all the time like #notifyItemRangeChanged.
             currenciesAdapter.notifyItemRangeChanged(0, currenciesAdapter.getItemCount());
             listCurrencyCalculations.scrollToPosition(0);
         }

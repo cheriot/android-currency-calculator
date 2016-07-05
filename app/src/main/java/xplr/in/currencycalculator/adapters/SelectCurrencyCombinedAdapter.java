@@ -122,6 +122,7 @@ public class SelectCurrencyCombinedAdapter
             checkBox.setChecked(currency.isSelected());
             checkBox.setEnabled(!currency.isSelected() || selectableCurrencies.allowDeselect());
             checkBox.setOnCheckedChangeListener(this);
+
         }
 
         @Override
@@ -131,8 +132,9 @@ public class SelectCurrencyCombinedAdapter
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            Log.v(LOG_TAG, "onCheckedChanged persist selection " + currency.getCode() + " " + isChecked);
+            Log.v(LOG_TAG, "onCheckedChanged persist selection " + currency.getCode() + " " + isChecked + " " + checkBox.getAnimation());
             selectionListener.onCurrencySelectionChange(currency, isChecked);
+
         }
     }
 }

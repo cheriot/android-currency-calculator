@@ -3,10 +3,11 @@ package xplr.in.currencycalculator.activities;
 import android.app.LoaderManager;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,6 +42,9 @@ public class SelectCurrencyActivity extends AppCompatActivity
 
     private static final String LOG_TAG = SelectCurrencyActivity.class.getSimpleName();
     private final static int COMBINED_CURRENCIES_LOADER_ID = 2;
+    public final static int INSERT_RESULT_CODE = 1;
+    public final static int REMOVE_RESULT_CODE = 2;
+    public final static String PARAM_POSITION = "position";
 
     @Inject PopularCurrenciesRepository popularCurrenciesRepository;
     @Inject CurrencyRepository currencyRepository;
@@ -135,26 +139,41 @@ public class SelectCurrencyActivity extends AppCompatActivity
 
     public class PersistCurrencySelection extends AsyncTask<Void, Void, Currency> {
         private long currencyId;
+        private Integer originalPosition;
+        private Integer updatedPosition;
         private boolean isSelected;
 
         public PersistCurrencySelection(Currency currency, boolean isSelected) {
             this.currencyId = currency.getId();
+            Log.v(LOG_TAG, "Persist " + currency);
+            this.originalPosition = currency.getPosition();
             this.isSelected = isSelected;
         }
 
         @Override
         protected Currency doInBackground(Void... params) {
             Log.v(LOG_TAG, "Update currency " + currencyId + " " + isSelected);
-            return currencyRepository.updateSelection(currencyId, isSelected);
+            Currency updated = currencyRepository.updateSelection(currencyId, isSelected);
+            this.updatedPosition = updated.getPosition();
+            // Give the checkbox animation time to finish before onBackPressed() takes the user
+            SystemClock.sleep(300);
+            return updated;
         }
 
         @Override
         protected void onPostExecute(Currency currency) {
             Log.v(LOG_TAG, "Completed update.");
+            // Will this loader get reused (need restart)?
             getLoaderManager().restartLoader(COMBINED_CURRENCIES_LOADER_ID, null, SelectCurrencyActivity.this);
-            String message = (currency.isSelected() ? "Selected " : "Removed ") + currency.getCode() + ".";
-            Snackbar.make(listSelectableCurrencies, message, Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            Intent intent = new Intent();
+            if(isSelected) {
+                intent.putExtra(PARAM_POSITION, this.updatedPosition);
+                setResult(INSERT_RESULT_CODE, intent);
+            } else {
+                intent.putExtra(PARAM_POSITION, this.originalPosition);
+                setResult(REMOVE_RESULT_CODE, intent);
+            }
+            finish();
         }
     }
 }
