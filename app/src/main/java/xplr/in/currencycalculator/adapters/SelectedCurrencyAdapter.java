@@ -83,11 +83,11 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if(viewType == BASE_CURRENCY_TYPE_POSITION) {
             View itemView = inflater.inflate(R.layout.list_item_currency_calculate_base, parent, false);
-            return new BaseCurrencyViewHolder(this, itemView, currencyRepository, metaRepository, analytics);
+            return new BaseCurrencyViewHolder(this, itemView, onItemDragListener, currencyRepository, metaRepository, analytics);
         }
         if(viewType == TARGET_CURRENCY_TYPE_POSITION) {
             View itemView = inflater.inflate(R.layout.list_item_currency_calculate_target, parent, false);
-            return new TargetCurrencyViewHolder(itemView, currencyRepository, metaRepository, analytics);
+            return new TargetCurrencyViewHolder(itemView, onItemDragListener, currencyRepository, metaRepository, analytics);
         }
         if(viewType == ACTIONS_TYPE_POSITION) {
             View itemView = inflater.inflate(R.layout.list_item_currency_calculate_actions, parent, false);
@@ -169,10 +169,12 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
     public static class BaseCurrencyViewHolder extends AbstractCurrencyViewHolder {
         @Bind(R.id.base_currency) BaseCurrencyAmountEditorView baseCurrencyAmountEditorView;
+        @Bind(R.id.currency_drag_handle) View dragHandleView;
         private OptionalMoney optionalMoney;
 
         public BaseCurrencyViewHolder(final RecyclerView.Adapter adapter,
                                       View itemView,
+                                      final OnItemDragListener onItemDragListener,
                                       CurrencyRepository currencyRepository,
                                       CurrencyMetaRepository metaRepository,
                                       final Analytics analytics) {
@@ -193,6 +195,17 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
                     analytics.getMainActivityAnalytics().recordClearBaseAmount();
                 }
             });
+            if(onItemDragListener != null) {
+                dragHandleView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                            onItemDragListener.onItemDrag(BaseCurrencyViewHolder.this);
+                        }
+                        return false;
+                    }
+                });
+            }
         }
 
         @Override
@@ -275,8 +288,8 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     }
 
     public static class TargetCurrencyViewHolder extends CurrencyViewHolder {
-        public TargetCurrencyViewHolder(View itemView, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository, Analytics analytics) {
-            super(itemView, null, currencyRepository, metaRepository, analytics);
+        public TargetCurrencyViewHolder(View itemView, OnItemDragListener onItemDragListener, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository, Analytics analytics) {
+            super(itemView, onItemDragListener, currencyRepository, metaRepository, analytics);
             ButterKnife.bind(this, itemView);
         }
 
