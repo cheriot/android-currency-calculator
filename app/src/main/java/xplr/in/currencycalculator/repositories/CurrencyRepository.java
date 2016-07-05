@@ -183,6 +183,17 @@ public class CurrencyRepository {
         return database.fetchByQuery(Currency.class, TARGET_CURRENCY);
     }
 
+    public void swap(Currency a, Currency b) {
+        if(a.getPosition() == null || b.getPosition() == null) throw new IllegalStateException("Must have positions to swap.");
+        Log.v(LOG_TAG, "swap " + a.getPosition() + " and " + b.getPosition());
+        Integer aPos = a.getPosition();
+        a.setPosition(b.getPosition());
+        b.setPosition(aPos);
+        database.persist(a);
+        database.persist(b);
+        publishDataChange("swap");
+    }
+
     public void setBaseMoney(Money money) {
         setBaseMoney(new OptionalMoney(money.getCurrency(), money.getAmount().toPlainString()));
     }

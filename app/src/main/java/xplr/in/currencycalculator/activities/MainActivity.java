@@ -28,15 +28,18 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
+import xplr.in.currencycalculator.adapters.OnItemDragListener;
 import xplr.in.currencycalculator.adapters.SelectedCurrencyAdapter;
 import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.loaders.SelectedCurrenciesLoader;
+import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.sync.CurrencySyncTriggers;
 import xplr.in.currencycalculator.sync.SyncCompleteEvent;
 
-public class MainActivity extends AppCompatActivity implements CurrencyListActivity, LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends AppCompatActivity
+        implements CurrencyListActivity, LoaderManager.LoaderCallbacks<Cursor>, OnItemDragListener {
 
     private static String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int LOADER_ID = 1;
@@ -48,7 +51,12 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     @Inject CurrencyMetaRepository currencyMetaRepository;
     @Inject SelectedCurrencyAdapter currenciesAdapter;
     @Inject Analytics analytics;
-    Integer notifyItemRemovedPosition;
+
+    private ItemTouchHelper itemTouchHelper;
+    // Temporary data to notify the adapter of:
+    private Integer notifyItemRemovedPosition;
+    private Integer swapOriginPosition;
+    private Integer swapDestinationPosition;
 
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.list_currency_calculations) RecyclerView listCurrencyCalculations;
@@ -96,33 +104,9 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         listCurrencyCalculations.setLayoutManager(new LinearLayoutManager(this));
         listCurrencyCalculations.setItemAnimator(new DefaultItemAnimator());
 
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false; // no drag and drop
-            }
-
-            @Override
-            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                // Don't swipe away the base currency until that is supported.
-                if(viewHolder.getLayoutPosition() == SelectedCurrencyAdapter.BASE_CURRENCY_TYPE_POSITION) return 0;
-                // Don't swipe away the action buttons.
-                if(viewHolder.getLayoutPosition() == SelectedCurrencyAdapter.ACTIONS_TYPE_POSITION) return 0;
-                // Return 0 to prevent swipe on the targetCurrency currency. Two currencies must always be
-                // selected (base and targetCurrency) for the Rate and Trade screens to work.
-                if(recyclerView.getAdapter().getItemCount() <= 2) return 0;
-                return super.getSwipeDirs(recyclerView, viewHolder);
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                Log.v(LOG_TAG, "onSwiped " + swipeDir + " " + viewHolder.getItemId());
-                ((SelectedCurrencyAdapter.CurrencyViewHolder)viewHolder).onSwipe();
-                notifyItemRemovedPosition = viewHolder.getAdapterPosition();
-            }
-        };
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper = new ItemTouchHelper(new CalculatorItemTouchHelperCallback());
         itemTouchHelper.attachToRecyclerView(listCurrencyCalculations);
+        currenciesAdapter.setOnItemDragListener(this);
 
         getLoaderManager().initLoader(LOADER_ID, null, this);
 
@@ -192,12 +176,16 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
         if(notifyItemRemovedPosition != null) {
             currenciesAdapter.notifyItemRemoved(notifyItemRemovedPosition);
             notifyItemRemovedPosition = null;
+        } else if(swapOriginPosition != null && swapDestinationPosition != null) {
+            currenciesAdapter.notifyItemMoved(swapOriginPosition, swapDestinationPosition);
+            swapOriginPosition = null;
+            swapDestinationPosition = null;
         } else {
-            // TODO make this block specific to a currency selected and notify(0, oldViewPosition)
+            // TODO make this block specific to each case
             // Cases
-            // 1. Initialize activity.                     (don't really need to execute this)
-            // 2. New base currency selected.
-            // 3. Currency added by SelectCurrencyActivity (don't really need to execute this)
+            // 1. Initialize activity.                     (don't really need notify)
+            // 2. New base currency selected.              (notify of Move)
+            // 3. Currency added by SelectCurrencyActivity (notify of Insert)
             // Updating calculations requires rebinding everything. For some reason
             // #notifyDatasetChanged doesn't animate all the time like #notifyItemRangeChanged.
             currenciesAdapter.notifyItemRangeChanged(0, currenciesAdapter.getItemCount());
@@ -209,5 +197,57 @@ public class MainActivity extends AppCompatActivity implements CurrencyListActiv
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.v(LOG_TAG, "onLoaderReset");
         currenciesAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onItemDrag(RecyclerView.ViewHolder viewHolder) {
+        itemTouchHelper.startDrag(viewHolder);
+    }
+
+    /**
+     * Specify and coordinate swipe and drag.
+     */
+    private class CalculatorItemTouchHelperCallback extends ItemTouchHelper.SimpleCallback {
+        public CalculatorItemTouchHelperCallback() {
+            super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            Log.v(LOG_TAG, "onMove " + viewHolder.getAdapterPosition() + " to " + target.getAdapterPosition());
+
+            Currency inMotionCurrency = ((SelectedCurrencyAdapter.AbstractCurrencyViewHolder)viewHolder).getCurrency();
+            Currency destinationCurrency = ((SelectedCurrencyAdapter.AbstractCurrencyViewHolder)target).getCurrency();
+            if(destinationCurrency == null) return false; // Moving past the action buttons.
+            currencyRepository.swap(inMotionCurrency, destinationCurrency);
+            swapOriginPosition = viewHolder.getAdapterPosition();
+            swapDestinationPosition = target.getAdapterPosition();
+            return true;
+        }
+
+        @Override
+        public int getDragDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            if(viewHolder.getLayoutPosition() == SelectedCurrencyAdapter.ACTIONS_TYPE_POSITION) return 0;
+            return super.getDragDirs(recyclerView, viewHolder);
+        }
+
+        @Override
+        public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            // Don't swipe away the base currency until that is supported.
+            if(viewHolder.getLayoutPosition() == SelectedCurrencyAdapter.BASE_CURRENCY_TYPE_POSITION) return 0;
+            // Don't swipe away the action buttons.
+            if(viewHolder.getLayoutPosition() == SelectedCurrencyAdapter.ACTIONS_TYPE_POSITION) return 0;
+            // Return 0 to prevent swipe on the targetCurrency currency. Two currencies must always be
+            // selected (base and targetCurrency) for the Rate and Trade screens to work.
+            if(recyclerView.getAdapter().getItemCount() <= 2) return 0;
+            return super.getSwipeDirs(recyclerView, viewHolder);
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+            Log.v(LOG_TAG, "onSwiped " + swipeDir + " " + viewHolder.getItemId());
+            ((SelectedCurrencyAdapter.CurrencyViewHolder)viewHolder).onSwipe();
+            notifyItemRemovedPosition = viewHolder.getAdapterPosition();
+        }
     }
 }
