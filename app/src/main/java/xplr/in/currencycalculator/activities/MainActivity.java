@@ -249,5 +249,13 @@ public class MainActivity extends AppCompatActivity
             ((SelectedCurrencyAdapter.CurrencyViewHolder)viewHolder).onSwipe();
             notifyItemRemovedPosition = viewHolder.getAdapterPosition();
         }
+
+        @Override
+        public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+            // swipeRefreshLayout interferes with drag/swipe of RecyclerView rows. Turn it off
+            // during RecyclerView changes.
+            swipeRefreshLayout.setEnabled(viewHolder == null);
+            super.onSelectedChanged(viewHolder, actionState);
+        }
     }
 }
