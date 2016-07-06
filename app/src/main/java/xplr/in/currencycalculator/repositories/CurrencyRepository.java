@@ -33,8 +33,9 @@ import static android.text.TextUtils.isEmpty;
 public class CurrencyRepository {
 
     private static final String LOG_TAG = CurrencyRepository.class.getSimpleName();
-    public static final int BASE_CURRENCY_POSITION = 1;
-    public static final int TARGET_CURRENCY_POSITION = BASE_CURRENCY_POSITION + 1;
+    private static final int BASE_CURRENCY_POSITION = 1;
+    private static final int BASE_CURRENCY_OFFSET = 0;
+    private static final int TARGET_CURRENCY_OFFSET = BASE_CURRENCY_OFFSET + 1;
 
     private final SharedPreferences appSharedPrefs;
     private final CurrenciesDatabase database;
@@ -61,16 +62,12 @@ public class CurrencyRepository {
             .orderBy(Currency.POSITION.asc())
             .freeze();
 
-    static final Query CALCULATED_CURRENCIES = SELECTED_CURRENCIES
-            .where(Currency.POSITION.gt(BASE_CURRENCY_POSITION))
-            .freeze();
-
     static final Query BASE_CURRENCY = SELECTED_CURRENCIES
-            .where(Currency.POSITION.eq(BASE_CURRENCY_POSITION))
+            .limit(1, BASE_CURRENCY_OFFSET)
             .freeze();
 
     static final Query TARGET_CURRENCY = SELECTED_CURRENCIES
-            .where(Currency.POSITION.eq(TARGET_CURRENCY_POSITION))
+            .limit(1, TARGET_CURRENCY_OFFSET)
             .freeze();
 
     public Cursor findSelectedCursor() {
@@ -165,10 +162,6 @@ public class CurrencyRepository {
 
     public OptionalMoney instantiateBaseMoney(SquidCursor cursor) {
         Currency baseCurrency = new Currency(cursor);
-        if(baseCurrency.getPosition() != BASE_CURRENCY_POSITION) {
-            String msg = "Cannot construct baseMoney out of the currency " + baseCurrency;
-            throw new IllegalStateException(msg);
-        }
         return constructBaseMoney(baseCurrency);
     }
 
