@@ -21,14 +21,14 @@ import xplr.in.currencycalculator.presenters.ComparisonPresenter;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView;
-import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
+import xplr.in.currencycalculator.views.CurrencyAmountChangeListener;
 import xplr.in.currencycalculator.views.TradeFormView;
 
 /**
  * Created by cheriot on 5/24/16.
  */
 public class TradeComparisonActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<ComparisonPresenter>, CurrencyAmountEditorView.CurrencyAmountChangeListener {
+        implements LoaderManager.LoaderCallbacks<ComparisonPresenter>, CurrencyAmountChangeListener {
     private static final String LOG_TAG = TradeComparisonActivity.class.getSimpleName();
     private static final int TRADE_COMPARISON_LOADER_ID = 5;
     @Inject CurrencyRepository currencyRepository;

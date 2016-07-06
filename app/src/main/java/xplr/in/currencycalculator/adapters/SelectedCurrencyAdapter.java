@@ -30,7 +30,7 @@ import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView;
 import xplr.in.currencycalculator.views.ClearableEditText;
-import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
+import xplr.in.currencycalculator.views.CurrencyAmountChangeListener;
 
 /**
  * Created by cheriot on 5/9/16.
@@ -66,16 +66,16 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
     public void swapCursor(SquidCursor newCursor) {
         this.cursor = newCursor;
-        if(this.cursor != null) {
-            cursor.moveToFirst(); // The base currency is first in the result set.
-            baseMoney = currencyRepository.instantiateBaseMoney(cursor);
-        }
+        if(this.cursor != null) refreshBaseMoney();
+    }
+
+    private void refreshBaseMoney() {
+        cursor.moveToFirst(); // The base currency is first in the result set.
+        baseMoney = currencyRepository.instantiateBaseMoney(cursor);
     }
 
     @Override
     public int getItemViewType(int position) {
-//        if(position == BASE_CURRENCY_TYPE_POSITION) return BASE_CURRENCY_TYPE_POSITION;
-//        if(position == TARGET_CURRENCY_TYPE_POSITION) return TARGET_CURRENCY_TYPE_POSITION;
         if(position == ACTIONS_TYPE_POSITION) return ACTIONS_TYPE_POSITION;
         return OTHER_CURRENCY_TYPE;
     }
@@ -83,21 +83,13 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     @Override
     public AbstractCurrencyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-//        if(viewType == BASE_CURRENCY_TYPE_POSITION) {
-//            View itemView = inflater.inflate(R.layout.list_item_currency_calculate_base, parent, false);
-//            return new BaseCurrencyViewHolder(this, itemView, onItemDragListener, currencyRepository, metaRepository, analytics);
-//        }
-//        if(viewType == TARGET_CURRENCY_TYPE_POSITION) {
-//            View itemView = inflater.inflate(R.layout.list_item_currency_calculate_target, parent, false);
-//            return new TargetCurrencyViewHolder(itemView, onItemDragListener, currencyRepository, metaRepository, analytics);
-//        }
         if(viewType == ACTIONS_TYPE_POSITION) {
             View itemView = inflater.inflate(R.layout.list_item_currency_calculate_actions, parent, false);
             return new ActionsViewHolder(itemView, currencyRepository, metaRepository, analytics);
         }
         // OTHER_CURRENCY_TYPE
         View itemView = inflater.inflate(R.layout.list_item_currency_calculate_other, parent, false);
-        return new CurrencyViewHolder(itemView, onItemDragListener, currencyRepository, metaRepository, analytics);
+        return new CurrencyViewHolder(this, itemView, onItemDragListener, currencyRepository, metaRepository, analytics);
     }
 
     @Override
@@ -138,7 +130,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
      * the item that borders the buttons to the other side of the buttons. Otherwise, RecyclerView
      * will assume that all rows other than those explicitly moved will maintain their order.
      *
-     * Or moving across multiple rows at once doesn't work and this happens to solve that.
+     * Or moving across multiple rows at once doesn't work and this happens to do it step by step.
      */
     public void notifyItemMovedWithFixedRow(int fromViewPosition, int toViewPosition) {
         Log.v(LOG_TAG, "notifyItemMoved position " + fromViewPosition + " " + toViewPosition);
@@ -154,6 +146,12 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             Log.v(LOG_TAG, "notifyItemMoved position " + (ACTIONS_TYPE_POSITION-1) + " " + (ACTIONS_TYPE_POSITION));
             notifyItemChanged(ACTIONS_TYPE_POSITION-1, ACTIONS_TYPE_POSITION);
         }
+    }
+
+    public void notifyCalculated(String payload) {
+        Log.v(LOG_TAG, "notifyCalculated notifyItemRangeChanged" + BASE_CURRENCY_TYPE_POSITION+1 + " to " + getItemCount());
+        refreshBaseMoney();
+        notifyItemRangeChanged(BASE_CURRENCY_TYPE_POSITION+1, getItemCount(), payload);
     }
 
     private Currency getCurrency(int viewPosition) {
@@ -203,7 +201,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             super(itemView, currencyRepository, metaRepository, analytics);
             ButterKnife.bind(this, itemView);
             baseCurrencyAmountEditorView.init(currencyRepository, metaRepository);
-            baseCurrencyAmountEditorView.setCurrencyAmountChangeListener(new CurrencyAmountEditorView.CurrencyAmountChangeListener() {
+            baseCurrencyAmountEditorView.setCurrencyAmountChangeListener(new CurrencyAmountChangeListener() {
                 @Override
                 public void onCurrencyAmountChange() {
                     // BaseCurrencyAmountEditorView will have persisted the new base amount. Trigger
@@ -250,53 +248,85 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
      * wrapper.
      */
     public static class CurrencyViewHolder extends AbstractCurrencyViewHolder implements View.OnClickListener {
+        private static final String CHANGE_RECALCULATE = "recalculate";
+        @Bind(R.id.currency_drag_handle) View dragHandleView;
+        @Bind(R.id.currency_flag) ImageView flagImage;
         @Bind(R.id.currency_name) TextView nameText;
         @Bind(R.id.calculated_amount) TextView calculatedAmount;
-        @Bind(R.id.currency_flag) ImageView flagImage;
-        @Bind(R.id.currency_drag_handle) View dragHandleView;
-        private OptionalMoney convertedMoney;
+        @Bind(R.id.edit_amount) ClearableEditText editAmount;
+
+        private SelectedCurrencyAdapter adapter;
+        private OptionalMoney optionalMoney;
         private CurrencyMeta meta;
         private int defaultTextColor;
+        private ClearableEditText.TextChangeListener textChangeListener = new ClearableEditText.TextChangeListener() {
+            @Override
+            public void onTextChanged(String text) {
+                Log.v(LOG_TAG, "CurrencyViewHolder#onTextChanged " + optionalMoney.getCurrency().getCode() + " " + text);
+                optionalMoney.setAmount(text);
+                currencyRepository.setBaseMoney(optionalMoney);
+                // Trigger rebind so currency conversions will be recalculated.
+                adapter.notifyCalculated(CHANGE_RECALCULATE);
+            }
+        };
+        private ClearableEditText.TextClearListener textClearListener = new ClearableEditText.TextClearListener() {
+            @Override
+            public void onTextCleared() {
+                Log.v(LOG_TAG, "CurrencyViewHolder onTextCleared");
+                CurrencyViewHolder.this.analytics.getMainActivityAnalytics().recordClearBaseAmount();
+            }
+        };
 
         public CurrencyViewHolder(
+                SelectedCurrencyAdapter adapter,
                 View itemView,
                 final OnItemDragListener onItemDragListener,
                 CurrencyRepository currencyRepository,
                 CurrencyMetaRepository metaRepository,
                 Analytics analytics) {
+
             super(itemView, currencyRepository, metaRepository, analytics);
+            this.adapter = adapter;
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
-            if(onItemDragListener != null) {
-                dragHandleView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
-                            onItemDragListener.onItemDrag(CurrencyViewHolder.this);
-                        }
-                        return false;
-                    }
-                });
-            }
+            // remember the system default so we can set it back
             defaultTextColor = nameText.getTextColors().getDefaultColor();
+            dragHandleView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                        onItemDragListener.onItemDrag(CurrencyViewHolder.this);
+                    }
+                    return false;
+                }
+            });
         }
 
         public void bindView(Currency currency, OptionalMoney baseOptionalMoney) {
-            nameText.setText(currency.getName());
-
             meta = metaRepository.findByCode(currency.getCode());
-            int resourceId = meta.getFlagResourceId(flagSize());
-            Drawable drawable = itemView.getResources().getDrawable(resourceId);
-            flagImage.setImageDrawable(drawable);
-
-            convertedMoney = baseOptionalMoney.convertTo(currency);
-            calculatedAmount.setText(convertedMoney.getAmountFormatted());
+            optionalMoney = baseOptionalMoney.convertTo(currency);
+            nameText.setText(currency.getName());
+            calculatedAmount.setText(optionalMoney.getAmountFormatted());
 
             updateTypeForPosition();
         }
 
         public void updateTypeForPosition() {
-            if(getAdapterPosition() == BASE_CURRENCY_TYPE_POSITION || getAdapterPosition() == TARGET_CURRENCY_TYPE_POSITION) {
+            if(isBase()) {
+                Log.v(LOG_TAG, "updateTypeForPosition init editAmount " + optionalMoney.getCurrency().getCode());
+                makeEditable(true);
+                editAmount.removeTextChangedListener(textChangeListener);
+                editAmount.setText(optionalMoney.getAmount());
+                editAmount.addTextChangedListener(textChangeListener);
+                editAmount.setTextClearListener(textClearListener);
+            } else {
+                makeEditable(false);
+                // Remove listeners to prevent erronious callbacks.
+                editAmount.removeTextChangedListener(textChangeListener);
+                editAmount.setTextClearListener(null);
+            }
+
+            if(isBase() || isTarget()) {
                 // TODO how to draw on the surface below the row?
                 itemView.setBackgroundColor(itemView.getResources().getColor(R.color.colorWhite));
                 largeDark(nameText);
@@ -308,6 +338,14 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
                 smallGray(calculatedAmount);
                 styleFlagImage(CurrencyMeta.FlagSize.NORMAL, 40);
             }
+        }
+
+        private boolean isBase() {
+            return getAdapterPosition() == BASE_CURRENCY_TYPE_POSITION;
+        }
+
+        private boolean isTarget() {
+            return getAdapterPosition() == TARGET_CURRENCY_TYPE_POSITION;
         }
 
         private void styleFlagImage(CurrencyMeta.FlagSize flagSize, int maxWidthDp) {
@@ -331,19 +369,24 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             tv.setTextColor(defaultTextColor);
         }
 
+        private void makeEditable(boolean isEditable) {
+            editAmount.setVisibility(isEditable ? View.VISIBLE : View.GONE);
+            calculatedAmount.setVisibility(isEditable ? View.GONE : View.VISIBLE);
+        }
+
         public void onSwipe() {
-            analytics.getMainActivityAnalytics().recordSwipeRemovedCurrency(convertedMoney.getCurrency());
-            currencyRepository.updateSelection(convertedMoney.getCurrency().getId(), false);
+            analytics.getMainActivityAnalytics().recordSwipeRemovedCurrency(optionalMoney.getCurrency());
+            currencyRepository.updateSelection(optionalMoney.getCurrency().getId(), false);
         }
 
         @Override
         public void onClick(View v) {
-            analytics.getMainActivityAnalytics().recordSelectCurrency(convertedMoney.getCurrency());
-            Log.v(LOG_TAG, "Select a new base " + convertedMoney);
+            analytics.getMainActivityAnalytics().recordSelectCurrency(optionalMoney.getCurrency());
+            Log.v(LOG_TAG, "Select a new base " + optionalMoney);
             // The calculated amount likely has more decimal places than we display. Set the base
             // amount to be what the user sees.
-            convertedMoney.roundToCurrency();
-            currencyRepository.setBaseMoney(convertedMoney);
+            optionalMoney.roundToCurrency();
+            currencyRepository.setBaseMoney(optionalMoney);
         }
 
         public CurrencyMeta.FlagSize flagSize() {
@@ -352,19 +395,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
         @Override
         public Currency getCurrency() {
-            return convertedMoney.getCurrency();
-        }
-    }
-
-    public static class TargetCurrencyViewHolder extends CurrencyViewHolder {
-        public TargetCurrencyViewHolder(View itemView, OnItemDragListener onItemDragListener, CurrencyRepository currencyRepository, CurrencyMetaRepository metaRepository, Analytics analytics) {
-            super(itemView, onItemDragListener, currencyRepository, metaRepository, analytics);
-            ButterKnife.bind(this, itemView);
-        }
-
-        @Override
-        public CurrencyMeta.FlagSize flagSize() {
-            return CurrencyMeta.FlagSize.SQUARE;
+            return optionalMoney.getCurrency();
         }
     }
 

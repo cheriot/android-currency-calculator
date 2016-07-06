@@ -201,14 +201,14 @@ public class CurrencyRepository {
     public synchronized void setBaseMoney(OptionalMoney optionalMoney) {
         // synchronized so setting positions and amount will be atomic
         Log.v(LOG_TAG, "setBaseMoney " + optionalMoney.getAmount() + " " + optionalMoney.getCurrency().getName());
-        setBaseAmount(optionalMoney.getCurrency(), optionalMoney.getAmount());
+        setBaseAmount(optionalMoney.getAmount());
         if(optionalMoney.getCurrency().getPosition() != BASE_CURRENCY_POSITION) {
             insertAtPosition(BASE_CURRENCY_POSITION, optionalMoney.getCurrency());
         }
     }
 
-    private void setBaseAmount(Currency baseCurrency, String amount) {
-        Log.v(LOG_TAG, "setBaseAmount " + baseCurrency.getCode() + " " + amount);
+    private void setBaseAmount(String amount) {
+        Log.v(LOG_TAG, "setBaseAmount " + amount);
         SharedPreferences.Editor editor = appSharedPrefs.edit();
         editor.putString(BASE_CURRENCY_AMOUNT_KEY, amount);
         editor.apply();

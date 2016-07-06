@@ -39,7 +39,7 @@ import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
 import xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView;
 import xplr.in.currencycalculator.views.ClearableEditText;
-import xplr.in.currencycalculator.views.CurrencyAmountEditorView;
+import xplr.in.currencycalculator.views.CurrencyAmountChangeListener;
 import xplr.in.currencycalculator.views.TradeFormView;
 
 /**
@@ -47,7 +47,7 @@ import xplr.in.currencycalculator.views.TradeFormView;
  */
 public class RateComparisonActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<ComparisonPresenter>,
-        CurrencyAmountEditorView.CurrencyAmountChangeListener,
+        CurrencyAmountChangeListener,
         AdapterView.OnItemSelectedListener {
 
     private static final String LOG_TAG = RateComparisonActivity.class.getSimpleName();

@@ -119,7 +119,7 @@ public class TradeFormView extends AbstractCompareFormView<TradeCompare> impleme
         tradeFormInstructionsView.setGravity(Gravity.NO_GRAVITY);
     }
 
-    class TradeAmountChangeListener implements CurrencyAmountEditorView.CurrencyAmountChangeListener {
+    class TradeAmountChangeListener implements CurrencyAmountChangeListener {
         @Override
         public void onCurrencyAmountChange() {
             Log.v(LOG_TAG, "onCurrencyAmountChange targetCurrency");

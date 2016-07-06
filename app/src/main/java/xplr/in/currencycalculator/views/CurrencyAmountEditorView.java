@@ -54,8 +54,7 @@ public class CurrencyAmountEditorView extends LinearLayout {
         textChangeListener = new ClearableEditText.TextChangeListener() {
             @Override
             public void onTextChanged(String text) {
-                Log.v(LOG_TAG, "TEXT " + text);
-                if(optionalMoney != null) setAmount(optionalMoney, text);
+                if(optionalMoney != null) updateAmount(optionalMoney, text);
                 if(changeListener != null) changeListener.onCurrencyAmountChange();
             }
         };
@@ -136,7 +135,7 @@ public class CurrencyAmountEditorView extends LinearLayout {
         }
     }
 
-    protected void setAmount(OptionalMoney optionalMoney, String amount) {
+    protected void updateAmount(OptionalMoney optionalMoney, String amount) {
         optionalMoney.setAmount(amount);
     }
 
@@ -146,10 +145,6 @@ public class CurrencyAmountEditorView extends LinearLayout {
 
     public CurrencyRepository getCurrencyRepository() {
         return currencyRepository;
-    }
-
-    public interface CurrencyAmountChangeListener {
-        void onCurrencyAmountChange();
     }
 
     public ClearableEditText getCurrencyAmount() {
