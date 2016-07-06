@@ -1,10 +1,12 @@
 package xplr.in.currencycalculator.adapters;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -242,12 +244,19 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         }
     }
 
+    /**
+     * A single ViewHolder that can bind itself as a base, target, or other currency. RecyclerView
+     * will turn moves into adds if the ViewHolder changes type so everything has to have a single
+     * wrapper.
+     */
     public static class CurrencyViewHolder extends AbstractCurrencyViewHolder implements View.OnClickListener {
         @Bind(R.id.currency_name) TextView nameText;
-        @Bind(R.id.currency_rate) TextView rateText;
+        @Bind(R.id.calculated_amount) TextView calculatedAmount;
         @Bind(R.id.currency_flag) ImageView flagImage;
         @Bind(R.id.currency_drag_handle) View dragHandleView;
         private OptionalMoney convertedMoney;
+        private CurrencyMeta meta;
+        private int defaultTextColor;
 
         public CurrencyViewHolder(
                 View itemView,
@@ -269,18 +278,57 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
                     }
                 });
             }
+            defaultTextColor = nameText.getTextColors().getDefaultColor();
         }
 
         public void bindView(Currency currency, OptionalMoney baseOptionalMoney) {
             nameText.setText(currency.getName());
 
-            CurrencyMeta meta = metaRepository.findByCode(currency.getCode());
+            meta = metaRepository.findByCode(currency.getCode());
             int resourceId = meta.getFlagResourceId(flagSize());
             Drawable drawable = itemView.getResources().getDrawable(resourceId);
             flagImage.setImageDrawable(drawable);
 
             convertedMoney = baseOptionalMoney.convertTo(currency);
-            rateText.setText(convertedMoney.getAmountFormatted());
+            calculatedAmount.setText(convertedMoney.getAmountFormatted());
+
+            updateTypeForPosition();
+        }
+
+        public void updateTypeForPosition() {
+            if(getAdapterPosition() == BASE_CURRENCY_TYPE_POSITION || getAdapterPosition() == TARGET_CURRENCY_TYPE_POSITION) {
+                // TODO how to draw on the surface below the row?
+                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.colorWhite));
+                largeDark(nameText);
+                largeDark(calculatedAmount);
+                styleFlagImage(CurrencyMeta.FlagSize.SQUARE, 50);
+            } else {
+                itemView.setBackgroundColor(Color.TRANSPARENT);
+                smallGray(nameText);
+                smallGray(calculatedAmount);
+                styleFlagImage(CurrencyMeta.FlagSize.NORMAL, 40);
+            }
+        }
+
+        private void styleFlagImage(CurrencyMeta.FlagSize flagSize, int maxWidthDp) {
+            int resourceId = meta.getFlagResourceId(flagSize);
+            Drawable drawable = itemView.getResources().getDrawable(resourceId);
+            flagImage.setImageDrawable(drawable);
+            float maxWidth = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    maxWidthDp,
+                    itemView.getResources().getDisplayMetrics());
+            flagImage.setMaxWidth(Math.round(maxWidth));
+        }
+
+        private void largeDark(TextView tv) {
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+            tv.setTextColor(Color.BLACK);
+        }
+
+        private void smallGray(TextView tv) {
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            tv.setTextColor(defaultTextColor);
         }
 
         public void onSwipe() {

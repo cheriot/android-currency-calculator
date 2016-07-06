@@ -37,10 +37,14 @@ public class SelectedCurrencyItemAnimator extends DefaultItemAnimator {
     @Override
     public boolean animateMove(RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
         boolean result = false;
-        if(fixedPosition != holder.getAdapterPosition()) {
-            result = super.animateMove(holder, fromX, fromY, toX, toY);
-        } else {
+        if(fixedPosition == holder.getAdapterPosition()) {
             Log.v(LOG_TAG, "animateMove skipped");
+            return false;
+        }
+        result = super.animateMove(holder, fromX, fromY, toX, toY);
+        if(holder instanceof SelectedCurrencyAdapter.CurrencyViewHolder) {
+            SelectedCurrencyAdapter.CurrencyViewHolder cvh = (SelectedCurrencyAdapter.CurrencyViewHolder)holder;
+            cvh.updateTypeForPosition();
         }
         Log.v(LOG_TAG, "animateMove " + holder.getItemId() + " @ " + holder.getAdapterPosition() + " " + result + " {" + fromX + "," + fromY + "} to {" + toX + "," + toY + "}");
         return result;
@@ -48,9 +52,9 @@ public class SelectedCurrencyItemAnimator extends DefaultItemAnimator {
 
     @Override
     public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder, int fromX, int fromY, int toX, int toY) {
-        //if(fixedPosition == oldHolder.getAdapterPosition()) return false;
         boolean result = super.animateChange(oldHolder, newHolder, fromX, fromY, toX, toY);
-        Log.v(LOG_TAG, "animateChange " + oldHolder.getItemId() + " @ " + oldHolder.getAdapterPosition() + " to " + newHolder.getItemId() + " @ " + newHolder.getAdapterPosition() + " " + result + " {" + fromX + "," + fromY + "} to {" + toX + "," + toY + "}");
+        // Fade in new numbers?
+        Log.v(LOG_TAG, "animateChange inner " + oldHolder.getItemId() + " @ " + oldHolder.getAdapterPosition() + " to " + newHolder.getItemId() + " @ " + newHolder.getAdapterPosition() + " " + result + " {" + fromX + "," + fromY + "} to {" + toX + "," + toY + "}");
         return result;
     }
 
@@ -91,9 +95,8 @@ public class SelectedCurrencyItemAnimator extends DefaultItemAnimator {
 
     @Override
     public boolean animateChange(@NonNull RecyclerView.ViewHolder oldHolder, @NonNull RecyclerView.ViewHolder newHolder, @NonNull ItemHolderInfo preInfo, @NonNull ItemHolderInfo postInfo) {
-        //if(fixedPosition == oldHolder.getAdapterPosition()) return false;
         boolean result = super.animateChange(oldHolder, newHolder, preInfo, postInfo);
-        Log.v(LOG_TAG, "animateChange " + oldHolder.getAdapterPosition() + " to " + newHolder.getAdapterPosition() + " " + result);
+        Log.v(LOG_TAG, "animateChange outer " + oldHolder.getAdapterPosition() + " to " + newHolder.getAdapterPosition() + " " + result);
         return result;
     }
 

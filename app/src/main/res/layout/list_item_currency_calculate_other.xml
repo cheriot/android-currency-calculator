@@ -41,7 +41,7 @@
         tools:text="US Dollar"/>
 
     <TextView
-        android:id="@+id/currency_rate"
+        android:id="@+id/calculated_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0"
