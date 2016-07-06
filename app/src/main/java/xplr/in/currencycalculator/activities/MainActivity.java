@@ -9,7 +9,6 @@ import android.support.annotation.Keep;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -30,6 +29,7 @@ import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.OnItemDragListener;
 import xplr.in.currencycalculator.adapters.SelectedCurrencyAdapter;
+import xplr.in.currencycalculator.adapters.SelectedCurrencyItemAnimator;
 import xplr.in.currencycalculator.analytics.Analytics;
 import xplr.in.currencycalculator.loaders.SelectedCurrenciesLoader;
 import xplr.in.currencycalculator.models.Currency;
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity
 
         listCurrencyCalculations.setAdapter(currenciesAdapter);
         listCurrencyCalculations.setLayoutManager(new LinearLayoutManager(this));
-        listCurrencyCalculations.setItemAnimator(new DefaultItemAnimator());
+        listCurrencyCalculations.setItemAnimator(new SelectedCurrencyItemAnimator(SelectedCurrencyAdapter.ACTIONS_TYPE_POSITION));
 
         itemTouchHelper = new ItemTouchHelper(new CalculatorItemTouchHelperCallback());
         itemTouchHelper.attachToRecyclerView(listCurrencyCalculations);
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity
 
         getLoaderManager().initLoader(LOADER_ID, null, this);
 
-        // TODO There's a "30 frames skipped" message...
+        // TODO There's a "30 frames skipped" message on the emulator...
         // Setup the sync account on another thread?
         // Create/Upgrade/Init database on another thread?
         // Init filesystem repositories on another thread?
@@ -153,11 +153,12 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == SELECT_CURRENCY_REQUEST_CODE) {
             int position = data.getIntExtra(SelectCurrencyActivity.PARAM_POSITION, -1);
-            Log.v(LOG_TAG, "onActivityResult position " + position);
             if(resultCode == SelectCurrencyActivity.INSERT_RESULT_CODE) {
+                Log.v(LOG_TAG, "notifyCurrencyInserted position " + position);
                 currenciesAdapter.notifyCurrencyInserted(position);
             }
             if(resultCode == SelectCurrencyActivity.REMOVE_RESULT_CODE) {
+                Log.v(LOG_TAG, "notifyCurrencyRemoved position " + position);
                 currenciesAdapter.notifyCurrencyRemoved(position);
             }
         }
@@ -174,10 +175,12 @@ public class MainActivity extends AppCompatActivity
         SquidCursor cursor = (SquidCursor)data;
         currenciesAdapter.swapCursor(cursor);
         if(notifyItemRemovedPosition != null) {
+            Log.v(LOG_TAG, "notifyItemRemoved position " + notifyItemRemovedPosition);
             currenciesAdapter.notifyItemRemoved(notifyItemRemovedPosition);
             notifyItemRemovedPosition = null;
         } else if(swapOriginPosition != null && swapDestinationPosition != null) {
-            currenciesAdapter.notifyItemMoved(swapOriginPosition, swapDestinationPosition);
+            currenciesAdapter.notifyItemMovedWithFixedRow(swapOriginPosition, swapDestinationPosition);
+
             swapOriginPosition = null;
             swapDestinationPosition = null;
         } else {
@@ -188,6 +191,7 @@ public class MainActivity extends AppCompatActivity
             // 3. Currency added by SelectCurrencyActivity (notify of Insert)
             // Updating calculations requires rebinding everything. For some reason
             // #notifyDatasetChanged doesn't animate all the time like #notifyItemRangeChanged.
+            Log.v(LOG_TAG, "notifyItemRangeChanged 0 to " + currenciesAdapter.getItemCount());
             currenciesAdapter.notifyItemRangeChanged(0, currenciesAdapter.getItemCount());
             listCurrencyCalculations.scrollToPosition(0);
         }
@@ -201,6 +205,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onItemDrag(RecyclerView.ViewHolder viewHolder) {
+        Log.v(LOG_TAG, "onItemDrag " + viewHolder.getAdapterPosition() + " " + viewHolder.itemView.getTop());
         itemTouchHelper.startDrag(viewHolder);
     }
 
@@ -216,12 +221,16 @@ public class MainActivity extends AppCompatActivity
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
             Log.v(LOG_TAG, "onMove " + viewHolder.getAdapterPosition() + " to " + target.getAdapterPosition());
 
+            // Is there a move in progress?
+            if(swapOriginPosition != null || swapDestinationPosition != null) return false;
+
             Currency inMotionCurrency = ((SelectedCurrencyAdapter.AbstractCurrencyViewHolder)viewHolder).getCurrency();
             Currency destinationCurrency = ((SelectedCurrencyAdapter.AbstractCurrencyViewHolder)target).getCurrency();
             if(destinationCurrency == null) return false; // Moving past the action buttons.
             currencyRepository.swap(inMotionCurrency, destinationCurrency);
             swapOriginPosition = viewHolder.getAdapterPosition();
             swapDestinationPosition = target.getAdapterPosition();
+            // Should this return false until after persisting and notifying the adapter?
             return true;
         }
 

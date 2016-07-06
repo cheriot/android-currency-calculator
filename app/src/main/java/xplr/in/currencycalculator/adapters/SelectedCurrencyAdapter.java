@@ -72,8 +72,8 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
     @Override
     public int getItemViewType(int position) {
-        if(position == BASE_CURRENCY_TYPE_POSITION) return BASE_CURRENCY_TYPE_POSITION;
-        if(position == TARGET_CURRENCY_TYPE_POSITION) return TARGET_CURRENCY_TYPE_POSITION;
+//        if(position == BASE_CURRENCY_TYPE_POSITION) return BASE_CURRENCY_TYPE_POSITION;
+//        if(position == TARGET_CURRENCY_TYPE_POSITION) return TARGET_CURRENCY_TYPE_POSITION;
         if(position == ACTIONS_TYPE_POSITION) return ACTIONS_TYPE_POSITION;
         return OTHER_CURRENCY_TYPE;
     }
@@ -81,14 +81,14 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     @Override
     public AbstractCurrencyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        if(viewType == BASE_CURRENCY_TYPE_POSITION) {
-            View itemView = inflater.inflate(R.layout.list_item_currency_calculate_base, parent, false);
-            return new BaseCurrencyViewHolder(this, itemView, onItemDragListener, currencyRepository, metaRepository, analytics);
-        }
-        if(viewType == TARGET_CURRENCY_TYPE_POSITION) {
-            View itemView = inflater.inflate(R.layout.list_item_currency_calculate_target, parent, false);
-            return new TargetCurrencyViewHolder(itemView, onItemDragListener, currencyRepository, metaRepository, analytics);
-        }
+//        if(viewType == BASE_CURRENCY_TYPE_POSITION) {
+//            View itemView = inflater.inflate(R.layout.list_item_currency_calculate_base, parent, false);
+//            return new BaseCurrencyViewHolder(this, itemView, onItemDragListener, currencyRepository, metaRepository, analytics);
+//        }
+//        if(viewType == TARGET_CURRENCY_TYPE_POSITION) {
+//            View itemView = inflater.inflate(R.layout.list_item_currency_calculate_target, parent, false);
+//            return new TargetCurrencyViewHolder(itemView, onItemDragListener, currencyRepository, metaRepository, analytics);
+//        }
         if(viewType == ACTIONS_TYPE_POSITION) {
             View itemView = inflater.inflate(R.layout.list_item_currency_calculate_actions, parent, false);
             return new ActionsViewHolder(itemView, currencyRepository, metaRepository, analytics);
@@ -129,9 +129,29 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         notifyItemRemoved(viewPosition(currencyPosition));
     }
 
-    public void notifyCurrencyMove(int originalCurrencyPosition, int destinationCurrencyPosition) {
-        Log.v(LOG_TAG, "notifyCurrencyMove " + originalCurrencyPosition + " to " + destinationCurrencyPosition);
-        notifyItemMoved(viewPosition(originalCurrencyPosition), viewPosition(destinationCurrencyPosition));
+    /**
+     * notifyItemMoved is final, so use this method and NEVER use notifyItemMoved
+     *
+     * When moving an item from one side of the fixed position action button row, we need to move
+     * the item that borders the buttons to the other side of the buttons. Otherwise, RecyclerView
+     * will assume that all rows other than those explicitly moved will maintain their order.
+     *
+     * Or moving across multiple rows at once doesn't work and this happens to solve that.
+     */
+    public void notifyItemMovedWithFixedRow(int fromViewPosition, int toViewPosition) {
+        Log.v(LOG_TAG, "notifyItemMoved position " + fromViewPosition + " " + toViewPosition);
+        notifyItemMoved(fromViewPosition, toViewPosition);
+        if(fromViewPosition > ACTIONS_TYPE_POSITION && toViewPosition < ACTIONS_TYPE_POSITION) {
+            // An item below the buttons has moved above it. To make space, move the item above the
+            // buttons to below it.
+            Log.v(LOG_TAG, "notifyItemMoved position " + (ACTIONS_TYPE_POSITION+1) + " " + (ACTIONS_TYPE_POSITION));
+            notifyItemMoved(ACTIONS_TYPE_POSITION+1, ACTIONS_TYPE_POSITION);
+        } else if(fromViewPosition < ACTIONS_TYPE_POSITION && toViewPosition > ACTIONS_TYPE_POSITION) {
+            // An item above the buttons has moved below it. To fill space, move the item below the
+            // buttons to above it.
+            Log.v(LOG_TAG, "notifyItemMoved position " + (ACTIONS_TYPE_POSITION-1) + " " + (ACTIONS_TYPE_POSITION));
+            notifyItemChanged(ACTIONS_TYPE_POSITION-1, ACTIONS_TYPE_POSITION);
+        }
     }
 
     private Currency getCurrency(int viewPosition) {
@@ -186,6 +206,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
                 public void onCurrencyAmountChange() {
                     // BaseCurrencyAmountEditorView will have persisted the new base amount. Trigger
                     // a rebind so target and other rows will convert the new amount.
+                    Log.v(LOG_TAG, "notifyDataSetChanged currencyAmountChangeListener");
                     adapter.notifyDataSetChanged();
                 }
             });

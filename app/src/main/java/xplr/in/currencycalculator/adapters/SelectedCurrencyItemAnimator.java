@@ -14,9 +14,21 @@ import java.util.List;
 public class SelectedCurrencyItemAnimator extends DefaultItemAnimator {
 
     private static final String LOG_TAG = SelectedCurrencyItemAnimator.class.getSimpleName();
+    private final int fixedPosition;
+
+    public SelectedCurrencyItemAnimator(int fixedPosition) {
+        this.fixedPosition = fixedPosition;
+        setSupportsChangeAnimations(true);
+//        long duration = 1000;
+//        setAddDuration(duration);
+//        setChangeDuration(duration);
+//        setMoveDuration(duration);
+//        setRemoveDuration(duration);
+    }
 
     @Override
     public boolean animateAdd(RecyclerView.ViewHolder holder) {
+        //if(fixedPosition == holder.getAdapterPosition()) return false;
         boolean result = super.animateAdd(holder);
         Log.v(LOG_TAG, "animateAdd " + holder.getAdapterPosition() + " " + result);
         return result;
@@ -24,15 +36,21 @@ public class SelectedCurrencyItemAnimator extends DefaultItemAnimator {
 
     @Override
     public boolean animateMove(RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
-        boolean result = super.animateMove(holder, fromX, fromY, toX, toY);
-        Log.v(LOG_TAG, "animateMove " + holder.getAdapterPosition() + " " + result);
+        boolean result = false;
+        if(fixedPosition != holder.getAdapterPosition()) {
+            result = super.animateMove(holder, fromX, fromY, toX, toY);
+        } else {
+            Log.v(LOG_TAG, "animateMove skipped");
+        }
+        Log.v(LOG_TAG, "animateMove " + holder.getItemId() + " @ " + holder.getAdapterPosition() + " " + result + " {" + fromX + "," + fromY + "} to {" + toX + "," + toY + "}");
         return result;
     }
 
     @Override
     public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder, int fromX, int fromY, int toX, int toY) {
+        //if(fixedPosition == oldHolder.getAdapterPosition()) return false;
         boolean result = super.animateChange(oldHolder, newHolder, fromX, fromY, toX, toY);
-        Log.v(LOG_TAG, "animateChange " + oldHolder.getAdapterPosition() + " to " + newHolder.getAdapterPosition() + " " + result);
+        Log.v(LOG_TAG, "animateChange " + oldHolder.getItemId() + " @ " + oldHolder.getAdapterPosition() + " to " + newHolder.getItemId() + " @ " + newHolder.getAdapterPosition() + " " + result + " {" + fromX + "," + fromY + "} to {" + toX + "," + toY + "}");
         return result;
     }
 
@@ -73,8 +91,25 @@ public class SelectedCurrencyItemAnimator extends DefaultItemAnimator {
 
     @Override
     public boolean animateChange(@NonNull RecyclerView.ViewHolder oldHolder, @NonNull RecyclerView.ViewHolder newHolder, @NonNull ItemHolderInfo preInfo, @NonNull ItemHolderInfo postInfo) {
+        //if(fixedPosition == oldHolder.getAdapterPosition()) return false;
         boolean result = super.animateChange(oldHolder, newHolder, preInfo, postInfo);
         Log.v(LOG_TAG, "animateChange " + oldHolder.getAdapterPosition() + " to " + newHolder.getAdapterPosition() + " " + result);
+        return result;
+    }
+
+    @NonNull
+    @Override
+    public ItemHolderInfo recordPreLayoutInformation(@NonNull RecyclerView.State state, @NonNull RecyclerView.ViewHolder viewHolder, int changeFlags, @NonNull List<Object> payloads) {
+        ItemHolderInfo result = super.recordPreLayoutInformation(state, viewHolder, changeFlags, payloads);
+        Log.v(LOG_TAG, "recordPreLayoutInformation " + viewHolder.getOldPosition() + " to " + viewHolder.getAdapterPosition() + " " + viewHolder.itemView.getTop() + " - " + viewHolder.getItemId() + " " + viewHolder.getClass().getSimpleName());
+        return result;
+    }
+
+    @NonNull
+    @Override
+    public ItemHolderInfo recordPostLayoutInformation(@NonNull RecyclerView.State state, @NonNull RecyclerView.ViewHolder viewHolder) {
+        ItemHolderInfo result = super.recordPostLayoutInformation(state, viewHolder);
+        Log.v(LOG_TAG, "recordPostLayoutInformation " + viewHolder.getOldPosition() + " to " + viewHolder.getAdapterPosition() + " " + viewHolder.itemView.getTop() + " - " + viewHolder.getItemId() + " " + viewHolder.getClass().getSimpleName());
         return result;
     }
 }
