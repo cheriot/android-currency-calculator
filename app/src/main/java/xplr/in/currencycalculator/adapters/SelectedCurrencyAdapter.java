@@ -265,7 +265,9 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
                 Log.v(LOG_TAG, "CurrencyViewHolder#onTextChanged " + optionalMoney.getCurrency().getCode() + " " + text);
                 optionalMoney.setAmount(text);
                 currencyRepository.setBaseMoney(optionalMoney);
-                // Trigger rebind so currency conversions will be recalculated.
+                // Trigger rebind so currency conversions will be recalculated. #setBaseMoney
+                // will not write to the DB if only the amount has changed so we can notify the
+                // adapter immediately.
                 adapter.notifyCalculated(CHANGE_RECALCULATE);
             }
         };
@@ -327,7 +329,6 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             }
 
             if(isBase() || isTarget()) {
-                // TODO how to draw on the surface below the row?
                 itemView.setBackgroundColor(itemView.getResources().getColor(R.color.colorWhite));
                 largeDark(nameText);
                 largeDark(calculatedAmount);
