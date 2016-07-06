@@ -19,16 +19,10 @@ public class SelectedCurrencyItemAnimator extends DefaultItemAnimator {
     public SelectedCurrencyItemAnimator(int fixedPosition) {
         this.fixedPosition = fixedPosition;
         setSupportsChangeAnimations(true);
-//        long duration = 1000;
-//        setAddDuration(duration);
-//        setChangeDuration(duration);
-//        setMoveDuration(duration);
-//        setRemoveDuration(duration);
     }
 
     @Override
     public boolean animateAdd(RecyclerView.ViewHolder holder) {
-        //if(fixedPosition == holder.getAdapterPosition()) return false;
         boolean result = super.animateAdd(holder);
         Log.v(LOG_TAG, "animateAdd " + holder.getAdapterPosition() + " " + result);
         return result;
@@ -36,12 +30,11 @@ public class SelectedCurrencyItemAnimator extends DefaultItemAnimator {
 
     @Override
     public boolean animateMove(RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
-        boolean result = false;
         if(fixedPosition == holder.getAdapterPosition()) {
             Log.v(LOG_TAG, "animateMove skipped");
             return false;
         }
-        result = super.animateMove(holder, fromX, fromY, toX, toY);
+        boolean result = super.animateMove(holder, fromX, fromY, toX, toY);
         if(holder instanceof SelectedCurrencyAdapter.CurrencyViewHolder) {
             SelectedCurrencyAdapter.CurrencyViewHolder cvh = (SelectedCurrencyAdapter.CurrencyViewHolder)holder;
             cvh.updateTypeForPosition();

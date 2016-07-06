@@ -115,7 +115,7 @@ public class ClearableEditText extends FrameLayout {
 
             // Call external listeners.
             String numberStr = DisplayUtils.stripFormatting(nextText);
-            Log.v(LOG_TAG, "TEXT " + numberStr);
+            Log.v(LOG_TAG, "TEXT " + numberStr + " inform " + textChangeListeners.size());
             for(TextChangeListener textChangeListener : textChangeListeners) {
                 textChangeListener.onTextChanged(numberStr);
             }
@@ -218,6 +218,7 @@ public class ClearableEditText extends FrameLayout {
     }
 
     public void setText(String text) {
+        Log.v(LOG_TAG, "ClearableEditText#setText " + text);
         editText.setText(text);
     }
 
