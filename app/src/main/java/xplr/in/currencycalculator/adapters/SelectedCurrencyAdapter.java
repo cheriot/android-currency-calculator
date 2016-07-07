@@ -273,6 +273,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         }
 
         public void bindView(Currency currency, OptionalMoney baseOptionalMoney) {
+            Log.v(LOG_TAG, "CurrencyViewHolder#bindView " + currency.getCode() + " " + currency.getPosition() + " @ " + getAdapterPosition());
             meta = metaRepository.findByCode(currency.getCode());
             optionalMoney = baseOptionalMoney.convertTo(currency);
             nameText.setText(currency.getName());
@@ -351,14 +352,15 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         @Override
         public void onClick(View v) {
             analytics.getMainActivityAnalytics().recordSelectCurrency(optionalMoney.getCurrency());
-            Log.v(LOG_TAG, "Select a new base " + optionalMoney);
+            Log.v(LOG_TAG, "Select a new base " + optionalMoney + " from " + optionalMoney.getCurrency().getPosition() + " @ " + getAdapterPosition());
             // The calculated amount likely has more decimal places than we display. Set the base
             // amount to be what the user sees.
-            // TODO how to run this when a currency is drug into the base positon?
+            // TODO how to run this when a currency is drug into the base position?
             optionalMoney.roundToCurrency();
             currencyRepository.setBaseMoney(optionalMoney);
             int pos = getAdapterPosition();
             // TODO will walking the list and moving each row do it?
+            // Using a single move, does not rebind
             adapter.addPendingNotify(new PendingNotify.RangeChanged(0, pos));
         }
 

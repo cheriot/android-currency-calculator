@@ -73,8 +73,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 analytics.getMainActivityAnalytics().recordFabClick();
-                // TODO startActivityForResult() to know when a currency was selected and
-                // inform the list adapter.
                 startActivityForResult(
                         new Intent(MainActivity.this, SelectCurrencyActivity.class),
                         SELECT_CURRENCY_REQUEST_CODE);
@@ -169,16 +167,6 @@ public class MainActivity extends AppCompatActivity
         Log.v(LOG_TAG, "onLoadFinished");
         SquidCursor cursor = (SquidCursor)data;
         currenciesAdapter.swapCursor(cursor);
-            // TODO make this block specific to each case
-            // Cases
-            // 1. Initialize activity.                     (don't really need notify)
-            // 2. New base currency selected.              (notify of Move)
-            // 3. Currency added by SelectCurrencyActivity (notify of Insert)
-            // Updating calculations requires rebinding everything. For some reason
-            // #notifyDatasetChanged doesn't animate all the time like #notifyItemRangeChanged.
-            //Log.v(LOG_TAG, "notifyItemRangeChanged 0 to " + currenciesAdapter.getItemCount());
-            //currenciesAdapter.notifyItemRangeChanged(0, currenciesAdapter.getItemCount());
-            //listCurrencyCalculations.scrollToPosition(0);
     }
 
     @Override

@@ -86,6 +86,7 @@ public class MoneyTest {
 
     private Currency usd() {
         Currency usd = new Currency();
+        usd.setId(1);
         usd.setName("US Dollar");
         usd.setRate("1");
         usd.setCode("USD");
@@ -96,6 +97,7 @@ public class MoneyTest {
 
     private Currency euro() {
         Currency euro = new Currency();
+        euro.setId(2);
         euro.setName("Euro");
         euro.setRate("0.8763");
         euro.setCode("EUR");
@@ -105,17 +107,19 @@ public class MoneyTest {
     }
 
     private Currency renminbi() {
-        Currency kes = new Currency();
-        kes.setName("Yuan Renminbi");
-        kes.setRate("6.4590");
-        kes.setCode("CNY");
-        kes.setPosition(null);
-        kes.setMinorUnits(2);
-        return kes;
+        Currency ren = new Currency();
+        ren.setId(3);
+        ren.setName("Yuan Renminbi");
+        ren.setRate("6.4590");
+        ren.setCode("CNY");
+        ren.setPosition(null);
+        ren.setMinorUnits(2);
+        return ren;
     }
 
     private Currency kenyanShilling() {
         Currency kes = new Currency();
+        kes.setId(4);
         kes.setName("Kenyan Shilling");
         kes.setRate("101.1310");
         kes.setCode("EUR");

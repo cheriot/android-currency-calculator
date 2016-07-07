@@ -11,6 +11,7 @@ import com.yahoo.squidb.sql.Query;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,7 +34,9 @@ import static android.text.TextUtils.isEmpty;
 public class CurrencyRepository {
 
     private static final String LOG_TAG = CurrencyRepository.class.getSimpleName();
-    protected static final int BASE_CURRENCY_POSITION = 1;
+
+    // Do not rely on the intended posotions being accurate.
+    public static final int BASE_CURRENCY_POSITION = 1;
     private static final int BASE_CURRENCY_OFFSET = 0;
     private static final int TARGET_CURRENCY_OFFSET = BASE_CURRENCY_OFFSET + 1;
 
@@ -132,11 +135,13 @@ public class CurrencyRepository {
                 // Move down
                 // startPosition 2, newPosition 5, first shift 3, 4, 5 up by one
                 sql.append("-1 where position <= ? and position > ?");
+                Log.v(LOG_TAG, sql + Arrays.toString(args));
                 database.tryExecSql(sql.toString(), args);
             } else if (startPos > newPosition) {
                 // Move up
                 // startPosition 5, newPosition 2, first shift 2, 3, 4 down by one
                 sql.append("+1 where position >= ? and position < ?");
+                Log.v(LOG_TAG, sql + Arrays.toString(args));
                 database.tryExecSql(sql.toString(), args);
             }
 
