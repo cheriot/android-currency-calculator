@@ -276,6 +276,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             Log.v(LOG_TAG, "CurrencyViewHolder#bindView " + currency.getCode() + " " + currency.getPosition() + " @ " + getAdapterPosition());
             meta = metaRepository.findByCode(currency.getCode());
             optionalMoney = baseOptionalMoney.convertTo(currency);
+            optionalMoney.roundToCurrency();
             nameText.setText(currency.getName());
             calculatedAmount.setText(optionalMoney.getAmountFormatted());
 
@@ -355,8 +356,6 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             Log.v(LOG_TAG, "Select a new base " + optionalMoney + " from " + optionalMoney.getCurrency().getPosition() + " @ " + getAdapterPosition());
             // The calculated amount likely has more decimal places than we display. Set the base
             // amount to be what the user sees.
-            // TODO how to run this when a currency is drug into the base position?
-            optionalMoney.roundToCurrency();
             currencyRepository.setBaseMoney(optionalMoney);
             int pos = getAdapterPosition();
             // TODO will walking the list and moving each row do it?
