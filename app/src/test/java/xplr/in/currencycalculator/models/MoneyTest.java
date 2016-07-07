@@ -21,15 +21,18 @@ public class MoneyTest {
     @Test
     public void testConvertTo() {
         Currency base = new Currency();
+        base.setId(1);
         base.setCode("AAA");
         base.setRate("2");
         Money m = new Money(base, "100");
 
         Currency target = new Currency();
+        target.setId(2);
         target.setCode("BBB");
         target.setRate("4");
-        assertEquals("Convert currency correctly.", new BigDecimal("200"), m.convertTo(target).getAmount());
-        assertEquals("Convert currency correctly.", target, m.convertTo(target).getCurrency());
+        assertEquals("Convert amount correctly.", new BigDecimal("200"), m.convertTo(target).getAmount());
+        assertEquals("Assign currency correctly.", target, m.convertTo(target).getCurrency());
+        assertEquals("Convert to the same currency performs no calculations.", m, m.convertTo(m.getCurrency()));
     }
 
     @Test

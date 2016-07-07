@@ -24,6 +24,12 @@ public class OptionalMoneyTest {
         assertEquals("Null amount on app install.", "", optionalMoney.getAmount());
     }
 
+    @Test
+    public void testGetAmount() {
+        OptionalMoney optionalMoney = new OptionalMoney(euro(), "1");
+        assertEquals("Returns an amount without extra decimal zeros.", "1", optionalMoney.getAmount());
+    }
+
     private Currency euro() {
         Currency euro = new Currency();
         euro.setName("Euro");

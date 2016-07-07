@@ -58,6 +58,8 @@ public class Money {
     }
 
     public Money convertTo(Currency targetCurrency) {
+        if(currency.equals(targetCurrency)) return this;
+
         BigDecimal dollarsAmount = convertToUSD();
         BigDecimal targetUSDRate = new BigDecimal(targetCurrency.getRate());
         BigDecimal targetAmount = dollarsAmount.multiply(targetUSDRate);
