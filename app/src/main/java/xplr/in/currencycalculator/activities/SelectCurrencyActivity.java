@@ -156,7 +156,7 @@ public class SelectCurrencyActivity extends AppCompatActivity
             Currency updated = currencyRepository.updateSelection(currencyId, isSelected);
             this.updatedPosition = updated.getPosition();
             // Give the checkbox animation time to finish before onBackPressed() takes the user
-            SystemClock.sleep(300);
+            SystemClock.sleep(200);
             return updated;
         }
 

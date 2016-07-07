@@ -17,6 +17,9 @@ import android.widget.TextView;
 
 import com.yahoo.squidb.data.SquidCursor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import xplr.in.currencycalculator.R;
@@ -28,9 +31,7 @@ import xplr.in.currencycalculator.models.CurrencyMeta;
 import xplr.in.currencycalculator.models.OptionalMoney;
 import xplr.in.currencycalculator.repositories.CurrencyMetaRepository;
 import xplr.in.currencycalculator.repositories.CurrencyRepository;
-import xplr.in.currencycalculator.views.BaseCurrencyAmountEditorView;
 import xplr.in.currencycalculator.views.ClearableEditText;
-import xplr.in.currencycalculator.views.CurrencyAmountChangeListener;
 
 /**
  * Created by cheriot on 5/9/16.
@@ -48,6 +49,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     private final CurrencyMetaRepository metaRepository;
     private final Analytics analytics;
 
+    private List<PendingNotify> pendingNotifies;
     private SquidCursor cursor;
     private OptionalMoney baseMoney;
     private OnItemDragListener onItemDragListener;
@@ -58,6 +60,24 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         this.currencyRepository = currencyRepository;
         this.metaRepository = metaRepository;
         this.analytics = analytics;
+        pendingNotifies = new ArrayList<>();
+    }
+
+    public void addPendingNotify(PendingNotify pendingNotify) {
+        synchronized (pendingNotifies) {
+            pendingNotifies.add(pendingNotify);
+        }
+    }
+
+    public void runPendingNotifies() {
+        synchronized (pendingNotifies) {
+            // Running and clearing need to be atomic.
+            for (PendingNotify pendingNotify : pendingNotifies) {
+                Log.v(LOG_TAG, "notify " + pendingNotify.getClass().getSimpleName());
+                pendingNotify.notify(this);
+            }
+            pendingNotifies.clear();
+        }
     }
 
     public void setOnItemDragListener(OnItemDragListener onItemDragListener) {
@@ -66,7 +86,10 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
     public void swapCursor(SquidCursor newCursor) {
         this.cursor = newCursor;
-        if(this.cursor != null) refreshBaseMoney();
+        if(this.cursor != null) {
+            refreshBaseMoney();
+            runPendingNotifies();
+        }
     }
 
     private void refreshBaseMoney() {
@@ -113,14 +136,14 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         return getCurrency(position).getId();
     }
 
-    public void notifyCurrencyInserted(int currencyPosition) {
-        Log.v(LOG_TAG, "notifyCurrencyInserted " + currencyPosition + " translated to " + viewPosition(currencyPosition));
-        notifyItemInserted(viewPosition(currencyPosition));
+    public void pendingNotifyCurrencyInserted(int currencyPosition) {
+        Log.v(LOG_TAG, "pendingNotifyCurrencyInserted " + currencyPosition + " translated to " + viewPosition(currencyPosition));
+        addPendingNotify(new PendingNotify.Inserted(viewPosition(currencyPosition)));
     }
 
-    public void notifyCurrencyRemoved(int currencyPosition) {
-        Log.v(LOG_TAG, "notifyCurrencyRemoved " + currencyPosition + " translated to " + viewPosition(currencyPosition));
-        notifyItemRemoved(viewPosition(currencyPosition));
+    public void pendingNotifyCurrencyRemoved(int currencyPosition) {
+        Log.v(LOG_TAG, "pendingNotifyCurrencyRemoved " + currencyPosition + " translated to " + viewPosition(currencyPosition));
+        addPendingNotify(new PendingNotify.Inserted(viewPosition(currencyPosition)));
     }
 
     /**
@@ -132,26 +155,25 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
      *
      * Or moving across multiple rows at once doesn't work and this happens to do it step by step.
      */
-    public void notifyItemMovedWithFixedRow(int fromViewPosition, int toViewPosition) {
+    public void pendingNotifyItemMovedWithFixedRow(int fromViewPosition, int toViewPosition) {
         Log.v(LOG_TAG, "notifyItemMoved position " + fromViewPosition + " " + toViewPosition);
-        notifyItemMoved(fromViewPosition, toViewPosition);
+        addPendingNotify(new PendingNotify.Moved(fromViewPosition, toViewPosition));
         if(fromViewPosition > ACTIONS_TYPE_POSITION && toViewPosition < ACTIONS_TYPE_POSITION) {
             // An item below the buttons has moved above it. To make space, move the item above the
             // buttons to below it.
-            Log.v(LOG_TAG, "notifyItemMoved position " + (ACTIONS_TYPE_POSITION+1) + " " + (ACTIONS_TYPE_POSITION));
-            notifyItemMoved(ACTIONS_TYPE_POSITION+1, ACTIONS_TYPE_POSITION);
+            addPendingNotify(new PendingNotify.Moved(ACTIONS_TYPE_POSITION+1, ACTIONS_TYPE_POSITION));
         } else if(fromViewPosition < ACTIONS_TYPE_POSITION && toViewPosition > ACTIONS_TYPE_POSITION) {
             // An item above the buttons has moved below it. To fill space, move the item below the
             // buttons to above it.
-            Log.v(LOG_TAG, "notifyItemMoved position " + (ACTIONS_TYPE_POSITION-1) + " " + (ACTIONS_TYPE_POSITION));
-            notifyItemChanged(ACTIONS_TYPE_POSITION-1, ACTIONS_TYPE_POSITION);
+            addPendingNotify(new PendingNotify.Moved(ACTIONS_TYPE_POSITION-1, ACTIONS_TYPE_POSITION));
         }
     }
 
-    public void notifyCalculated(String payload) {
+    public void notifyCalculated() {
         Log.v(LOG_TAG, "notifyCalculated notifyItemRangeChanged" + BASE_CURRENCY_TYPE_POSITION+1 + " to " + getItemCount());
         refreshBaseMoney();
-        notifyItemRangeChanged(BASE_CURRENCY_TYPE_POSITION+1, getItemCount(), payload);
+        // There is no data change to wait for so notify directly.
+        notifyItemRangeChanged(BASE_CURRENCY_TYPE_POSITION+1, getItemCount());
     }
 
     private Currency getCurrency(int viewPosition) {
@@ -163,7 +185,9 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         return currency;
     }
 
+    @Deprecated
     private int viewPosition(int dataPosition) {
+        // TODO Rely on currency#position's order, not the value.
         // data's position starts at 1, view starts at 0
         int offsetPosition = dataPosition - 1;
         // data's position does not have the row of buttons
@@ -187,68 +211,12 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         public abstract Currency getCurrency();
     }
 
-    public static class BaseCurrencyViewHolder extends AbstractCurrencyViewHolder {
-        @Bind(R.id.base_currency) BaseCurrencyAmountEditorView baseCurrencyAmountEditorView;
-        @Bind(R.id.currency_drag_handle) View dragHandleView;
-        private OptionalMoney optionalMoney;
-
-        public BaseCurrencyViewHolder(final RecyclerView.Adapter adapter,
-                                      View itemView,
-                                      final OnItemDragListener onItemDragListener,
-                                      CurrencyRepository currencyRepository,
-                                      CurrencyMetaRepository metaRepository,
-                                      final Analytics analytics) {
-            super(itemView, currencyRepository, metaRepository, analytics);
-            ButterKnife.bind(this, itemView);
-            baseCurrencyAmountEditorView.init(currencyRepository, metaRepository);
-            baseCurrencyAmountEditorView.setCurrencyAmountChangeListener(new CurrencyAmountChangeListener() {
-                @Override
-                public void onCurrencyAmountChange() {
-                    // BaseCurrencyAmountEditorView will have persisted the new base amount. Trigger
-                    // a rebind so target and other rows will convert the new amount.
-                    Log.v(LOG_TAG, "notifyDataSetChanged currencyAmountChangeListener");
-                    adapter.notifyDataSetChanged();
-                }
-            });
-            baseCurrencyAmountEditorView.getCurrencyAmount().setTextClearListener(new ClearableEditText.TextClearListener() {
-                @Override
-                public void onTextCleared() {
-                    analytics.getMainActivityAnalytics().recordClearBaseAmount();
-                }
-            });
-            if(onItemDragListener != null) {
-                dragHandleView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
-                            onItemDragListener.onItemDrag(BaseCurrencyViewHolder.this);
-                        }
-                        return false;
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void bindView(Currency currency, OptionalMoney optionalMoney) {
-            Log.v(LOG_TAG, "base bindView " + optionalMoney);
-            this.optionalMoney = optionalMoney;
-            baseCurrencyAmountEditorView.setMoney(optionalMoney);
-        }
-
-        @Override
-        public Currency getCurrency() {
-            return optionalMoney.getCurrency();
-        }
-    }
-
     /**
      * A single ViewHolder that can bind itself as a base, target, or other currency. RecyclerView
      * will turn moves into adds if the ViewHolder changes type so everything has to have a single
      * wrapper.
      */
     public static class CurrencyViewHolder extends AbstractCurrencyViewHolder implements View.OnClickListener {
-        private static final String CHANGE_RECALCULATE = "recalculate";
         @Bind(R.id.currency_drag_handle) View dragHandleView;
         @Bind(R.id.currency_flag) ImageView flagImage;
         @Bind(R.id.currency_name) TextView nameText;
@@ -268,7 +236,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
                 // Trigger rebind so currency conversions will be recalculated. #setBaseMoney
                 // will not write to the DB if only the amount has changed so we can notify the
                 // adapter immediately.
-                adapter.notifyCalculated(CHANGE_RECALCULATE);
+                adapter.notifyCalculated();
             }
         };
         private ClearableEditText.TextClearListener textClearListener = new ClearableEditText.TextClearListener() {
@@ -389,6 +357,9 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             // TODO how to run this when a currency is drug into the base positon?
             optionalMoney.roundToCurrency();
             currencyRepository.setBaseMoney(optionalMoney);
+            int pos = getAdapterPosition();
+            // TODO will walking the list and moving each row do it?
+            adapter.addPendingNotify(new PendingNotify.RangeChanged(0, pos));
         }
 
         public CurrencyMeta.FlagSize flagSize() {

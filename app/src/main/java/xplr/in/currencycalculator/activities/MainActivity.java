@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
 import xplr.in.currencycalculator.App;
 import xplr.in.currencycalculator.R;
 import xplr.in.currencycalculator.adapters.OnItemDragListener;
+import xplr.in.currencycalculator.adapters.PendingNotify;
 import xplr.in.currencycalculator.adapters.SelectedCurrencyAdapter;
 import xplr.in.currencycalculator.adapters.SelectedCurrencyItemAnimator;
 import xplr.in.currencycalculator.analytics.Analytics;
@@ -53,10 +54,6 @@ public class MainActivity extends AppCompatActivity
     @Inject Analytics analytics;
 
     private ItemTouchHelper itemTouchHelper;
-    // Temporary data to notify the adapter of:
-    private Integer notifyItemRemovedPosition;
-    private Integer swapOriginPosition;
-    private Integer swapDestinationPosition;
 
     @Bind(R.id.fab) FloatingActionButton fab;
     @Bind(R.id.list_currency_calculations) RecyclerView listCurrencyCalculations;
@@ -154,12 +151,10 @@ public class MainActivity extends AppCompatActivity
         if(requestCode == SELECT_CURRENCY_REQUEST_CODE) {
             int position = data.getIntExtra(SelectCurrencyActivity.PARAM_POSITION, -1);
             if(resultCode == SelectCurrencyActivity.INSERT_RESULT_CODE) {
-                Log.v(LOG_TAG, "notifyCurrencyInserted position " + position);
-                currenciesAdapter.notifyCurrencyInserted(position);
+                currenciesAdapter.pendingNotifyCurrencyInserted(position);
             }
             if(resultCode == SelectCurrencyActivity.REMOVE_RESULT_CODE) {
-                Log.v(LOG_TAG, "notifyCurrencyRemoved position " + position);
-                currenciesAdapter.notifyCurrencyRemoved(position);
+                currenciesAdapter.pendingNotifyCurrencyRemoved(position);
             }
         }
     }
@@ -174,16 +169,6 @@ public class MainActivity extends AppCompatActivity
         Log.v(LOG_TAG, "onLoadFinished");
         SquidCursor cursor = (SquidCursor)data;
         currenciesAdapter.swapCursor(cursor);
-        if(notifyItemRemovedPosition != null) {
-            Log.v(LOG_TAG, "notifyItemRemoved position " + notifyItemRemovedPosition);
-            currenciesAdapter.notifyItemRemoved(notifyItemRemovedPosition);
-            notifyItemRemovedPosition = null;
-        } else if(swapOriginPosition != null && swapDestinationPosition != null) {
-            currenciesAdapter.notifyItemMovedWithFixedRow(swapOriginPosition, swapDestinationPosition);
-
-            swapOriginPosition = null;
-            swapDestinationPosition = null;
-        } else {
             // TODO make this block specific to each case
             // Cases
             // 1. Initialize activity.                     (don't really need notify)
@@ -191,10 +176,9 @@ public class MainActivity extends AppCompatActivity
             // 3. Currency added by SelectCurrencyActivity (notify of Insert)
             // Updating calculations requires rebinding everything. For some reason
             // #notifyDatasetChanged doesn't animate all the time like #notifyItemRangeChanged.
-            Log.v(LOG_TAG, "notifyItemRangeChanged 0 to " + currenciesAdapter.getItemCount());
-            currenciesAdapter.notifyItemRangeChanged(0, currenciesAdapter.getItemCount());
-            listCurrencyCalculations.scrollToPosition(0);
-        }
+            //Log.v(LOG_TAG, "notifyItemRangeChanged 0 to " + currenciesAdapter.getItemCount());
+            //currenciesAdapter.notifyItemRangeChanged(0, currenciesAdapter.getItemCount());
+            //listCurrencyCalculations.scrollToPosition(0);
     }
 
     @Override
@@ -221,15 +205,13 @@ public class MainActivity extends AppCompatActivity
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
             Log.v(LOG_TAG, "onMove " + viewHolder.getAdapterPosition() + " to " + target.getAdapterPosition());
 
-            // Is there a move in progress?
-            if(swapOriginPosition != null || swapDestinationPosition != null) return false;
-
             Currency inMotionCurrency = ((SelectedCurrencyAdapter.AbstractCurrencyViewHolder)viewHolder).getCurrency();
             Currency destinationCurrency = ((SelectedCurrencyAdapter.AbstractCurrencyViewHolder)target).getCurrency();
             if(destinationCurrency == null) return false; // Moving past the action buttons.
             currencyRepository.swap(inMotionCurrency, destinationCurrency);
-            swapOriginPosition = viewHolder.getAdapterPosition();
-            swapDestinationPosition = target.getAdapterPosition();
+            int swapOriginPosition = viewHolder.getAdapterPosition();
+            int swapDestinationPosition = target.getAdapterPosition();
+            currenciesAdapter.pendingNotifyItemMovedWithFixedRow(swapOriginPosition, swapDestinationPosition);
             // Should this return false until after persisting and notifying the adapter?
             return true;
         }
@@ -257,7 +239,7 @@ public class MainActivity extends AppCompatActivity
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
             Log.v(LOG_TAG, "onSwiped " + swipeDir + " " + viewHolder.getItemId());
             ((SelectedCurrencyAdapter.CurrencyViewHolder)viewHolder).onSwipe();
-            notifyItemRemovedPosition = viewHolder.getAdapterPosition();
+            currenciesAdapter.addPendingNotify(new PendingNotify.Removed(viewHolder.getAdapterPosition()));
         }
 
         @Override
