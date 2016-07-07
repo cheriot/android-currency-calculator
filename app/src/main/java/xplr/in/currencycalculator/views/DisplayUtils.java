@@ -39,7 +39,17 @@ public class DisplayUtils {
     }
 
     public static StringBuffer format(Number amount) {
-        return new DecimalFormat().format(amount, new StringBuffer(), new FieldPosition(0));
+        return formatter().format(amount, new StringBuffer(), new FieldPosition(0));
+    }
+
+    private static DecimalFormat formatter() {
+        // Formatter for the default locale.
+        DecimalFormat df = new DecimalFormat();
+        // By default, the formatter will round values that are too precise. Since we're working
+        // with BigDecimals, maintain the precision.
+        df.setMaximumFractionDigits(Integer.MAX_VALUE);
+        df.setMaximumIntegerDigits(Integer.MAX_VALUE);
+        return df;
     }
 
     public static final Pattern HEADLESS_NUMBER = Pattern.compile("^[^\\d^\\.]*0");

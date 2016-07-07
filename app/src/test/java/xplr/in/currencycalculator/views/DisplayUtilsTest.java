@@ -28,5 +28,6 @@ public class DisplayUtilsTest {
         assertEquals("Naked decimal with zeros.", ".0", DisplayUtils.formatWhileTyping(".0"));
         assertEquals("Start with decimal.", ".", DisplayUtils.formatWhileTyping("."));
         assertEquals("Naked decimal with numbers.", ".01", DisplayUtils.formatWhileTyping(".01"));
+        assertEquals("Don't round decimals!", ".999999", DisplayUtils.formatWhileTyping(".999999"));
     }
 }
