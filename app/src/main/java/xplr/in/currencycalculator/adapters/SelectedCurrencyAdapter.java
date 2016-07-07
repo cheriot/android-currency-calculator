@@ -386,6 +386,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             Log.v(LOG_TAG, "Select a new base " + optionalMoney);
             // The calculated amount likely has more decimal places than we display. Set the base
             // amount to be what the user sees.
+            // TODO how to run this when a currency is drug into the base positon?
             optionalMoney.roundToCurrency();
             currencyRepository.setBaseMoney(optionalMoney);
         }
