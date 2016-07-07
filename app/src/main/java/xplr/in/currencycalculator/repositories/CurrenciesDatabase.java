@@ -77,6 +77,10 @@ public class CurrenciesDatabase extends SquidDatabase {
         lazyBulkRepository.get().initializeDefaultSelections();
     }
 
+    public void verifyData() {
+        lazyBulkRepository.get().verifyData();
+    }
+
     /** Test helper. */
     public <T extends AbstractModel> List<T> queryAsList(Class<T> modelClass, Query query) {
         return cursorToModelList(modelClass, query(modelClass, query));

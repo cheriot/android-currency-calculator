@@ -1,6 +1,7 @@
 package xplr.in.currencycalculator;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 
 import javax.inject.Inject;
@@ -21,11 +22,6 @@ public class App extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        appComponent = DaggerAppComponent
-                .builder()
-                .appModule(new AppModule(this))
-                .build();
-        appComponent.inject(this);
         if(BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
@@ -35,9 +31,15 @@ public class App extends android.app.Application {
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                     .detectAll()
                     .penaltyLog()
-                    .penaltyDropBox() // What does this actually do?
+                    .penaltyDropBox()
                     .build());
         }
+        appComponent = DaggerAppComponent
+                .builder()
+                .appModule(new AppModule(this))
+                .build();
+        appComponent.inject(this);
+        new VerifyData().execute();
     }
 
     public ActivityComponent newActivityScope(Activity activity) {
@@ -54,4 +56,11 @@ public class App extends android.app.Application {
         currenciesDatabase.close();
     }
 
+    private class VerifyData extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            currenciesDatabase.verifyData();;
+            return null;
+        }
+    }
 }

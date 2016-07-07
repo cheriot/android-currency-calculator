@@ -96,6 +96,20 @@ public class CurrencyBulkRepository {
         currencyRepository.setBaseMoney(baseMoney);
     }
 
+    public void verifyData() {
+        // UI interactions faster than data can be saved and requeried may leave positions in invalid
+        // states. Assign ordered positions starting at BASE_CURRENCY_POSITION.
+        List<Currency> selected = database.queryAsList(Currency.class, CurrencyRepository.SELECTED_CURRENCIES);
+        int expectedId = CurrencyRepository.BASE_CURRENCY_POSITION;
+        for(Currency currency : selected) {
+            if(currency.getPosition() != expectedId) {
+                currency.setPosition(expectedId);
+                database.persist(currency);
+            }
+            expectedId++;
+        }
+    }
+
     public void updateFromRemote() {
         Log.v(LOG_TAG, "updateFromRemote");
         update(remoteRateSource);

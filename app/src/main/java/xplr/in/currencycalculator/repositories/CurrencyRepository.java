@@ -33,7 +33,7 @@ import static android.text.TextUtils.isEmpty;
 public class CurrencyRepository {
 
     private static final String LOG_TAG = CurrencyRepository.class.getSimpleName();
-    private static final int BASE_CURRENCY_POSITION = 1;
+    protected static final int BASE_CURRENCY_POSITION = 1;
     private static final int BASE_CURRENCY_OFFSET = 0;
     private static final int TARGET_CURRENCY_OFFSET = BASE_CURRENCY_OFFSET + 1;
 
@@ -57,9 +57,11 @@ public class CurrencyRepository {
             .freeze();
 
     static final Criterion SELECTED_CRITERION = Currency.POSITION.isNotNull();
+
+    // sort by id for consistency when positions are screwed up and no longer unique
     static final Query SELECTED_CURRENCIES = VALID_CURRENCIES
             .where(SELECTED_CRITERION)
-            .orderBy(Currency.POSITION.asc())
+            .orderBy(Currency.POSITION.asc(), Currency.ID.asc())
             .freeze();
 
     static final Query BASE_CURRENCY = SELECTED_CURRENCIES
