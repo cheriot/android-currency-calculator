@@ -19,7 +19,7 @@ public class SelectedCurrencyItemAnimator extends DefaultItemAnimator {
     public SelectedCurrencyItemAnimator(int fixedPosition) {
         this.fixedPosition = fixedPosition;
         setSupportsChangeAnimations(true);
-        setAddDuration(1300);
+        setAddDuration(600);
     }
 
     @Override

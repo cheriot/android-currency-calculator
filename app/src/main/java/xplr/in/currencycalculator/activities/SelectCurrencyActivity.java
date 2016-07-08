@@ -42,6 +42,7 @@ public class SelectCurrencyActivity extends AppCompatActivity
 
     private static final String LOG_TAG = SelectCurrencyActivity.class.getSimpleName();
     private final static int COMBINED_CURRENCIES_LOADER_ID = 2;
+    private final static int CHECKBOX_ANIMATION_DURATION = 125;
     public final static int INSERT_RESULT_CODE = 1;
     public final static int REMOVE_RESULT_CODE = 2;
     public final static String PARAM_POSITION = "position";
@@ -156,7 +157,7 @@ public class SelectCurrencyActivity extends AppCompatActivity
             Currency updated = currencyRepository.updateSelection(currencyId, isSelected);
             this.updatedPosition = updated.getPosition();
             // Give the checkbox animation time to finish before onBackPressed() takes the user
-            SystemClock.sleep(200);
+            SystemClock.sleep(CHECKBOX_ANIMATION_DURATION);
             return updated;
         }
 
@@ -167,9 +168,11 @@ public class SelectCurrencyActivity extends AppCompatActivity
             getLoaderManager().restartLoader(COMBINED_CURRENCIES_LOADER_ID, null, SelectCurrencyActivity.this);
             Intent intent = new Intent();
             if(isSelected) {
+                Log.v(LOG_TAG, "Added " + currencyId + " to position " + this.updatedPosition);
                 intent.putExtra(PARAM_POSITION, this.updatedPosition);
                 setResult(INSERT_RESULT_CODE, intent);
             } else {
+                Log.v(LOG_TAG, "Removed " + currencyId + " from position " + this.originalPosition);
                 intent.putExtra(PARAM_POSITION, this.originalPosition);
                 setResult(REMOVE_RESULT_CODE, intent);
             }
