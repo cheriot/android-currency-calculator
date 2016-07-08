@@ -97,10 +97,16 @@ public class CurrencyBulkRepository {
     }
 
     public void verifyData() {
+        // In case the UI allowed too many selected currencies to be removed.
+        List<Currency> selected = database.queryAsList(Currency.class, CurrencyRepository.SELECTED_CURRENCIES);
+        if(selected.size() < 2) {
+            // Require at least a base and target currency.
+            initializeDefaultSelections();
+        }
+
         // UI interactions faster than data can be saved and requeried may leave positions in invalid
         // states. Assign ordered positions starting at BASE_CURRENCY_POSITION.
         boolean publish = false;
-        List<Currency> selected = database.queryAsList(Currency.class, CurrencyRepository.SELECTED_CURRENCIES);
         int expectedPosition = CurrencyRepository.BASE_CURRENCY_POSITION;
         for(Currency currency : selected) {
             int position = currency.getPosition();

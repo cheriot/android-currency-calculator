@@ -69,8 +69,9 @@ public class CurrencyRepositoryTest {
     }
 
     @Test
-    public void testEmptyDatabase() {
-        assertEquals("Empty database for each test.", 0L, database.countAll(Currency.class));
+    public void testPopulatedDatabase() {
+        // We initialize data in onTablesCreated.
+        assertEquals("Empty database for each test.", 157L, database.countAll(Currency.class));
     }
 
     @Test

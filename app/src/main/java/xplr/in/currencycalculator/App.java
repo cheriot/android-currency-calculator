@@ -59,7 +59,7 @@ public class App extends android.app.Application {
     private class VerifyData extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            currenciesDatabase.verifyData();;
+            currenciesDatabase.verifyData();
             return null;
         }
     }
