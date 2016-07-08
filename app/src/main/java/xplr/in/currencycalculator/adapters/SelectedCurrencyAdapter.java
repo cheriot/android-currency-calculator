@@ -149,7 +149,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
     public void pendingNotifyCurrencyRemoved(int currencyPosition) {
         Log.v(LOG_TAG, "pendingNotifyCurrencyRemoved " + currencyPosition + " translated to " + viewPosition(currencyPosition));
-        addPendingNotify(new PendingNotify.Inserted(viewPosition(currencyPosition)));
+        addPendingNotify(new PendingNotify.Removed(viewPosition(currencyPosition)));
     }
 
     /**
