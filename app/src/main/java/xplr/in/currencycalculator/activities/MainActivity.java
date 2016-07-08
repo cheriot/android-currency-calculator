@@ -195,12 +195,13 @@ public class MainActivity extends AppCompatActivity
 
             Currency inMotionCurrency = ((SelectedCurrencyAdapter.AbstractCurrencyViewHolder)viewHolder).getCurrency();
             Currency destinationCurrency = ((SelectedCurrencyAdapter.AbstractCurrencyViewHolder)target).getCurrency();
+            // FYI, returning false tells ItemTouchHelper to recall this method.
             if(destinationCurrency == null) return false; // Moving past the action buttons.
+            if(currenciesAdapter.hasPendingNotifies()) return false; // There may be a swap in progress.
             currencyRepository.swap(inMotionCurrency, destinationCurrency);
             int swapOriginPosition = viewHolder.getAdapterPosition();
             int swapDestinationPosition = target.getAdapterPosition();
             currenciesAdapter.pendingNotifyItemMovedWithFixedRow(swapOriginPosition, swapDestinationPosition);
-            // Should this return false until after persisting and notifying the adapter?
             return true;
         }
 

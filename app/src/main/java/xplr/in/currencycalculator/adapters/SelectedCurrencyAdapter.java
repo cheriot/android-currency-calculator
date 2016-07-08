@@ -69,6 +69,12 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         }
     }
 
+    public boolean hasPendingNotifies() {
+        synchronized (pendingNotifies) {
+            return pendingNotifies.size() != 0;
+        }
+    }
+
     public void runPendingNotifies() {
         synchronized (pendingNotifies) {
             // Running and clearing need to be atomic.
