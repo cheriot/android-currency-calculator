@@ -7,7 +7,7 @@
     <string name="flag_content_desc">National Flag</string>
     <string name="clear_content_desc">Clear Amount</string>
     <string name="title_activity_rate_comparison">Rate Comparison</string>
-    <string name="title_activity_offer_comparison">Offer Comparison</string>
+    <string name="title_activity_offer_comparison">Trade Comparison</string>
     <string name="rate_compare_result_lose">
         <![CDATA[
         Loss of <b>%1$s</b>, <b>%2$s&nbsp;%3$s</b>, or <b>%4$s&nbsp;%5$s</b>.
