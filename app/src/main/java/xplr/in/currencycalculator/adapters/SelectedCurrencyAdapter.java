@@ -309,12 +309,12 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
                 itemView.setBackgroundColor(itemView.getResources().getColor(R.color.colorWhite));
                 largeDark(nameText);
                 largeDark(calculatedAmount);
-                styleFlagImage(CurrencyMeta.FlagSize.SQUARE, 50);
+                styleFlagImage(CurrencyMeta.FlagSize.SQUARE, 50, 1);
             } else {
                 itemView.setBackgroundColor(Color.TRANSPARENT);
                 smallGray(nameText);
                 smallGray(calculatedAmount);
-                styleFlagImage(CurrencyMeta.FlagSize.NORMAL, 40);
+                styleFlagImage(CurrencyMeta.FlagSize.NORMAL, 40, 0.5f);
             }
         }
 
@@ -326,10 +326,11 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             return getAdapterPosition() == TARGET_CURRENCY_TYPE_POSITION;
         }
 
-        private void styleFlagImage(CurrencyMeta.FlagSize flagSize, int maxWidthDp) {
+        private void styleFlagImage(CurrencyMeta.FlagSize flagSize, int maxWidthDp, float alpha) {
             int resourceId = meta.getFlagResourceId(flagSize);
             Drawable drawable = itemView.getResources().getDrawable(resourceId);
             flagImage.setImageDrawable(drawable);
+            flagImage.setAlpha(alpha);
             float maxWidth = TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
                     maxWidthDp,
