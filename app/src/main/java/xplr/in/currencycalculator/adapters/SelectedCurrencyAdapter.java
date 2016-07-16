@@ -44,6 +44,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     private static final int TARGET_CURRENCY_TYPE_POSITION = 1;
     public static final int ACTIONS_TYPE_POSITION = 2;
     private static final int OTHER_CURRENCY_TYPE = 3;
+    public static final int MIN_ALLOWED_ROWS = 3; // base, target, buttons
 
     private final CurrencyRepository currencyRepository;
     private final CurrencyMetaRepository metaRepository;

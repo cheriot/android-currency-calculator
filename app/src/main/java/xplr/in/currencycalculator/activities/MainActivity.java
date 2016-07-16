@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity
             // Return 0 to prevent swipe on the targetCurrency currency. Two currencies must always be
             // selected (base and targetCurrency) for the Rate and Trade screens to work.
             // +1 for the action buttons
-            if(recyclerView.getAdapter().getItemCount() <= 3) return 0;
+            if(recyclerView.getAdapter().getItemCount() <= SelectedCurrencyAdapter.MIN_ALLOWED_ROWS) return 0;
             return super.getSwipeDirs(recyclerView, viewHolder);
         }
 
