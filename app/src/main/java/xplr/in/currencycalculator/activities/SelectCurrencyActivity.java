@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.Loader;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,7 +41,6 @@ public class SelectCurrencyActivity extends AppCompatActivity
 
     private static final String LOG_TAG = SelectCurrencyActivity.class.getSimpleName();
     private final static int COMBINED_CURRENCIES_LOADER_ID = 2;
-    private final static int CHECKBOX_ANIMATION_DURATION = 125;
     public final static int INSERT_RESULT_CODE = 1;
     public final static int REMOVE_RESULT_CODE = 2;
     public final static String PARAM_POSITION = "position";
@@ -156,8 +154,6 @@ public class SelectCurrencyActivity extends AppCompatActivity
             Log.v(LOG_TAG, "Update currency " + currencyId + " " + isSelected);
             Currency updated = currencyRepository.updateSelection(currencyId, isSelected);
             this.updatedPosition = updated.getPosition();
-            // Give the checkbox animation time to finish before onBackPressed() takes the user
-            SystemClock.sleep(CHECKBOX_ANIMATION_DURATION);
             return updated;
         }
 

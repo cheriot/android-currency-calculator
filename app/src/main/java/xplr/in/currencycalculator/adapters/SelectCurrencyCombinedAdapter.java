@@ -1,12 +1,12 @@
 package xplr.in.currencycalculator.adapters;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -16,7 +16,7 @@ import xplr.in.currencycalculator.models.Currency;
 import xplr.in.currencycalculator.presenters.SelectableCurrencies;
 
 /**
- * Created by cheriot on 5/29/16.
+ * Combined adapter for popular and all lists and header rows to identify them.
  */
 public class SelectCurrencyCombinedAdapter
         extends RecyclerView.Adapter<SelectCurrencyCombinedAdapter.CombinedViewHolder> {
@@ -96,18 +96,23 @@ public class SelectCurrencyCombinedAdapter
         }
     }
 
-    public static class CurrencyViewHolder extends CombinedViewHolder implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
-        @Bind(R.id.currency_selected) CheckBox checkBox;
+    public static class CurrencyViewHolder extends CombinedViewHolder implements View.OnClickListener {
+        @Bind(R.id.icon_plus) ImageButton iconPlus;
+        @Bind(R.id.icon_check) ImageButton iconCheck;
         @Bind(R.id.currency_name) TextView nameText;
         @Bind(R.id.currency_code) TextView codeText;
 
         private final CurrencySelectionChangeListener selectionListener;
         private Currency currency;
+        private int defaultTextColor;
 
         public CurrencyViewHolder(View itemView, CurrencySelectionChangeListener selectionListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             this.selectionListener = selectionListener;
+            defaultTextColor = nameText.getCurrentTextColor();
+            iconPlus.setOnClickListener(this);
+            iconCheck.setOnClickListener(this);
         }
 
         public void bindView(int position, SelectableCurrencies selectableCurrencies) {
@@ -117,24 +122,22 @@ public class SelectCurrencyCombinedAdapter
 
             itemView.setOnClickListener(this);
 
-            // Stop listening to the checkbox while we change it.
-            checkBox.setOnCheckedChangeListener(null);
-            checkBox.setChecked(currency.isSelected());
-            checkBox.setEnabled(!currency.isSelected() || selectableCurrencies.allowDeselect());
-            checkBox.setOnCheckedChangeListener(this);
+            if(currency.isSelected()) {
+                iconCheck.setVisibility(View.VISIBLE);
+                iconPlus.setVisibility(View.GONE);
+                nameText.setTextColor(defaultTextColor);
+            } else {
+                iconCheck.setVisibility(View.GONE);
+                iconPlus.setVisibility(View.VISIBLE);
+                nameText.setTextColor(Color.BLACK);
+            }
 
         }
 
         @Override
         public void onClick(View v) {
-            if(checkBox.isEnabled()) checkBox.setChecked(!checkBox.isChecked());
-        }
-
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            Log.v(LOG_TAG, "onCheckedChanged persist selection " + currency.getCode() + " " + isChecked + " " + checkBox.getAnimation());
-            selectionListener.onCurrencySelectionChange(currency, isChecked);
-
+            Log.v(LOG_TAG, "onCheckedChanged persist selection " + currency.getCode() + " " + currency.isSelected() + " will be changed.");
+            selectionListener.onCurrencySelectionChange(currency, !currency.isSelected());
         }
     }
 }

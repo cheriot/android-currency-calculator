@@ -6,25 +6,39 @@
               android:layout_height="wrap_content"
               android:minHeight="40dp"
               android:orientation="horizontal"
+              android:paddingEnd="10dp"
+              android:paddingLeft="10dp"
+              android:paddingRight="10dp"
+              android:paddingStart="10dp"
               app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <CheckBox
-        android:id="@+id/currency_selected"
+    <ImageButton
+        android:id="@+id/icon_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:focusable="false"
-        android:textIsSelectable="false"/>
+        android:background="@null"
+        android:src="@drawable/check"/>
+
+    <ImageButton
+        android:id="@+id/icon_plus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@null"
+        android:src="@drawable/plus"/>
 
     <TextView
         android:id="@+id/currency_name"
-        style="@style/ResultFont"
+        android:textSize="20sp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:focusable="false"
         android:gravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
         android:textIsSelectable="false"
         tools:text="United People's Rupee"/>
 
