@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 
+import com.google.firebase.crash.FirebaseCrash;
+
 import javax.inject.Inject;
 
 import xplr.in.currencycalculator.modules.ActivityComponent;
@@ -22,7 +24,7 @@ public class App extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
                     .penaltyLog()
@@ -39,7 +41,16 @@ public class App extends android.app.Application {
                 .appModule(new AppModule(this))
                 .build();
         appComponent.inject(this);
+        
         new VerifyData().execute();
+
+        /** Report FirebaseCrash Exception on production application crash. */
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable e) {
+                if (!BuildConfig.DEBUG) FirebaseCrash.report(e);
+            }
+        });
     }
 
     public ActivityComponent newActivityScope(Activity activity) {

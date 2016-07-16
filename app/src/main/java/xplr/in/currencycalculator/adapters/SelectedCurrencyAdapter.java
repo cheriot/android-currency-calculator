@@ -366,7 +366,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             // amount to be what the user sees.
             currencyRepository.setBaseMoney(optionalMoney);
             int pos = getAdapterPosition();
-            // TODO will walking the list and moving each row do it?
+            // will walking the list and moving each row do it?
             // Using a single move, does not rebind
             adapter.addPendingNotify(new PendingNotify.RangeChanged(0, pos));
         }
