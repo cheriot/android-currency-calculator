@@ -177,8 +177,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onItemDrag(RecyclerView.ViewHolder viewHolder) {
+        SelectedCurrencyAdapter.CurrencyViewHolder inMotion = ((SelectedCurrencyAdapter.CurrencyViewHolder)viewHolder);
         Log.v(LOG_TAG, "onItemDrag " + viewHolder.getAdapterPosition() + " " + viewHolder.itemView.getTop());
         itemTouchHelper.startDrag(viewHolder);
+        inMotion.startDrag();
     }
 
     /**
@@ -191,18 +193,34 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            Log.v(LOG_TAG, "onMove " + viewHolder.getAdapterPosition() + " to " + target.getAdapterPosition());
 
             Currency inMotionCurrency = ((SelectedCurrencyAdapter.AbstractCurrencyViewHolder)viewHolder).getCurrency();
             Currency destinationCurrency = ((SelectedCurrencyAdapter.AbstractCurrencyViewHolder)target).getCurrency();
+            Log.v(LOG_TAG, "onMove " + inMotionCurrency + " " + viewHolder.getAdapterPosition() + " to " + target.getAdapterPosition());
+
             // FYI, returning false tells ItemTouchHelper to recall this method.
             if(destinationCurrency == null) return false; // Moving past the action buttons.
             if(currenciesAdapter.hasPendingNotifies()) return false; // There may be a swap in progress.
+
             currencyRepository.swap(inMotionCurrency, destinationCurrency);
             int swapOriginPosition = viewHolder.getAdapterPosition();
             int swapDestinationPosition = target.getAdapterPosition();
             currenciesAdapter.pendingNotifyItemMovedWithFixedRow(swapOriginPosition, swapDestinationPosition);
             return true;
+        }
+
+        @Override
+        public boolean canDropOver(RecyclerView recyclerView, RecyclerView.ViewHolder current, RecyclerView.ViewHolder target) {
+            return target instanceof SelectedCurrencyAdapter.CurrencyViewHolder;
+        }
+
+        @Override
+        public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            // drag or swipe has ended.
+            SelectedCurrencyAdapter.CurrencyViewHolder inMotion = ((SelectedCurrencyAdapter.CurrencyViewHolder)viewHolder);
+            inMotion.endDrag();
+            Log.v(LOG_TAG, "clearView " + inMotion.getCurrency());
+            super.clearView(recyclerView, viewHolder);
         }
 
         @Override

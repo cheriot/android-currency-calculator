@@ -234,6 +234,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         private OptionalMoney optionalMoney;
         private CurrencyMeta meta;
         private int defaultTextColor;
+        private boolean isDragging = false;
         private ClearableEditText.TextChangeListener textChangeListener = new ClearableEditText.TextChangeListener() {
             @Override
             public void onTextChanged(String text) {
@@ -291,6 +292,10 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         }
 
         public void updateTypeForPosition() {
+            // The row will be rebound as it is moved while dragging. Maintain the drag style until
+            // drop.
+            if(isDragging) return;
+
             if(isBase()) {
                 Log.v(LOG_TAG, "updateTypeForPosition init editAmount " + optionalMoney.getCurrency().getCode());
                 makeEditable(true);
@@ -306,16 +311,24 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             }
 
             if(isBase() || isTarget()) {
-                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.colorWhite));
+                setBackgroundColor(R.color.colorWhite);
                 largeDark(nameText);
                 largeDark(calculatedAmount);
-                styleFlagImage(CurrencyMeta.FlagSize.SQUARE, 50, 1);
+                styleFlagImage(CurrencyMeta.FlagSize.SQUARE, 50, 255);
             } else {
-                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.defaultBackground));
+                setBackgroundColor(R.color.defaultBackground);
                 smallGray(nameText);
                 smallGray(calculatedAmount);
-                styleFlagImage(CurrencyMeta.FlagSize.NORMAL, 40, 0.5f);
+                styleFlagImage(CurrencyMeta.FlagSize.NORMAL, 40, 128);
             }
+        }
+
+        public void updateTypeForDrag() {
+            if(isBase() || isTarget()) return;
+            largeDark(nameText);
+            largeDark(calculatedAmount);
+            flagImage.setAlpha(255);
+            setBackgroundColor(R.color.colorWhite);
         }
 
         private boolean isBase() {
@@ -326,7 +339,11 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             return getAdapterPosition() == TARGET_CURRENCY_TYPE_POSITION;
         }
 
-        private void styleFlagImage(CurrencyMeta.FlagSize flagSize, int maxWidthDp, float alpha) {
+        private void setBackgroundColor(int color) {
+            itemView.setBackgroundColor(itemView.getResources().getColor(color));
+        }
+
+        private void styleFlagImage(CurrencyMeta.FlagSize flagSize, int maxWidthDp, int alpha) {
             int resourceId = meta.getFlagResourceId(flagSize);
             Drawable drawable = itemView.getResources().getDrawable(resourceId);
             flagImage.setImageDrawable(drawable);
@@ -356,6 +373,16 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         public void onSwipe() {
             analytics.getMainActivityAnalytics().recordSwipeRemovedCurrency(optionalMoney.getCurrency());
             currencyRepository.updateSelection(optionalMoney.getCurrency().getId(), false);
+        }
+
+        public void startDrag() {
+            isDragging = true;
+            updateTypeForDrag();
+        }
+
+        public void endDrag() {
+            isDragging = false;
+            updateTypeForPosition();
         }
 
         @Override
