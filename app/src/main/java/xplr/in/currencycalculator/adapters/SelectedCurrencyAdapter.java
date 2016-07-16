@@ -3,6 +3,7 @@ package xplr.in.currencycalculator.adapters;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -202,6 +203,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     }
 
     public static abstract class AbstractCurrencyViewHolder extends RecyclerView.ViewHolder {
+        private static final int ELEVATION_RAISED = 2;
         protected final CurrencyRepository currencyRepository;
         protected final CurrencyMetaRepository metaRepository;
         protected final Analytics analytics;
@@ -216,6 +218,32 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         public abstract void bindView(Currency currency, OptionalMoney baseMoney);
 
         public abstract Currency getCurrency();
+
+        protected void setElevationRaised() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                itemView.setElevation(dpToPx(ELEVATION_RAISED));
+                Log.v(LOG_TAG, "setElevationRaised " + itemView.getElevation() + " " + itemView.getTranslationZ());
+            }
+        }
+
+        protected void setElevationFlat() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                itemView.setElevation(0);
+                Log.v(LOG_TAG, "setElevationFlat " + itemView.getElevation() + " " + itemView.getTranslationZ());
+            }
+        }
+
+        protected void setElevationMoving() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                itemView.setElevation(dpToPx(ELEVATION_RAISED-1));
+                Log.v(LOG_TAG, "setElevationMoving " + itemView.getElevation() + " " + itemView.getTranslationZ());
+            }
+        }
+
+        protected int dpToPx(int dp) {
+            float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, itemView.getResources().getDisplayMetrics());
+            return (int)Math.floor(px);
+        }
     }
 
     /**
@@ -315,11 +343,13 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
                 largeDark(nameText);
                 largeDark(calculatedAmount);
                 styleFlagImage(CurrencyMeta.FlagSize.SQUARE, 50, 255);
+                setElevationRaised();
             } else {
                 setBackgroundColor(R.color.defaultBackground);
                 smallGray(nameText);
                 smallGray(calculatedAmount);
                 styleFlagImage(CurrencyMeta.FlagSize.NORMAL, 40, 128);
+                setElevationFlat();
             }
         }
 
@@ -329,6 +359,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             largeDark(calculatedAmount);
             flagImage.setAlpha(255);
             setBackgroundColor(R.color.colorWhite);
+            setElevationMoving();
         }
 
         private boolean isBase() {
@@ -428,6 +459,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
                     v.getContext().startActivity(new Intent(v.getContext(), TradeComparisonActivity.class));
                 }
             });
+            setElevationRaised();
         }
 
         @Override

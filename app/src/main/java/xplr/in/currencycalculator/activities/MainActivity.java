@@ -217,10 +217,10 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             // drag or swipe has ended.
+            super.clearView(recyclerView, viewHolder);
             SelectedCurrencyAdapter.CurrencyViewHolder inMotion = ((SelectedCurrencyAdapter.CurrencyViewHolder)viewHolder);
             inMotion.endDrag();
             Log.v(LOG_TAG, "clearView " + inMotion.getCurrency());
-            super.clearView(recyclerView, viewHolder);
         }
 
         @Override
