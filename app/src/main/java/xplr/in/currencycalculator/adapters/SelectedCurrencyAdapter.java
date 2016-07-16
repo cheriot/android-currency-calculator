@@ -311,7 +311,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
                 largeDark(calculatedAmount);
                 styleFlagImage(CurrencyMeta.FlagSize.SQUARE, 50, 1);
             } else {
-                itemView.setBackgroundColor(Color.TRANSPARENT);
+                itemView.setBackgroundColor(itemView.getResources().getColor(R.color.defaultBackground));
                 smallGray(nameText);
                 smallGray(calculatedAmount);
                 styleFlagImage(CurrencyMeta.FlagSize.NORMAL, 40, 0.5f);
