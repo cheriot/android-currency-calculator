@@ -203,7 +203,8 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
     }
 
     public static abstract class AbstractCurrencyViewHolder extends RecyclerView.ViewHolder {
-        private static final int ELEVATION_RAISED = 2;
+        private static final int ELEVATION_RAISED = 0;
+        private static final int ELEVATION_MOVING = 0;
         protected final CurrencyRepository currencyRepository;
         protected final CurrencyMetaRepository metaRepository;
         protected final Analytics analytics;
@@ -235,7 +236,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
         protected void setElevationMoving() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                itemView.setElevation(dpToPx(ELEVATION_RAISED-1));
+                itemView.setElevation(dpToPx(ELEVATION_MOVING-1));
                 Log.v(LOG_TAG, "setElevationMoving " + itemView.getElevation() + " " + itemView.getTranslationZ());
             }
         }
