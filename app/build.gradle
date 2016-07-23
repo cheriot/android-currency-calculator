@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "xplr.in.currencycalculator"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 24
         versionName "1.24"
