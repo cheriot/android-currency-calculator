@@ -109,4 +109,5 @@ public class SelectedCurrencyItemAnimator extends DefaultItemAnimator {
         Log.v(LOG_TAG, "recordPostLayoutInformation " + viewHolder.getOldPosition() + " to " + viewHolder.getAdapterPosition() + " " + viewHolder.itemView.getTop() + " - " + viewHolder.getItemId() + " " + viewHolder.getClass().getSimpleName());
         return result;
     }
+
 }

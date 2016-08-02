@@ -1,5 +1,9 @@
 package xplr.in.currencycalculator.adapters;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -12,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,6 +25,9 @@ import android.widget.TextView;
 import com.yahoo.squidb.data.SquidCursor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
@@ -263,6 +272,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         private OptionalMoney optionalMoney;
         private CurrencyMeta meta;
         private int defaultTextColor;
+        private int currentBackgroundColor;
         private boolean isDragging = false;
         private ClearableEditText.TextChangeListener textChangeListener = new ClearableEditText.TextChangeListener() {
             @Override
@@ -354,12 +364,37 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             }
         }
 
-        public void updateTypeForDrag() {
+        public void animateTypeForPosition() {
+            AnimatorSet animatorSet = null;
+            if(isBase() || isTarget()) {
+                animatorSet = playTogetherNullable(
+                        backgroundColorAnimated(R.color.colorWhite),
+                        largeDarkAnimated(nameText),
+                        largeDarkAnimated(calculatedAmount)
+                );
+                styleFlagImage(CurrencyMeta.FlagSize.SQUARE, 50, 255);
+                setElevationRaised();
+            } else {
+                animatorSet = playTogetherNullable(
+                        backgroundColorAnimated(R.color.defaultBackground),
+                        smallGrayAnimated(nameText),
+                        smallGrayAnimated(calculatedAmount)
+                );
+                styleFlagImage(CurrencyMeta.FlagSize.NORMAL, 40, 128);
+                setElevationFlat();
+            }
+            animatorSet.start();
+        }
+
+        public void animateTypeForDrag() {
             if(isBase() || isTarget()) return;
-            largeDark(nameText);
-            largeDark(calculatedAmount);
-            flagImage.setAlpha(255);
-            setBackgroundColor(R.color.colorWhite);
+            AnimatorSet animatorSet =  playTogetherNullable(
+                    largeDarkAnimated(nameText),
+                    largeDarkAnimated(calculatedAmount),
+                    opaqueFlagAnimated(),
+                    backgroundColorAnimated(R.color.colorWhite)
+            );
+            animatorSet.start();
             setElevationMoving();
         }
 
@@ -372,6 +407,7 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
         }
 
         private void setBackgroundColor(int color) {
+            currentBackgroundColor = color;
             itemView.setBackgroundColor(itemView.getResources().getColor(color));
         }
 
@@ -387,14 +423,111 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
             flagImage.setMaxWidth(Math.round(maxWidth));
         }
 
+        private Interpolator interpolator() {
+            return new DecelerateInterpolator(1.3f);
+        }
+
+        private Animator backgroundColorAnimated(int color) {
+            if(currentBackgroundColor == color) return null;
+            int oldColor = itemView.getResources().getColor(currentBackgroundColor);
+            int newColor = itemView.getResources().getColor(color);
+            ValueAnimator colorAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), oldColor, newColor);
+            colorAnimator.setDuration(ANIMATION_LENGTH);
+            colorAnimator.setInterpolator(interpolator());
+            colorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animator) {
+                    itemView.setBackgroundColor((int) animator.getAnimatedValue());
+                }
+
+            });
+            currentBackgroundColor = color;
+            return colorAnimator;
+        }
+
+        private Animator opaqueFlagAnimated() {
+            ValueAnimator opacityAnimator = null;
+            int oldAlpha = flagImage.getImageAlpha();
+            int newAlpha = 255;
+            if(oldAlpha == newAlpha) return null;
+            opacityAnimator = ValueAnimator.ofInt(oldAlpha, newAlpha);
+            opacityAnimator.setInterpolator(interpolator());
+            opacityAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    int animatedValue = (int) animation.getAnimatedValue();
+                    flagImage.setImageAlpha(animatedValue);
+                }
+            });
+            return opacityAnimator;
+        }
+
+        private static final int LARGE_SP = 20;
         private void largeDark(TextView tv) {
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, LARGE_SP);
             tv.setTextColor(Color.BLACK);
         }
 
+        private static final int ANIMATION_LENGTH = 75;
+        private Animator largeDarkAnimated(final TextView tv) {
+            AnimatorSet animatorSet = playTogetherNullable(
+                    animateTextSize(tv, LARGE_SP),
+                    animateColor(tv, Color.BLACK)
+            );
+            return animatorSet;
+        }
+
+        private Animator smallGrayAnimated(TextView tv) {
+            AnimatorSet animatorSet = playTogetherNullable(animateTextSize(tv, SMALL_SP), animateColor(tv, defaultTextColor));
+            return animatorSet;
+        }
+
+        private Animator animateTextSize(final TextView tv, int newSp) {
+            ValueAnimator textSizeAnimator = null;
+            if(tv.getPaint() == null || tv.getPaint().density == 0) return null;
+            float oldSp = tv.getTextSize() / tv.getPaint().density;
+            if(oldSp == newSp) return null;
+            textSizeAnimator = ValueAnimator.ofFloat(oldSp, newSp);
+            textSizeAnimator.setInterpolator(interpolator());
+            textSizeAnimator.setDuration(ANIMATION_LENGTH);
+            textSizeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    float animatedValue = (float) valueAnimator.getAnimatedValue();
+                    tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, animatedValue);
+                }
+            });
+            return textSizeAnimator;
+        }
+
+        private Animator animateColor(final TextView tv, int newColor) {
+            int oldColor = tv.getTextColors().getDefaultColor();
+            if(oldColor == newColor) return null;
+            ValueAnimator colorAnimator = ValueAnimator.ofInt(oldColor, newColor);
+            colorAnimator.setInterpolator(interpolator());
+            colorAnimator.setDuration(ANIMATION_LENGTH);
+            colorAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    int animatedValue = (int) valueAnimator.getAnimatedValue();
+                    tv.setTextColor(animatedValue);
+                }
+            });
+            return colorAnimator;
+        }
+
+        private static final int SMALL_SP = 14;
         private void smallGray(TextView tv) {
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, SMALL_SP);
             tv.setTextColor(defaultTextColor);
+        }
+
+        private AnimatorSet playTogetherNullable(Animator... animatorsWithNulls) {
+            Collection<Animator> animators = new ArrayList(Arrays.asList(animatorsWithNulls));
+            animators.removeAll(Collections.singleton(null));
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.playTogether(animators);
+            return animatorSet;
         }
 
         private void makeEditable(boolean isEditable) {
@@ -409,12 +542,12 @@ public class SelectedCurrencyAdapter extends RecyclerView.Adapter<SelectedCurren
 
         public void startDrag() {
             isDragging = true;
-            updateTypeForDrag();
+            animateTypeForDrag();
         }
 
         public void endDrag() {
             isDragging = false;
-            updateTypeForPosition();
+            animateTypeForPosition();
         }
 
         @Override
