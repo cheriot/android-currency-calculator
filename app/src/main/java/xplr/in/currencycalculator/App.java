@@ -49,6 +49,7 @@ public class App extends android.app.Application {
             @Override
             public void uncaughtException(Thread thread, Throwable e) {
                 if (!BuildConfig.DEBUG) FirebaseCrash.report(e);
+                throw new RuntimeException(e);
             }
         });
     }
